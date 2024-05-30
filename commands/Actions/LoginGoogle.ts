@@ -3,7 +3,7 @@ const LoginGoogle = async (page, email) => {
 
   // @ts-ignore
   await page.waitForSelector('#identifierId', {visible: true});
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
   await page.type('#identifierId', email.email);
   await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll('button'));
@@ -12,6 +12,7 @@ const LoginGoogle = async (page, email) => {
       return span && span.textContent.trim() === 'Avançar';
     });
     if (button) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
       button.click();
     }
   });
