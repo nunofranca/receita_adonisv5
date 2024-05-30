@@ -99,12 +99,11 @@ export default class TestPixSimple extends BaseCommand {
     const proxy = getRandomProxy(proxies);
     function getRandomUrl(urls) {
       const randomIndex = Math.floor(Math.random() * urls.length);
-      console.log(urls[randomIndex])
+
       return urls[randomIndex];
     }
-
     let url = getRandomUrl(apiUrls)
-    console.log(url)
+
 
     const dataReq = await axios.get(url + '/api/data');
     const addressReq = await axios.get(url + '/api/address');
@@ -131,7 +130,7 @@ export default class TestPixSimple extends BaseCommand {
       executablePath: '/usr/bin/microsoft-edge',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
@@ -152,7 +151,7 @@ export default class TestPixSimple extends BaseCommand {
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
-      console.log(randomUserAgent)
+
 
       // Definindo cabeçalhos HTTP adicionais para pt-BR
       await page.setExtraHTTPHeaders({
@@ -163,66 +162,25 @@ export default class TestPixSimple extends BaseCommand {
         return Math.floor(Math.random() * 2000) + 1000; // Atraso entre 1 e 3 segundos
       };
 
-
-      const randomMouseMove = async () => {
-        await page.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
-      // await applyStealthSettings(page);
-
       await page.authenticate({
         username: proxy.username,
         password: proxy.password,
       });
-      // await page.authenticate({
-      //   username: 'alberttojrfsa275842',
-      //   password: 'hgaxcdcn96uq',
-      // });
-      await randomMouseMove();
 
-
-      //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
 
-      // const google = await page.target().createCDPSession();
-      // await google.send('Network.clearBrowserCookies');
-      //
-      // // Limpa o cache
-      // await google.send('Network.clearBrowserCache');
-      //
-      // // Limpa o armazenamento local e o session storage
-      // await page.evaluate(() => {
-      //   localStorage.clear();
-      //   sessionStorage.clear();
-      // });
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      await page.type('#identifierId', email.email); // Insira seu e-mail do Google
-      await randomMouseMove();
-
-      const randomMouseMovePopup = async () => {
-        await page.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
-      await randomMouseMovePopup();
-
-
       await new Promise(resolve => setTimeout(resolve, 10000));
-      await randomMouseMovePopup();
+      await page.type('#identifierId', email.email);
+      await new Promise(resolve => setTimeout(resolve, 10000));
       await page.keyboard.press('Tab');
       await page.keyboard.press('Tab');
-      await randomMouseMovePopup();
       await page.keyboard.press('Tab');
-      await randomMouseMovePopup();
+      await new Promise(resolve => setTimeout(resolve, 10000000));
       await new Promise(resolve => setTimeout(resolve, randomDelay()));
       await page.keyboard.press('Enter');
-      await randomMouseMovePopup();
+
 
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 10000));
