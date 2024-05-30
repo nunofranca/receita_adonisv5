@@ -216,7 +216,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
-      await page.goto('https://www.google.com.br/', {timeout: 60000});
+      await page.goto('dentifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTARfguknxStmQYeXaR2FZ97PvvfA2HI2esq4X6PRy1OEWNpAN4E5pS8HUiiWR8ZEikhXQK42WA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S420028969%3A1717111006980508&ddm=0', {timeout: 60000});
 
       await new Promise(resolve => setTimeout(resolve, 15000));
       try {
