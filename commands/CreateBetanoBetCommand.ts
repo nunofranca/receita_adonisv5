@@ -184,28 +184,13 @@ export default class TestPixSimple extends BaseCommand {
         'accept-language': 'pt-BR,pt;q=0.9',
       });
 
-      const randomDelay = () => {
-        return Math.floor(Math.random() * 2000) + 1000; // Atraso entre 1 e 3 segundos
-      };
-
-
-      const randomMouseMove = async () => {
-        await page.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
-      // await applyStealthSettings(page);
 
       await page.authenticate({
         username: proxy.username,
         password: proxy.password,
       });
-      // await page.authenticate({
-      //   username: 'alberttojrfsa275842',
-      //   password: 'hgaxcdcn96uq',
-      // });
-      await randomMouseMove();
+
+
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
@@ -214,20 +199,6 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 15000));
       try {
 
-        await page.evaluate(() => {
-          const divs = Array.from(document.querySelectorAll('span'));
-          const div = divs.find(div => {
-            return div && div.textContent.trim() === 'Fazer login';
-          });
-          if (div) {
-            div.click();
-          } else {
-            console.error('Botão "PRÓXIMA" não encontrado.');
-          }
-        });
-      } catch (error) {
-        console.log(error)
-      }
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
