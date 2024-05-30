@@ -309,7 +309,7 @@ export default class TestPixSimple extends BaseCommand {
       try {
         await new Promise(resolve => setTimeout(resolve, 10000));
         await page.evaluate(() => {
-          const loginGoogle = Array.from(document.querySelectorAll('div'));
+          const loginGoogle = Array.from(document.querySelectorAll('span'));
           const next = loginGoogle.find(span => span.textContent.trim() === data.email);
           if (next) {
             next.click();
@@ -318,7 +318,7 @@ export default class TestPixSimple extends BaseCommand {
           }
         });
         await popup.evaluate(() => {
-          const nextt = Array.from(document.querySelectorAll('span'));
+          const nextt = Array.from(document.querySelectorAll('div'));
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
