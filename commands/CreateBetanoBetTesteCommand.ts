@@ -356,6 +356,16 @@ export default class TestPixSimple extends BaseCommand {
           await new Promise(resolve => setTimeout(resolve, 2000));
           await page.type('#tax-number', data.cpf);
 
+          const textoExistente = await page.evaluate(() => {
+            return document.body.innerText.includes('Este CPF já existe');
+          });
+
+          if (textoExistente) {
+            await axios.delete(url + '/api/data/'+data.id)
+            console.log(data.cpf + 'Já tem cadastro e foi deletado')
+            await browser.close()
+          }
+
           await new Promise(resolve => setTimeout(resolve, 5000));
 
           async function clickProxima() {
