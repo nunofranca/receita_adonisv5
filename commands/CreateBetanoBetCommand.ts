@@ -142,7 +142,7 @@ export default class TestPixSimple extends BaseCommand {
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
@@ -200,14 +200,15 @@ export default class TestPixSimple extends BaseCommand {
       //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
       console.log('abriu a pagina do google')
-      // const cookies = await page.cookies();
-      // for (let cookie of cookies) {
-      //   await page.deleteCookie(cookie);
-      // }
-      //
-      // // Verificar que os cookies foram limpos
-      // const cookiesAfter = await page.cookies();
-      // console.log('Cookies after deletion:', cookiesAfter);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const cookies = await page.cookies();
+      for (let cookie of cookies) {
+        await page.deleteCookie(cookie);
+      }
+
+      // Verificar que os cookies foram limpos
+      const cookiesAfter = await page.cookies();
+      console.log('Cookies after deletion:', cookiesAfter);
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
@@ -290,6 +291,14 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
       await page.waitForSelector('body');
+      const cookiesBetano = await page.cookies();
+      for (let cookieBe of cookiesBetano) {
+        await page.deleteCookie(cookieBe);
+      }
+
+      // Verificar que os cookies foram limpos
+      const cookiesAfterBetano = await page.cookies();
+      console.log('Cookies after deletion:', cookiesAfterBetano);
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       const isTextPresent = await page.evaluate((text: string) => {
