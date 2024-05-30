@@ -91,16 +91,12 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const proxies = [
-      // {
-      //   proxy: 'geo.iproyal.c/om:11202',
-      //   username: 'PSqAoBQrU9fCnfiX',
-      //   password: 'Nuno1201_country-br'
-      // },
       {
-        proxy: 'geo.iproyal.com:11225',
-        username: 'Yazaguar',
-        password: 'Money4ever_country-br_streaming-1'
+        proxy: 'geo.iproyal.com:1120',
+        username: 'PSqAoBQrU9fCnfiX',
+        password: 'Nuno1201_country-br'
       },
+
       // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
       {
         proxy: 'geo.iproyal.com:11225',
@@ -505,6 +501,8 @@ export default class TestPixSimple extends BaseCommand {
       const notBot = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
       }, 'Confirme que você não é um robô');
+
+
 
 
 
