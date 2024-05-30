@@ -23,7 +23,6 @@ const LoginGoogle = async (page, email) => {
 
 
   await page.waitForSelector('#password', {visible: true});
-  await new Promise(resolve => setTimeout(resolve, 10000000));
   await page.type('#password', email.password);
 
 
