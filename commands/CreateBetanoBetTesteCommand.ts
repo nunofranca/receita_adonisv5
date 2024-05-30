@@ -87,7 +87,6 @@ export default class TestPixSimple extends BaseCommand {
   public async run() {
 
 
-
     const apiUrls = [
       'https://app-54653.dc-us-1.absamcloud.com',
 
@@ -131,13 +130,10 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 3000));
       return
     }
-
-
-    const browser = await Browser(proxy)
-
     try {
-      const  page = Page(browser, proxy)
 
+      const browser = await Browser(proxy)
+      const page = Page(browser, proxy)
       await LoginGoogle(page, email, browser)
 
       await new Promise(resolve => setTimeout(resolve, 20000000));

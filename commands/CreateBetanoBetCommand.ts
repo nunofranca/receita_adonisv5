@@ -91,8 +91,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const proxies = [
-      { proxy: 'geo.iproyal.com:11202', username: 'PSqAoBQrU9fCnfiX', password: 'Nuno1201_country-br' },
+      // { proxy: 'geo.iproyal.com:11202', username: 'PSqAoBQrU9fCnfiX', password: 'Nuno1201_country-br' },
       // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
+      { proxy: 'geo.iproyal.com:11225', username: 'Yazaguar', password: 'Money4ever_country-br_streaming-1' },
     ];
     function getRandomProxy(proxies: string | any[]) {
       const randomIndex = Math.floor(Math.random() * proxies.length);
