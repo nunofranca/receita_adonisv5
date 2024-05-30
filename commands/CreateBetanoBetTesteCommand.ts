@@ -3,7 +3,6 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 
 
-
 // @ts-ignore
 import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
@@ -44,6 +43,8 @@ import * as fs from 'fs';
 import {err} from "pino-std-serializers";
 import userAgents from "../userAgents";
 import LoginGoogle from "./Actions/LoginGoogle";
+import Browser from "./Actions/Browser";
+import Page from "./Actions/Page";
 
 const stealth = StealthPlugin()
 stealth.enabledEvasions.delete('iframe.contentWindow')
@@ -86,7 +87,7 @@ export default class TestPixSimple extends BaseCommand {
   public async run() {
 
 
-    let browser;
+
     const apiUrls = [
       'https://app-54653.dc-us-1.absamcloud.com',
 
@@ -132,69 +133,29 @@ export default class TestPixSimple extends BaseCommand {
     }
 
 
-    browser = await puppeteer.launch({
-      // userDataDir: '../profiles/dateBirth',
-      env: {
-        DISPLAY: ":10.0"
-      },
-      executablePath: '/usr/bin/microsoft-edge',
-      slowMo: 10,
-      defaultViewport: null,
-      headless: false,
-      ignoreDefaultArgs: ["--disable-extensions"],
-
-      args: [
-        '--proxy-server=' + proxy.proxy,
-        // '--proxy-server=http://x279.fxdx.in:15783',
-        //'--start-maximized',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        //'--window-size=1920x1080',
-      ],
-    });
+    const browser = await Browser(proxy)
 
     try {
-      const page = await browser.newPage();
+      const  page = Page(browser, proxy)
 
-      const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-      await page.setUserAgent(randomUserAgent);
-
-
-      // Definindo cabeçalhos HTTP adicionais para pt-BR
-      await page.setExtraHTTPHeaders({
-        'accept-language': 'pt-BR,pt;q=0.9',
-      });
-
-      const randomDelay = () => {
-        return Math.floor(Math.random() * 2000) + 1000; // Atraso entre 1 e 3 segundos
-      };
-
-      await page.authenticate({
-        username: proxy.username,
-        password: proxy.password,
-      });
-
-        await LoginGoogle(page, email)
+      await LoginGoogle(page, email, browser)
 
       await new Promise(resolve => setTimeout(resolve, 20000000));
-        const isEmailInputPresent = await page.evaluate(() => {
-          return !!document.querySelector('input[type="email"]');
-        });
-        if (isEmailInputPresent) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type('input[type="email"]', email.emailRecovery);
-          await new Promise(resolve => setTimeout(resolve, 10000));
+      const isEmailInputPresent = await page.evaluate(() => {
+        return !!document.querySelector('input[type="email"]');
+      });
+      if (isEmailInputPresent) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.type('input[type="email"]', email.emailRecovery);
+        await new Promise(resolve => setTimeout(resolve, 10000));
 
-          await page.keyboard.press('Tab');
+        await page.keyboard.press('Tab');
 
-          await page.keyboard.press('Enter');
+        await page.keyboard.press('Enter');
 
-        } else {
-          console.log('Campo de e-mail não encontrado.');
-        }
+      } else {
+        console.log('Campo de e-mail não encontrado.');
+      }
 
       await new Promise(resolve => setTimeout(resolve, 15000));
 
@@ -385,16 +346,18 @@ export default class TestPixSimple extends BaseCommand {
 
     }
 
-}
+  }
 
-async function buttons(text: string, page) {
-  const buttons = await page.$$('button');
-  for (const button of buttons) {
-    const buttonText = await button.evaluate(node => node.textContent.trim());
-    if (buttonText === text) {
-      await button.click();
+  async function
+
+  buttons(text: string, page) {
+    const buttons = await page.$$('button');
+    for (const button of buttons) {
+      const buttonText = await button.evaluate(node => node.textContent.trim());
+      if (buttonText === text) {
+        await button.click();
+      }
     }
   }
-}
 
 }
