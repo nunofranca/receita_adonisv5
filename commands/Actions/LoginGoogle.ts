@@ -4,39 +4,24 @@ const LoginGoogle = async (page, email, browser) => {
     waitUntil: 'networkidle0' // Espera até que não haja mais de 0 conexões de rede por pelo menos 500ms
   });
 
-  // @ts-ignore
+  try {
   await page.waitForSelector('#identifierId', {visible: true});
 
   await page.type('#identifierId', email.email);
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll('button'));
-    const button = buttons.find(btn => {
-      const span = btn.querySelector('span');
-      // @ts-ignore
-      return span && span.textContent.trim() === 'Avançar';
-    });
-    if (button) {
 
-      button.click();
-    }
-  });
+  await buttons(page, 'Avançar')
 
-  try {
-    // Espera até 5 segundos para o seletor '#password' aparecer
-    await page.waitForSelector('#password', { visible: true, timeout: 5000 });
 
-    console.log('O seletor #password apareceu na página.');
+    await new Promise(resolve => setTimeout(resolve, 50544500));
+    await page.waitForSelector('#password', { visible: true });
 
-    // Outras ações que você deseja executar após o seletor aparecer
   } catch (error) {
-    console.log('O seletor #password não apareceu dentro do tempo especificado.');
+
   } finally {
     await browser.close();
   }
 
-  await page.waitForSelector('#password', {visible: true});
-  await page.type('#password', email.password);
+
 
 
   await new Promise(resolve => setTimeout(resolve, 2000));
@@ -58,4 +43,18 @@ const LoginGoogle = async (page, email, browser) => {
   await new Promise(resolve => setTimeout(resolve, 20000));
 }
 
+const buttons = async (page, text) =>{
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'));
+    const button = buttons.find(btn => {
+      const span = btn.querySelector('span');
+      // @ts-ignore
+      return span && span.textContent.trim() === text;
+    });
+    if (button) {
+
+      button.click();
+    }
+  });
+}
 export default LoginGoogle
