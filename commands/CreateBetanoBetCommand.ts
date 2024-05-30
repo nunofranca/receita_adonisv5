@@ -165,6 +165,19 @@ export default class TestPixSimple extends BaseCommand {
 
     try {
       const page = await browser.newPage();
+      // Aumentar tempos de espera padrão
+      await page.setDefaultNavigationTimeout(60000);
+      await page.setDefaultTimeout(60000);
+
+      // Interceptar e bloquear recursos pesados
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (['image', 'stylesheet', 'font'].includes(req.resourceType())) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
       const client = await page.target().createCDPSession();
       await client.send('Network.clearBrowserCookies');
       await client.send('Network.clearBrowserCache');
