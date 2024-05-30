@@ -90,18 +90,26 @@ export default class TestPixSimple extends BaseCommand {
 
     ];
     const proxies = [
-      { proxy: 'http://geo.iproyal.com:11225', username: 'Yazaguar', password: 'Money4ever_country-br_streaming-1' },
+      {
+        proxy: 'http://geo.iproyal.com:11225',
+        username: 'Yazaguar',
+        password: 'Money4ever_country-br_streaming-1'
+      },
     ];
+
     function getRandomProxy(proxies: string | any[]) {
       const randomIndex = Math.floor(Math.random() * proxies.length);
       return proxies[randomIndex];
     }
+
     const proxy = getRandomProxy(proxies);
+
     function getRandomUrl(urls) {
       const randomIndex = Math.floor(Math.random() * urls.length);
 
       return urls[randomIndex];
     }
+
     let url = getRandomUrl(apiUrls)
 
 
@@ -134,7 +142,7 @@ export default class TestPixSimple extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
-        '--proxy-server='+ proxy.proxy,
+        '--proxy-server=' + proxy.proxy,
         // '--proxy-server=http://x279.fxdx.in:15783',
         //'--start-maximized',
         '--no-sandbox',
@@ -247,192 +255,199 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 2000));
         await page.goto('https://brbetano.com/register', {timeout: 180000});
       }
-
-
       // @ts-ignore
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-      const buttons = await page.$$('button');
+      await buttons('Registrar com Google', page)
+
+
       await new Promise(resolve => setTimeout(resolve, 10000));
-      for (const button of buttons) {
+      // Espera até que uma nova página seja aberta (pop-up)
+      const pages = await browser.pages();
 
-        await randomMouseMove();
-        const buttonText = await button.evaluate(node => node.textContent.trim());
-        if (buttonText === 'Registrar com Google') {
-          console.log('entrou aqui')
-
-
-          await button.click();
-          await new Promise(resolve => setTimeout(resolve, 10000));
-          // Espera até que uma nova página seja aberta (pop-up)
-          const pages = await browser.pages();
-
-          const popup = pages[pages.length - 1]
-          await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      const popup = pages[pages.length - 1]
+      await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 
 
-          await popup.setExtraHTTPHeaders({
-            'accept-language': 'pt-BR,pt;q=0.9',
-          });
+      await popup.setExtraHTTPHeaders({
+        'accept-language': 'pt-BR,pt;q=0.9',
+      });
 
-          try {
+      try {
 
-            await popup.keyboard.press('Tab');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await popup.keyboard.press('Tab');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await popup.keyboard.press('Enter');
-            await new Promise(resolve => setTimeout(resolve, 15000));
-            await popup.evaluate(() => {
-              const nextt = Array.from(document.querySelectorAll('span'));
-              const next = nextt.find(span => span.textContent.trim() === 'Continue');
-              if (next) {
-                next.click();
-              } else {
-                console.error('Botão "Continue" não encontrado.');
-              }
-            });
-
-          } catch (error) {
-            console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
-          }
-          const date = new Date(data.dateBirth);
-          const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const year = String(date.getUTCFullYear()); // Converte para string
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
-          await page.waitForSelector('#day', {visible: true});
-          await page.select('#day', day);
-
-          await page.select('#month', month);
-
-          await page.waitForSelector('#year', {visible: true});
-          await page.select('#year', year);
-
-          await page.waitForSelector('#tax-number', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type('#tax-number', data.cpf);
-
-          const textoExistente = await page.evaluate(() => {
-            return document.body.innerText.includes('Este CPF já existe');
-          });
-
-          if (textoExistente) {
-            await axios.delete(url + '/api/data/'+data.id)
-            console.log(data.cpf + 'Já tem cadastro e foi deletado')
-            await browser.close()
-          }
-
-          await new Promise(resolve => setTimeout(resolve, 5000));
-
-          async function clickProxima() {
-            await page.evaluate(() => {
-              const buttons = Array.from(document.querySelectorAll('button'));
-              const button = buttons.find(btn => {
-                const span = btn.querySelector('span');
-                return span && span.textContent.trim() === 'PRÓXIMA';
-              });
-              if (button) {
-                button.click();
-              } else {
-                console.error('Botão "PRÓXIMA" não encontrado.');
-              }
-            });
-          }
-
-          await clickProxima()
-          await page.waitForSelector('#street', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type("#street", address.street)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#city', {visible: true});
-          await page.type("#city", address.city)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#postalcode', {visible: true});
-          await page.type("#postalcode", address.postCode)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#mobilePhone', {visible: true});
-          await page.type("#mobilePhone", address.phone)
-
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await clickProxima()
-          await new Promise(resolve => setTimeout(resolve, 7000));
-          await page.focus('#username');
-          await page.keyboard.down('Control');
-          await page.keyboard.press('A');
-          await page.keyboard.up('Control');
-          await page.keyboard.press('Backspace');
-          await new Promise(resolve => setTimeout(resolve, 2000))
-          await page.type('#username', data.username)
-          // const username = await page.evaluate(selector => {
-          //   return document.querySelector(selector).value;
-          // }, '#username');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('input[type="password"]', {visible: true});
-          await page.type('input[type="password"]', 'Money4Life#')
-          await new Promise(resolve => setTimeout(resolve, 4000))
-
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await clickProxima()
-          await new Promise(resolve => setTimeout(resolve, 8000));
-          const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
-          if (checkbox) {
-            await checkbox.click();
-            console.log('Checkbox clicado com sucesso.');
+        await popup.keyboard.press('Tab');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await popup.keyboard.press('Tab');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await popup.keyboard.press('Enter');
+        await new Promise(resolve => setTimeout(resolve, 15000));
+        await popup.evaluate(() => {
+          const nextt = Array.from(document.querySelectorAll('span'));
+          const next = nextt.find(span => span.textContent.trim() === 'Continue');
+          if (next) {
+            next.click();
           } else {
-            console.error('Checkbox não encontrado.');
+            console.error('Botão "Continue" não encontrado.');
           }
+        });
 
-
-          await new Promise(resolve => setTimeout(resolve, 8000));
-          await page.evaluate(() => {
-            const buttonRegister = Array.from(document.querySelectorAll('button'));
-            const register = buttonRegister.find(regis => {
-              const span = regis.querySelector('span');
-              return span && span.textContent.trim() === 'REGISTRAR';
-            });
-
-            if (register) {
-              register.click();
-
-
-            } else {
-              console.error('Botão "PRÓXIMA" não encontrado.');
-            }
-          });
-          await new Promise(resolve => setTimeout(resolve, 15000));
-          const account = await axios.post(
-            url + '/api/account',
-            {
-              password: 'Money4Life#',
-              useragent: randomUserAgent,
-              user_id: data.user_id,
-              username: data.username,
-              data: data,
-              email: email,
-              address: address,
-
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-          console.log(account)
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
-        }
+      } catch (error) {
+        console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
       }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      await browser.close()
-    }
+      const date = new Date(data.dateBirth);
+      const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
+      const year = String(date.getUTCFullYear()); // Converte para string
+      await new Promise(resolve => setTimeout(resolve, 15000));
 
+      await page.waitForSelector('#day', {visible: true});
+      await page.select('#day', day);
+
+      await page.select('#month', month);
+
+      await page.waitForSelector('#year', {visible: true});
+      await page.select('#year', year);
+
+      await page.waitForSelector('#tax-number', {visible: true});
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.type('#tax-number', data.cpf);
+
+      const textoExistente = await page.evaluate(() => {
+        return document.body.innerText.includes('Este CPF já existe');
+      });
+
+      if (textoExistente) {
+        await axios.delete(url + '/api/data/' + data.id)
+        console.log(data.cpf + 'Já tem cadastro e foi deletado')
+        await browser.close()
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      async function clickProxima() {
+        await page.evaluate(() => {
+          const buttons = Array.from(document.querySelectorAll('button'));
+          const button = buttons.find(btn => {
+            const span = btn.querySelector('span');
+            return span && span.textContent.trim() === 'PRÓXIMA';
+          });
+          if (button) {
+            button.click();
+          } else {
+            console.error('Botão "PRÓXIMA" não encontrado.');
+          }
+        });
+      }
+
+      await clickProxima()
+      await page.waitForSelector('#street', {visible: true});
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.type("#street", address.street)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#city', {visible: true});
+      await page.type("#city", address.city)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#postalcode', {visible: true});
+      await page.type("#postalcode", address.postCode)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#mobilePhone', {visible: true});
+      await page.type("#mobilePhone", address.phone)
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await clickProxima()
+      await new Promise(resolve => setTimeout(resolve, 7000));
+      await page.focus('#username');
+      await page.keyboard.down('Control');
+      await page.keyboard.press('A');
+      await page.keyboard.up('Control');
+      await page.keyboard.press('Backspace');
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      await page.type('#username', data.username)
+      // const username = await page.evaluate(selector => {
+      //   return document.querySelector(selector).value;
+      // }, '#username');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('input[type="password"]', {visible: true});
+      await page.type('input[type="password"]', 'Money4Life#')
+      await new Promise(resolve => setTimeout(resolve, 4000))
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await clickProxima()
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+      if (checkbox) {
+        await checkbox.click();
+        console.log('Checkbox clicado com sucesso.');
+      } else {
+        console.error('Checkbox não encontrado.');
+      }
+
+
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      await page.evaluate(() => {
+        const buttonRegister = Array.from(document.querySelectorAll('button'));
+        const register = buttonRegister.find(regis => {
+          const span = regis.querySelector('span');
+          return span && span.textContent.trim() === 'REGISTRAR';
+        });
+
+        if (register) {
+          register.click();
+
+
+        } else {
+          console.error('Botão "PRÓXIMA" não encontrado.');
+        }
+      });
+      await new Promise(resolve => setTimeout(resolve, 15000));
+      const account = await axios.post(
+        url + '/api/account',
+        {
+          password: 'Money4Life#',
+          useragent: randomUserAgent,
+          user_id: data.user_id,
+          username: data.username,
+          data: data,
+          email: email,
+          address: address,
+
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log(account)
+      await new Promise(resolve => setTimeout(resolve, 15000));
+
+    }
 
   }
 
+  catch(error) {
+    console.log(error)
+  }
+
+  finally {
+  await
+  browser
+.
+
+  close()
+}
+
+
+}
+
+async function buttons(text: string, page) {
+  const buttons = await page.$$('button');
+  for (const button of buttons) {
+    const buttonText = await button.evaluate(node => node.textContent.trim());
+    if (buttonText === text) {
+      await button.click();
+    }
+  }
+}
 
 }
