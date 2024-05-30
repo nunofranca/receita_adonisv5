@@ -86,20 +86,28 @@ export default class TestPixSimple extends BaseCommand {
 
     let browser;
     const apiUrls = [
-       'https://app-54674.dc-sp-1.absamcloud.com',
+      'https://app-54674.dc-sp-1.absamcloud.com',
+      'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
 
     const proxies = [
       // { proxy: 'geo.iproyal.com:11202', username: 'PSqAoBQrU9fCnfiX', password: 'Nuno1201_country-br' },
       // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
-      { proxy: 'geo.iproyal.com:11225', username: 'Yazaguar', password: 'Money4ever_country-br_streaming-1' },
+      {
+        proxy: 'geo.iproyal.com:11225',
+        username: 'Yazaguar',
+        password: 'Money4ever_country-br_streaming-1'
+      },
     ];
+
     function getRandomProxy(proxies: string | any[]) {
       const randomIndex = Math.floor(Math.random() * proxies.length);
       return proxies[randomIndex];
     }
+
     const proxy = getRandomProxy(proxies);
+
     function getRandomUrl(urls) {
       const randomIndex = Math.floor(Math.random() * urls.length);
       console.log(urls[randomIndex])
@@ -139,7 +147,7 @@ export default class TestPixSimple extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
-        '--proxy-server='+ proxy.proxy,
+        '--proxy-server=' + proxy.proxy,
         // '--proxy-server=http://x279.fxdx.in:15783',
         //'--start-maximized',
         '--no-sandbox',
@@ -366,7 +374,7 @@ export default class TestPixSimple extends BaseCommand {
           });
 
           if (textoExistente) {
-            await axios.delete(url + '/api/data/'+data.id)
+            await axios.delete(url + '/api/data/' + data.id)
             console.log(data.cpf + 'Já tem cadastro e foi deletado')
             await browser.close()
           }
