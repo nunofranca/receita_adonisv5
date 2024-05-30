@@ -30,11 +30,11 @@ xvfb.start((err) => {
   // Após o código rodar, pare o XVFB
   xvfb.stop((err) => {
     if (err) {
-      console.error('Erro ao parar o XVFB:', err);
+
       return;
     }
 
-    console.log('XVFB parado');
+
   });
 });
 
@@ -115,7 +115,7 @@ export default class TestPixSimple extends BaseCommand {
     }
 
     let url = getRandomUrl(apiUrls)
-    console.log(url)
+
 
     const dataReq = await axios.get(url + '/api/data');
     const addressReq = await axios.get(url + '/api/address');
@@ -143,7 +143,7 @@ export default class TestPixSimple extends BaseCommand {
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
@@ -167,8 +167,7 @@ export default class TestPixSimple extends BaseCommand {
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
-      console.log(randomUserAgent)
-      console.log(proxies)
+
 
       // Definindo cabeçalhos HTTP adicionais para pt-BR
       await page.setExtraHTTPHeaders({
@@ -201,7 +200,7 @@ export default class TestPixSimple extends BaseCommand {
 
       //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
-
+      console.log('abriu a pagina do google')
       // const google = await page.target().createCDPSession();
       // await google.send('Network.clearBrowserCookies');
       //
@@ -240,6 +239,7 @@ export default class TestPixSimple extends BaseCommand {
       await page.keyboard.press('Enter');
       await randomMouseMovePopup();
 
+
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 10000));
       await page.type('#password', email.password);
@@ -276,11 +276,9 @@ export default class TestPixSimple extends BaseCommand {
 
           await page.keyboard.press('Enter');
 
-        } else {
-          console.log('Campo de e-mail não encontrado.');
         }
       } catch (error) {
-        console.error('Erro durante a execução do script:', error);
+
         await browser.close();
       }
 
@@ -317,7 +315,7 @@ export default class TestPixSimple extends BaseCommand {
         await randomMouseMove();
         const buttonText = await button.evaluate(node => node.textContent.trim());
         if (buttonText === 'Registrar com Google') {
-          console.log('entrou aqui')
+          console.log('Clicou no botão de logar com googlt')
 
 
           await button.click();
