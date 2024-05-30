@@ -139,9 +139,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       // executablePath: '/usr/bin/chromium-browser',
@@ -203,8 +203,25 @@ export default class TestPixSimple extends BaseCommand {
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
-      await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
+      await page.goto('https://www.google.com.br/', {timeout: 60000});
 
+      await new Promise(resolve => setTimeout(resolve, 15000));
+      try {
+
+        await page.evaluate(() => {
+          const divs = Array.from(document.querySelectorAll('span'));
+          const div = divs.find(div => {
+            return div && div.textContent.trim() === 'Fazer login';
+          });
+          if (div) {
+            div.click();
+          } else {
+            console.error('Botão "PRÓXIMA" não encontrado.');
+          }
+        });
+      } catch (error) {
+        console.log(error)
+      }
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
@@ -314,9 +331,9 @@ export default class TestPixSimple extends BaseCommand {
       });
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000000000));
+        await new Promise(resolve => setTimeout(resolve, 10000));
         await page.evaluate(() => {
-          const loginGoogle = Array.from(document.querySelectorAll('span'));
+          const loginGoogle = Array.from(document.querySelectorAll('div'));
           const next = loginGoogle.find(span => span.textContent.trim() === data.email);
           if (next) {
             next.click();
