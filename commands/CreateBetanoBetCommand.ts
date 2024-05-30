@@ -39,8 +39,7 @@ xvfb.start((err) => {
 });
 
 import axios from 'axios';
-import * as fs from 'fs';
-import {err} from "pino-std-serializers";
+
 import userAgents from "../userAgents";
 
 const stealth = StealthPlugin()
