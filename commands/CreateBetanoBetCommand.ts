@@ -284,14 +284,14 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
       await page.waitForSelector('body');
-      const cookiesBetano = await page.cookies();
-      for (let cookieBe of cookiesBetano) {
-        await page.deleteCookie(cookieBe);
-      }
-
-      // Verificar que os cookies foram limpos
-      const cookiesAfterBetano = await page.cookies();
-      console.log('Cookies after deletion:', cookiesAfterBetano);
+      // const cookiesBetano = await page.cookies();
+      // for (let cookieBe of cookiesBetano) {
+      //   await page.deleteCookie(cookieBe);
+      // }
+      //
+      // // Verificar que os cookies foram limpos
+      // const cookiesAfterBetano = await page.cookies();
+      // console.log('Cookies after deletion:', cookiesAfterBetano);
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       const isTextPresent = await page.evaluate((text: string) => {
