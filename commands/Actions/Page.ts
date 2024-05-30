@@ -1,6 +1,9 @@
+// @ts-ignore
+import { Browser } from "puppeteer";
+// @ts-ignore
 import userAgents from "../../userAgents";
 
-const Page = async (browser, proxy) =>{
+const Page = async (browser: Browser, proxy: { username: string; password: string; }) =>{
   const page = await browser.newPage();
 
   const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];

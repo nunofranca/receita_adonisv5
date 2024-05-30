@@ -91,8 +91,16 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const proxies = [
-      { proxy: 'geo.iproyal.c/om:11202', username: 'PSqAoBQrU9fCnfiX', password: 'Nuno1201_country-br' },
-      { proxy: 'geo.iproyal.com:11225', username: 'Yazaguar', password: 'Money4ever_country-br_streaming-1' },
+      // {
+      //   proxy: 'geo.iproyal.c/om:11202',
+      //   username: 'PSqAoBQrU9fCnfiX',
+      //   password: 'Nuno1201_country-br'
+      // },
+      {
+        proxy: 'geo.iproyal.com:11225',
+        username: 'Yazaguar',
+        password: 'Money4ever_country-br_streaming-1'
+      },
       // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
       {
         proxy: 'geo.iproyal.com:11225',
@@ -135,15 +143,15 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
@@ -200,60 +208,47 @@ export default class TestPixSimple extends BaseCommand {
 
       //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
-      console.log('abriu a pagina do google')
-      await new Promise(resolve => setTimeout(resolve, 5000));
 
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      await page.type('#identifierId', email.email); // Insira seu e-mail do Google
-      await randomMouseMove();
+      await page.type('#identifierId', email.email);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await buttonNext(page)
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
-      const randomMouseMovePopup = async () => {
-        await page.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
-      await randomMouseMovePopup();
+      await notLogin(page)
 
-
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await randomMouseMovePopup();
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await randomMouseMovePopup();
-      await page.keyboard.press('Tab');
-      await randomMouseMovePopup();
-      await new Promise(resolve => setTimeout(resolve, randomDelay()));
-      await page.keyboard.press('Enter');
-      await randomMouseMovePopup();
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
 
       await page.waitForSelector('#password', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await new Promise(resolve => setTimeout(resolve, 5000));
       await page.type('#password', email.password);
-
-
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.keyboard.press('Tab');
-
-      await page.keyboard.press('Tab');
-
-      await page.keyboard.press('Enter');
+      await buttonNext(page)
 
 
       await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.keyboard.down('Shift');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.up('Shift');
+      try {
 
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.keyboard.press('Enter');
-      await new Promise(resolve => setTimeout(resolve, 20000));
+        await page.evaluate(() => {
+          const divs = Array.from(document.querySelectorAll('div'));
+          const div = divs.find(div => {
+            return div && div.textContent.trim() === 'Confirme seu e-mail de recuperação';
+          });
+          if (div) {
+            div.click();
+          } else {
+            console.error('Botão "PRÓXIMA" não encontrado.');
+          }
+        });
+      } catch (error) {
+        console.log(error)
+      }
+      await new Promise(resolve => setTimeout(resolve, 7000));
       try {
         const isEmailInputPresent = await page.evaluate(() => {
           return !!document.querySelector('input[type="email"]');
@@ -262,11 +257,8 @@ export default class TestPixSimple extends BaseCommand {
         if (isEmailInputPresent) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           await page.type('input[type="email"]', email.emailRecovery);
-          await new Promise(resolve => setTimeout(resolve, 10000));
-
-          await page.keyboard.press('Tab');
-
-          await page.keyboard.press('Enter');
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          await buttonNext(page)
 
         }
       } catch (error) {
@@ -274,7 +266,7 @@ export default class TestPixSimple extends BaseCommand {
         await browser.close();
       }
 
-      await new Promise(resolve => setTimeout(resolve, 15000));
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
 
       await page.setViewport({
@@ -285,14 +277,7 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
       await page.waitForSelector('body');
-      // const cookiesBetano = await page.cookies();
-      // for (let cookieBe of cookiesBetano) {
-      //   await page.deleteCookie(cookieBe);
-      // }
-      //
-      // // Verificar que os cookies foram limpos
-      // const cookiesAfterBetano = await page.cookies();
-      // console.log('Cookies after deletion:', cookiesAfterBetano);
+
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       const isTextPresent = await page.evaluate((text: string) => {
@@ -306,188 +291,229 @@ export default class TestPixSimple extends BaseCommand {
 
 
       // @ts-ignore
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
-      const buttons = await page.$$('button');
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      for (const button of buttons) {
-
-        await randomMouseMove();
-        const buttonText = await button.evaluate(node => node.textContent.trim());
-        if (buttonText === 'Registrar com Google') {
-          console.log('Clicou no botão de logar com googlt')
+      await new Promise(resolve => setTimeout(resolve, 7000));
 
 
-          await button.click();
-          await new Promise(resolve => setTimeout(resolve, 10000));
-          // Espera até que uma nova página seja aberta (pop-up)
-          const pages = await browser.pages();
-
-          const popup = pages[pages.length - 1]
-          await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-
-
-          await popup.setExtraHTTPHeaders({
-            'accept-language': 'pt-BR,pt;q=0.9',
-          });
-
-          try {
-
-            await popup.keyboard.press('Tab');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await popup.keyboard.press('Tab');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await popup.keyboard.press('Enter');
-            await new Promise(resolve => setTimeout(resolve, 15000));
-            await popup.evaluate(() => {
-              const nextt = Array.from(document.querySelectorAll('span'));
-              const next = nextt.find(span => span.textContent.trim() === 'Continue');
-              if (next) {
-                next.click();
-              } else {
-                console.error('Botão "Continue" não encontrado.');
-              }
-            });
-
-          } catch (error) {
-            console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
-          }
-          const date = new Date(data.dateBirth);
-          const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const year = String(date.getUTCFullYear()); // Converte para string
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
-          await page.waitForSelector('#day', {visible: true});
-          await page.select('#day', day);
-
-          await page.select('#month', month);
-
-          await page.waitForSelector('#year', {visible: true});
-          await page.select('#year', year);
-
-          await page.waitForSelector('#tax-number', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type('#tax-number', data.cpf);
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          const textoExistente = await page.evaluate(() => {
-            return document.body.innerText.includes('Este CPF já existe');
-          });
-
-          if (textoExistente) {
-            await axios.delete(url + '/api/data/' + data.id)
-            console.log(data.cpf + 'Já tem cadastro e foi deletado')
-            await browser.close()
-          }
-
-          await new Promise(resolve => setTimeout(resolve, 5000));
-
-          async function clickProxima() {
-            await page.evaluate(() => {
-              const buttons = Array.from(document.querySelectorAll('button'));
-              const button = buttons.find(btn => {
-                const span = btn.querySelector('span');
-                return span && span.textContent.trim() === 'PRÓXIMA';
-              });
-              if (button) {
-                button.click();
-              } else {
-                console.error('Botão "PRÓXIMA" não encontrado.');
-              }
-            });
-          }
-
-          await clickProxima()
-          await page.waitForSelector('#street', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type("#street", address.street)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#city', {visible: true});
-          await page.type("#city", address.city)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#postalcode', {visible: true});
-          await page.type("#postalcode", address.postCode)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('#mobilePhone', {visible: true});
-          await page.type("#mobilePhone", address.phone)
-
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await clickProxima()
-          await new Promise(resolve => setTimeout(resolve, 7000));
-          await page.focus('#username');
-          await page.keyboard.down('Control');
-          await page.keyboard.press('A');
-          await page.keyboard.up('Control');
-          await page.keyboard.press('Backspace');
-          await new Promise(resolve => setTimeout(resolve, 2000))
-          await page.type('#username', data.username)
-          // const username = await page.evaluate(selector => {
-          //   return document.querySelector(selector).value;
-          // }, '#username');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.waitForSelector('input[type="password"]', {visible: true});
-          await page.type('input[type="password"]', 'Money4Life#')
-          await new Promise(resolve => setTimeout(resolve, 4000))
-
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await clickProxima()
-          await new Promise(resolve => setTimeout(resolve, 8000));
-          const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
-          if (checkbox) {
-            await checkbox.click();
-            console.log('Checkbox clicado com sucesso.');
-          } else {
-            console.error('Checkbox não encontrado.');
-          }
-
-
-          await new Promise(resolve => setTimeout(resolve, 8000));
-          await page.evaluate(() => {
-            const buttonRegister = Array.from(document.querySelectorAll('button'));
-            const register = buttonRegister.find(regis => {
-              const span = regis.querySelector('span');
-              return span && span.textContent.trim() === 'REGISTRAR';
-            });
-
-            if (register) {
-              register.click();
-
-
-            } else {
-              console.error('Botão "PRÓXIMA" não encontrado.');
-            }
-          });
-          await new Promise(resolve => setTimeout(resolve, 15000));
-          const account = await axios.post(
-            url + '/api/account',
-            {
-              password: 'Money4Life#',
-              useragent: randomUserAgent,
-              user_id: data.user_id,
-              username: data.username,
-              data: data,
-              email: email,
-              address: address,
-
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-          console.log(account)
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
+      await page.evaluate(() => {
+        const loginGoogle = Array.from(document.querySelectorAll('span'));
+        const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
+        if (next) {
+          next.click();
+        } else {
+          console.error('Botão "Continue" não encontrado.');
         }
+      });
+
+
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      // Espera até que uma nova página seja aberta (pop-up)
+      const pages = await browser.pages();
+
+      const popup = pages[pages.length - 1]
+      await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
+
+      await popup.setExtraHTTPHeaders({
+        'accept-language': 'pt-BR,pt;q=0.9',
+      });
+
+      try {
+
+        await page.evaluate(() => {
+          const loginGoogle = Array.from(document.querySelectorAll('span'));
+          const next = loginGoogle.find(span => span.textContent.trim() === data.email);
+          if (next) {
+            next.click();
+          } else {
+            console.error('Botão "Continue" não encontrado.');
+          }
+        });
+        await popup.evaluate(() => {
+          const nextt = Array.from(document.querySelectorAll('span'));
+          const next = nextt.find(span => span.textContent.trim() === 'Continue');
+          if (next) {
+            next.click();
+          } else {
+            console.error('Botão "Continue" não encontrado.');
+          }
+        });
+
+      } catch (error) {
+        console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
       }
+      const date = new Date(data.dateBirth);
+      const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
+      const year = String(date.getUTCFullYear()); // Converte para string
+      await new Promise(resolve => setTimeout(resolve, 15000));
+
+      await page.waitForSelector('#day', {visible: true});
+      await page.select('#day', day);
+
+      await page.select('#month', month);
+
+      await page.waitForSelector('#year', {visible: true});
+      await page.select('#year', year);
+
+      await page.waitForSelector('#tax-number', {visible: true});
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.type('#tax-number', data.cpf);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const textoExistente = await page.evaluate(() => {
+        return document.body.innerText.includes('Este CPF já existe');
+      });
+
+      if (textoExistente) {
+        await axios.delete(url + '/api/data/' + data.id)
+        console.log(data.cpf + 'Já tem cadastro e foi deletado')
+        await browser.close()
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      async function clickProxima() {
+        await page.evaluate(() => {
+          const buttons = Array.from(document.querySelectorAll('button'));
+          const button = buttons.find(btn => {
+            const span = btn.querySelector('span');
+            return span && span.textContent.trim() === 'PRÓXIMA';
+          });
+          if (button) {
+            button.click();
+          } else {
+            console.error('Botão "PRÓXIMA" não encontrado.');
+          }
+        });
+      }
+
+      await clickProxima()
+      await page.waitForSelector('#street', {visible: true});
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.type("#street", address.street)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#city', {visible: true});
+      await page.type("#city", address.city)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#postalcode', {visible: true});
+      await page.type("#postalcode", address.postCode)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('#mobilePhone', {visible: true});
+      await page.type("#mobilePhone", address.phone)
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await clickProxima()
+      await new Promise(resolve => setTimeout(resolve, 7000));
+      await page.focus('#username');
+      await page.keyboard.down('Control');
+      await page.keyboard.press('A');
+      await page.keyboard.up('Control');
+      await page.keyboard.press('Backspace');
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      await page.type('#username', data.username)
+      // const username = await page.evaluate(selector => {
+      //   return document.querySelector(selector).value;
+      // }, '#username');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('input[type="password"]', {visible: true});
+      await page.type('input[type="password"]', 'Money4Life#')
+      await new Promise(resolve => setTimeout(resolve, 4000))
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await clickProxima()
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+      if (checkbox) {
+        await checkbox.click();
+        console.log('Checkbox clicado com sucesso.');
+      } else {
+        console.error('Checkbox não encontrado.');
+      }
+
+
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      await page.evaluate(() => {
+        const buttonRegister = Array.from(document.querySelectorAll('button'));
+        const register = buttonRegister.find(regis => {
+          const span = regis.querySelector('span');
+          return span && span.textContent.trim() === 'REGISTRAR';
+        });
+
+        if (register) {
+          register.click();
+
+
+        } else {
+          console.error('Botão "PRÓXIMA" não encontrado.');
+        }
+      });
+      await new Promise(resolve => setTimeout(resolve, 15000));
+      const account = await axios.post(
+        url + '/api/account',
+        {
+          password: 'Money4Life#',
+          useragent: randomUserAgent,
+          user_id: data.user_id,
+          username: data.username,
+          data: data,
+          email: email,
+          address: address,
+
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log(account)
+      await new Promise(resolve => setTimeout(resolve, 15000));
+
+
     } catch (error) {
       console.log(error)
     } finally {
+      // const cookiesBetano = await page.cookies();
+      // for (let cookieBe of cookiesBetano) {
+      //   await page.deleteCookie(cookieBe);
+      // }
+      //
+      // // Verificar que os cookies foram limpos
+      // const cookiesAfterBetano = await page.cookies();
+      // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
     }
 
+    async function buttonNext(page) {
+      await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const button = buttons.find(btn => {
+          const span = btn.querySelector('span');
+          // @ts-ignore
+          return span && span.textContent.trim() === 'Avançar';
+        });
+        if (button) {
 
+          button.click();
+        }
+      });
+    }
+    async function notLogin(page){
+      const notLogin = await page.evaluate((text: string) => {
+        return document.body.textContent.includes(text);
+      }, 'Não foi possível fazer o login');
+
+      const notBot = await page.evaluate((text: string) => {
+        return document.body.textContent.includes(text);
+      }, 'Confirme que você não é um robô');
+
+
+
+      if (notLogin || notBot) {
+        console.log(randomUserAgent)
+        browser.close()
+        return
+      }
+    }
   }
 
 

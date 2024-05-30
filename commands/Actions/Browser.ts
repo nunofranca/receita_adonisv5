@@ -3,9 +3,9 @@ import puppeteer from "puppeteer-extra";
 const Browser = async (proxy: { proxy: string; }) =>{
   return  await puppeteer.launch({
     // userDataDir: '../profiles/dateBirth',
-    env: {
-      DISPLAY: ":10.0"
-    },
+    // env: {
+    //   DISPLAY: ":10.0"
+    // },
     executablePath: '/usr/bin/microsoft-edge',
     slowMo: 10,
     defaultViewport: null,
