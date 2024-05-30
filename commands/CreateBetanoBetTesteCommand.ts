@@ -131,7 +131,7 @@ export default class TestPixSimple extends BaseCommand {
       executablePath: '/usr/bin/microsoft-edge',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
