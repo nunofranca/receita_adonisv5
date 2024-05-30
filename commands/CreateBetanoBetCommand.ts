@@ -314,7 +314,7 @@ export default class TestPixSimple extends BaseCommand {
       });
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 1000000000));
         await page.evaluate(() => {
           const loginGoogle = Array.from(document.querySelectorAll('span'));
           const next = loginGoogle.find(span => span.textContent.trim() === data.email);
