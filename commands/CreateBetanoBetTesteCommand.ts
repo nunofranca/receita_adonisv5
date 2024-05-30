@@ -177,7 +177,8 @@ export default class TestPixSimple extends BaseCommand {
         password: proxy.password,
       });
 
-        await LoginGoogle(page)
+        await LoginGoogle(page, email)
+
       await new Promise(resolve => setTimeout(resolve, 20000000));
         const isEmailInputPresent = await page.evaluate(() => {
           return !!document.querySelector('input[type="email"]');
