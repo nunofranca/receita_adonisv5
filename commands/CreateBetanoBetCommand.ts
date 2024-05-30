@@ -195,6 +195,8 @@ export default class TestPixSimple extends BaseCommand {
       //   password: 'hgaxcdcn96uq',
       // });
       await randomMouseMove();
+      await page.goto('https://br.betano.com/login/', {timeout: 180000});
+      await new Promise(resolve => setTimeout(resolve, 2000000));
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
@@ -289,6 +291,7 @@ export default class TestPixSimple extends BaseCommand {
         height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
         deviceScaleFactor: 1
       });
+
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
       await page.waitForSelector('body');
