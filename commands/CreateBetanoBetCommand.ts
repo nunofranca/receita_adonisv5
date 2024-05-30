@@ -143,7 +143,7 @@ export default class TestPixSimple extends BaseCommand {
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
