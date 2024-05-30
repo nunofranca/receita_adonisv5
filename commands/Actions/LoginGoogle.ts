@@ -5,17 +5,21 @@ const LoginGoogle = async (page, email) => {
   await page.waitForSelector('#identifierId', {visible: true});
   await new Promise(resolve => setTimeout(resolve, 10000));
   await page.type('#identifierId', email.email);
-  await new Promise(resolve => setTimeout(resolve, 10000));
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await new Promise(resolve => setTimeout(resolve, 10000000));
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'));
+    const button = buttons.find(btn => {
+      const span = btn.querySelector('span');
+      return span && span.textContent.trim() === 'Avançar';
+    });
+    if (button) {
+      button.click();
+    }
+  });
 
-  await page.keyboard.press('Enter');
 
 
   await page.waitForSelector('#password', {visible: true});
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 10000000));
   await page.type('#password', email.password);
 
 
