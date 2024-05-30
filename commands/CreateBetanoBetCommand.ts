@@ -149,18 +149,21 @@ export default class TestPixSimple extends BaseCommand {
       args: [
         '--proxy-server=' + proxy.proxy,
         // '--proxy-server=http://x279.fxdx.in:15783',
-        //'--start-maximized',
+        '--start-maximized',
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
-        // '--window-size=1920x1080',
+        '--window-size=1920x1080',
       ],
     });
 
     try {
       const page = await browser.newPage();
+      const client = await page.target().createCDPSession();
+      await client.send('Network.clearBrowserCookies');
+      await client.send('Network.clearBrowserCache');
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
