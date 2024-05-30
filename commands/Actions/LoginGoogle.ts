@@ -12,7 +12,7 @@ const LoginGoogle = async (page, email) => {
       return span && span.textContent.trim() === 'Avançar';
     });
     if (button) {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+     new Promise(resolve => setTimeout(resolve, 5000));
       button.click();
     }
   });
