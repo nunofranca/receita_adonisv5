@@ -110,7 +110,7 @@ export default class TestPixSimple extends BaseCommand {
 
     function getRandomUrl(urls) {
       const randomIndex = Math.floor(Math.random() * urls.length);
-      console.log(urls[randomIndex])
+      console.log(proxy)
       return urls[randomIndex];
     }
 
