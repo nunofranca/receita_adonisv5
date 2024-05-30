@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 
 
+
 // @ts-ignore
 import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
@@ -42,6 +43,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 import {err} from "pino-std-serializers";
 import userAgents from "../userAgents";
+import LoginGoogle from "./Actions/LoginGoogle";
 
 const stealth = StealthPlugin()
 stealth.enabledEvasions.delete('iframe.contentWindow')
@@ -175,48 +177,11 @@ export default class TestPixSimple extends BaseCommand {
         password: proxy.password,
       });
 
-      await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AaSxoQzmgJ1cLzhz_RiZ3Q_19cFM6u5VCAKcx4o-dsaHREFzhBKIGnayemNomS5mNUMjEekDd4kK&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S1275832598%3A1716502765207858&ddm=0', {timeout: 60000});
-
-      // @ts-ignore
-      await page.waitForSelector('#identifierId', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.type('#identifierId', email.email);
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await new Promise(resolve => setTimeout(resolve, 10000000));
-      await new Promise(resolve => setTimeout(resolve, randomDelay()));
-      await page.keyboard.press('Enter');
-
-
-      await page.waitForSelector('#password', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.type('#password', email.password);
-
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.keyboard.press('Tab');
-
-      await page.keyboard.press('Tab');
-
-      await page.keyboard.press('Enter');
-
-
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.keyboard.down('Shift');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.up('Shift');
-
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.keyboard.press('Enter');
-      await new Promise(resolve => setTimeout(resolve, 20000));
-      try {
+        await LoginGoogle(page)
+      await new Promise(resolve => setTimeout(resolve, 20000000));
         const isEmailInputPresent = await page.evaluate(() => {
           return !!document.querySelector('input[type="email"]');
         });
-
         if (isEmailInputPresent) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           await page.type('input[type="email"]', email.emailRecovery);
@@ -229,10 +194,6 @@ export default class TestPixSimple extends BaseCommand {
         } else {
           console.log('Campo de e-mail não encontrado.');
         }
-      } catch (error) {
-        console.error('Erro durante a execução do script:', error);
-        await browser.close();
-      }
 
       await new Promise(resolve => setTimeout(resolve, 15000));
 
@@ -422,21 +383,6 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 15000));
 
     }
-
-  }
-
-  catch(error) {
-    console.log(error)
-  }
-
-  finally {
-  await
-  browser
-.
-
-  close()
-}
-
 
 }
 
