@@ -507,7 +507,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       if (notLogin || notBot) {
-        console.log(randomUserAgent)
+
         browser.close()
         return
       }
