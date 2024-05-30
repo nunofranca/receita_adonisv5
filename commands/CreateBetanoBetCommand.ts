@@ -170,7 +170,14 @@ export default class TestPixSimple extends BaseCommand {
       await page.setDefaultTimeout(60000);
 
       // Interceptar e bloquear recursos pesados
-
+      await page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (['image', 'stylesheet', 'font'].includes(req.resourceType())) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
       const client = await page.target().createCDPSession();
       await client.send('Network.clearBrowserCookies');
       await client.send('Network.clearBrowserCache');
@@ -209,7 +216,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
-      await page.goto('dentifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTARfguknxStmQYeXaR2FZ97PvvfA2HI2esq4X6PRy1OEWNpAN4E5pS8HUiiWR8ZEikhXQK42WA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S420028969%3A1717111006980508&ddm=0', {timeout: 60000});
+      await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
 
       await new Promise(resolve => setTimeout(resolve, 15000));
       try {
