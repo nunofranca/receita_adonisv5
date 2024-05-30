@@ -5,6 +5,7 @@ const LoginGoogle = async (page, email) => {
   await page.waitForSelector('#identifierId', {visible: true});
   await new Promise(resolve => setTimeout(resolve, 2000));
   await page.type('#identifierId', email.email);
+  await new Promise(resolve => setTimeout(resolve, 5000));
   await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll('button'));
     const button = buttons.find(btn => {
@@ -12,7 +13,7 @@ const LoginGoogle = async (page, email) => {
       return span && span.textContent.trim() === 'Avançar';
     });
     if (button) {
-     new Promise(resolve => setTimeout(resolve, 5000));
+
       button.click();
     }
   });
