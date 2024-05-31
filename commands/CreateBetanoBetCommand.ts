@@ -109,6 +109,8 @@ export default class TestPixSimple extends BaseCommand {
     const address = addressReq.data;
 
     const proxy = proxyReq.data;
+    console.log(proxy)
+    await new Promise(resolve => setTimeout(resolve, 3000000));
 
 
     if (data.length === 0 || email.length === 0) {
