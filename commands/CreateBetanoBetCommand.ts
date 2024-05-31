@@ -222,25 +222,18 @@ export default class TestPixSimple extends BaseCommand {
       await page.type('#identifierId', email.email)
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 5000));
-      const targetElement = await page.$('#identifierId');
+
 
       await randomMouseMovePopup();
 
-      let { x, y } = await targetElement.boundingBox();
 
 
       await new Promise(resolve => setTimeout(resolve, 5000));
       // Move o mouse para a posição inicial antes de começar os movimentos
-      await page.mouse.move(x, y);
       await randomMouseMovePopup();
 
-      // Move o mouse para várias posições ao redor do elemento alvo
-      for (let i = 0; i < 5; i++) {
-        await page.mouse.move(x + Math.random() * 50 - 25, y + Math.random() * 50 - 25);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-      await randomMouseMovePopup();
-      await buttonNext(page)
+
+
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
       await notLogin(page)
@@ -252,18 +245,9 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 5000));
       await page.type('#password', email.password);
       await randomMouseMovePopup();
-      const targetElementPassword = await page.$('#password');
 
-      let { a, b } = await targetElementPassword.boundingBox();
+
       await new Promise(resolve => setTimeout(resolve, 5000));
-
-      await randomMouseMovePopup();
-      // Move o mouse para a posição inicial antes de começar os movimentos
-      await page.mouse.move(a, b);
-      for (let i = 0; i < 5; i++) {
-        await page.mouse.move(a + Math.random() * 50 - 25, b + Math.random() * 50 - 25);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
 
       await randomMouseMovePopup();
 
@@ -306,7 +290,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await browser.close();
       }
-      await randomMouseMovePopup();
+
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
