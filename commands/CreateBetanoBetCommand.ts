@@ -392,7 +392,9 @@ export default class TestPixSimple extends BaseCommand {
       }
 
       await clickProxima()
-      const addressReq = await axios.get(url + '/api/cep/'+proxy.slug);
+      const addressProxy = await axios.get(url + '/api/cep/'+proxy.slug);
+      const addressReq = await axios.get('viacep.com.br/ws/'+addressProxy.data.cep+'/json/' );
+      console.log(addressReq)
       await new Promise(resolve => setTimeout(resolve, 3000));
       const addressApi = addressReq.data
       await page.waitForSelector('#street', {visible: true});
