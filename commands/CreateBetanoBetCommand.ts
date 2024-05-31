@@ -394,7 +394,7 @@ export default class TestPixSimple extends BaseCommand {
 
       await clickProxima()
       const addressProxy = await axios.get(url + '/api/cep/'+proxy.slug);
-      const addressReq = await axios.get('viacep.com.br/ws/'+addressProxy.data.cep+'/json/' );
+      const addressReq = await axios.get('https://viacep.com.br/ws/'+addressProxy.data.cep+'/json/' );
       console.log(addressReq)
       await new Promise(resolve => setTimeout(resolve, 3000));
       const addressApi = addressReq.data
