@@ -512,8 +512,12 @@ export default class TestPixSimple extends BaseCommand {
         return document.body.textContent.includes(text);
       }, 'Sign in');
 
+      const incom = await page.evaluate((text: string) => {
+        return document.body.textContent.includes(text);
+      }, 'Detectamos uma atividade ');
 
-      if (notLogin || notBot || captcha || emailExist || signin) {
+
+      if (notLogin || notBot || captcha || emailExist || signin || incom) {
 
         browser.close()
         return
