@@ -221,6 +221,7 @@ export default class TestPixSimple extends BaseCommand {
       await randomMouseMovePopup();
       await page.type('#identifierId', email.email)
       await randomMouseMovePopup();
+      await new Promise(resolve => setTimeout(resolve, 5000));
       await buttonNext(page)
       await new Promise(resolve => setTimeout(resolve, 5000));
 
