@@ -307,21 +307,27 @@ export default class TestPixSimple extends BaseCommand {
       });
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        await page.evaluate(() => {
-          const loginGoogle = Array.from(document.querySelectorAll('div'));
-          const next = loginGoogle.find(span => span.textContent.trim() === data.email);
-          if (next) {
-            next.click();
-          } else {
-            console.error('Botão "Continue" não encontrado.');
-          }
-        });
+        await new Promise(resolve => setTimeout(resolve, 7000));
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Enter');
+
+        // await page.evaluate(() => {
+        //   const loginGoogle = Array.from(document.querySelectorAll('div'));
+        //   const next = loginGoogle.find(span => span.textContent.trim() === data.email);
+        //   if (next) {
+        //     next.click();
+        //   } else {
+        //     console.error('Botão "Continue" não encontrado.');
+        //   }
+        // });
+        await new Promise(resolve => setTimeout(resolve, 7000));
         await popup.evaluate(() => {
           const nextt = Array.from(document.querySelectorAll('div'));
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
+            await new Promise(resolve => setTimeout(resolve, 7000));
           } else {
             console.error('Botão "Continue" não encontrado.');
           }
