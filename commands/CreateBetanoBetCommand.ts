@@ -86,7 +86,7 @@ export default class TestPixSimple extends BaseCommand {
     let browser;
     const apiUrls = [
       'https://app-54674.dc-sp-1.absamcloud.com',
-      'https://app-54653.dc-us-1.absamcloud.com'
+      //'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
 
@@ -98,11 +98,11 @@ export default class TestPixSimple extends BaseCommand {
       },
 
       // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
-      {
-        proxy: 'geo.iproyal.com:11225',
-        username: 'Yazaguar',
-        password: 'Money4ever_country-br_streaming-1'
-      },
+      // {
+      //   proxy: 'geo.iproyal.com:11225',
+      //   username: 'Yazaguar',
+      //   password: 'Money4ever_country-br_streaming-1'
+      // },
     ];
 
     function getRandomProxy(proxies: string | any[]) {
@@ -139,9 +139,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
        executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
