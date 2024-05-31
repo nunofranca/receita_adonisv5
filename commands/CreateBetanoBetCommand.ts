@@ -133,7 +133,7 @@ export default class TestPixSimple extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
-        '--proxy-server=' + proxy.proxy,
+        '--proxy-server=http://' + proxy.proxy,
         // '--proxy-server=http://x279.fxdx.in:15783',
         '--start-maximized',
         '--no-sandbox',
