@@ -323,7 +323,7 @@ export default class TestPixSimple extends BaseCommand {
         // });
         await new Promise(resolve => setTimeout(resolve, 7000));
         await popup.evaluate(() => {
-          const nextt = Array.from(document.querySelectorAll('div'));
+          const nextt = Array.from(document.querySelectorAll('span'));
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
