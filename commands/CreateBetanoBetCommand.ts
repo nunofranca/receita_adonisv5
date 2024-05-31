@@ -327,12 +327,12 @@ export default class TestPixSimple extends BaseCommand {
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
-            await new Promise(resolve => setTimeout(resolve, 7000));
+
           } else {
             console.error('Botão "Continue" não encontrado.');
           }
         });
-
+        await new Promise(resolve => setTimeout(resolve, 7000));
       } catch (error) {
         console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
       }
