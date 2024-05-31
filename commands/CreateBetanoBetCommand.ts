@@ -89,32 +89,9 @@ export default class TestPixSimple extends BaseCommand {
       //'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
-
-    const proxies = [
-      {
-        proxy: 'geo.iproyal.com:11222',
-        username: 'PSqAoBQrU9fCnfiX',
-        password: 'Nuno1201_country-br'
-      },
-
-      // { proxy: '6cdce5b5c43654a2.shg.na.pyproxy.io:16666', username: 'diegosantiago23-zone-resi-region-br', password: 'Diego2222' },
-      // {
-      //   proxy: 'geo.iproyal.com:11225',
-      //   username: 'Yazaguar',
-      //   password: 'Money4ever_country-br_streaming-1'
-      // },
-    ];
-
-    function getRandomProxy(proxies: string | any[]) {
-      const randomIndex = Math.floor(Math.random() * proxies.length);
-      return proxies[randomIndex];
-    }
-
-    const proxy = getRandomProxy(proxies);
-
     function getRandomUrl(urls) {
       const randomIndex = Math.floor(Math.random() * urls.length);
-      console.log(proxy)
+
       return urls[randomIndex];
     }
 
@@ -123,16 +100,18 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const dataReq = await axios.get(url + '/api/data');
-    const addressReq = await axios.get(url + '/api/address');
 
+    const proxyReq = await axios.get(url + '/api/proxy');
     const emailReq = await axios.get(url + '/api/email/' + dataReq.data.user_id);
-
+    const addressReq = await axios.get(url + '/api/address');
     const data = dataReq.data;
     const email = emailReq.data;
     const address = addressReq.data;
 
+    const proxy = proxyReq.data;
 
-    if (data.length === 0 || email.length === 0 || address.length === 0) {
+
+    if (data.length === 0 || email.length === 0) {
       console.log('sem dados suficientes')
       await new Promise(resolve => setTimeout(resolve, 3000));
       return
@@ -140,9 +119,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
        executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -293,6 +272,7 @@ export default class TestPixSimple extends BaseCommand {
       });
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
+
       await page.waitForSelector('body');
 
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -410,15 +390,18 @@ export default class TestPixSimple extends BaseCommand {
       }
 
       await clickProxima()
+      const addressReq = await axios.get(url + '/api/cep/'+proxy.slug);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const addressApi = addressReq.data
       await page.waitForSelector('#street', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.type("#street", address.street)
+      await page.type("#street", addressApi.logradouro)
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('#city', {visible: true});
-      await page.type("#city", address.city)
+      await page.type("#city", addressApi.localidade)
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('#postalcode', {visible: true});
-      await page.type("#postalcode", address.postCode)
+      await page.type("#postalcode", addressApi.cep)
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('#mobilePhone', {visible: true});
       await page.type("#mobilePhone", address.phone)
@@ -479,7 +462,8 @@ export default class TestPixSimple extends BaseCommand {
           username: data.username,
           data: data,
           email: email,
-          address: address,
+          address: address
+
 
         },
         {
