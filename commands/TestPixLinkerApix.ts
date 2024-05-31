@@ -90,7 +90,6 @@ export default class TestPixLinker extends BaseCommand {
        const url = 'https://apix.tec.br/api/data';
 
 
-
       this.check = await axios.get(url);
 
 
