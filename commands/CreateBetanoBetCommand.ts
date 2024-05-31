@@ -501,11 +501,14 @@ export default class TestPixSimple extends BaseCommand {
         return document.body.textContent.includes(text);
       }, 'Confirme que você não é um robô');
 
+      const captcha = await page.evaluate((text: string) => {
+        return document.body.textContent.includes(text);
+      }, 'CAPTCHA Security check');
 
 
 
 
-      if (notLogin || notBot) {
+      if (notLogin || notBot || captcha) {
 
         browser.close()
         return
