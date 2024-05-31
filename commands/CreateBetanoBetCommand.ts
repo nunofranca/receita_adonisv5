@@ -201,7 +201,6 @@ export default class TestPixSimple extends BaseCommand {
       // }
 
 
-      await new Promise(resolve => setTimeout(resolve, 5000));
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
