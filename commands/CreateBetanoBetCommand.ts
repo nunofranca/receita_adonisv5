@@ -504,11 +504,14 @@ export default class TestPixSimple extends BaseCommand {
       const captcha = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
       }, 'CAPTCHA Security check');
+      const emailExist = await page.evaluate((text: string) => {
+        return document.body.textContent.includes(text);
+      }, ' Parece que já tem uma conta Betano. Por favor, digite sua senha para continuar.');
 
 
 
 
-      if (notLogin || notBot || captcha) {
+      if (notLogin || notBot || captcha || emailExist) {
 
         browser.close()
         return
