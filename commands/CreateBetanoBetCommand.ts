@@ -201,7 +201,7 @@ export default class TestPixSimple extends BaseCommand {
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       await page.type('#identifierId', email.email);
       await new Promise(resolve => setTimeout(resolve, 5000));
