@@ -172,6 +172,12 @@ export default class TestPixSimple extends BaseCommand {
         username: proxy.username,
         password: proxy.password,
       });
+      const randomMouseMovePopup = async () => {
+        await page.mouse.move(
+          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
+          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
+        );
+      };
 
       // await page.goto('https://brbetano.com/register', {timeout: 180000});
       //
@@ -205,16 +211,20 @@ export default class TestPixSimple extends BaseCommand {
 
       //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
-
+      await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
 
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
-      await page.type('#identifierId', email.email);
+      await randomMouseMovePopup();
+      await page.type('#identifierId', email.email)
+      await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 5000));
       const targetElement = await page.$('#identifierId');
+
+      await randomMouseMovePopup();
 
       let { x, y } = await targetElement.boundingBox();
 
@@ -222,33 +232,40 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 5000));
       // Move o mouse para a posição inicial antes de começar os movimentos
       await page.mouse.move(x, y);
+      await randomMouseMovePopup();
 
       // Move o mouse para várias posições ao redor do elemento alvo
       for (let i = 0; i < 5; i++) {
         await page.mouse.move(x + Math.random() * 50 - 25, y + Math.random() * 50 - 25);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
+      await randomMouseMovePopup();
       await buttonNext(page)
       await new Promise(resolve => setTimeout(resolve, 5000));
-
+      await randomMouseMovePopup();
       await notLogin(page)
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-
+      await randomMouseMovePopup();
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
       await page.type('#password', email.password);
+      await randomMouseMovePopup();
       const targetElementPassword = await page.$('#password');
 
       let { a, b } = await targetElementPassword.boundingBox();
       await new Promise(resolve => setTimeout(resolve, 5000));
+
+      await randomMouseMovePopup();
       // Move o mouse para a posição inicial antes de começar os movimentos
       await page.mouse.move(a, b);
       for (let i = 0; i < 5; i++) {
         await page.mouse.move(a + Math.random() * 50 - 25, b + Math.random() * 50 - 25);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
+
+      await randomMouseMovePopup();
 
       await buttonNext(page)
 
@@ -259,6 +276,7 @@ export default class TestPixSimple extends BaseCommand {
         await page.evaluate(() => {
           const divs = Array.from(document.querySelectorAll('div'));
           const div = divs.find(div => {
+
             return div && div.textContent.trim() === 'Confirme seu e-mail de recuperação';
           });
           if (div) {
@@ -270,6 +288,7 @@ export default class TestPixSimple extends BaseCommand {
       } catch (error) {
         console.log(error)
       }
+      await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 7000));
       try {
         const isEmailInputPresent = await page.evaluate(() => {
@@ -287,6 +306,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await browser.close();
       }
+      await randomMouseMovePopup();
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
