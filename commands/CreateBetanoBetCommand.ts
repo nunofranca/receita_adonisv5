@@ -139,9 +139,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       // executablePath: '/usr/bin/microsoft-edge',
       executablePath: '/usr/bin/chromium-browser',
@@ -309,7 +309,7 @@ export default class TestPixSimple extends BaseCommand {
       try {
         await new Promise(resolve => setTimeout(resolve, 10000));
         await page.evaluate(() => {
-          const loginGoogle = Array.from(document.querySelectorAll('span'));
+          const loginGoogle = Array.from(document.querySelectorAll('div'));
           const next = loginGoogle.find(span => span.textContent.trim() === data.email);
           if (next) {
             next.click();
