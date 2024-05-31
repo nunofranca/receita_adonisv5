@@ -292,10 +292,7 @@ export default class TestPixSimple extends BaseCommand {
       await page.setViewport({
         width: randomWidth,
         height: randomHeight,
-        deviceScaleFactor: selectedViewport.options.deviceScaleFactor,
-        isMobile: selectedViewport.options.isMobile,
-        hasTouch: selectedViewport.options.hasTouch,
-        isLandscape: selectedViewport.options.isLandscape
+        deviceScaleFactor: 1
       });
       // await page.setViewport({
       //   width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
