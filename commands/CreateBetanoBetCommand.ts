@@ -314,7 +314,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await popup.evaluate(() => {
           const loginGoogle = Array.from(document.querySelectorAll('div'));
-          const next = loginGoogle.find(span => span.textContent.trim() === data.email);
+          const next = loginGoogle.find(span => span.textContent.trim() ===email.email);
           if (next) {
             next.click();
           } else {
