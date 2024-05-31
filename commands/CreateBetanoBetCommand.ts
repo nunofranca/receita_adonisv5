@@ -223,18 +223,8 @@ export default class TestPixSimple extends BaseCommand {
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 5000));
       await buttonNext(page)
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
 
       await randomMouseMovePopup();
-
-
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      // Move o mouse para a posição inicial antes de começar os movimentos
-      await randomMouseMovePopup();
-
-
 
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
