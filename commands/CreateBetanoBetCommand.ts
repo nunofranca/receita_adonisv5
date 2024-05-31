@@ -86,7 +86,7 @@ export default class TestPixSimple extends BaseCommand {
     let browser;
     const apiUrls = [
       'https://app-54674.dc-sp-1.absamcloud.com',
-      //'https://app-54653.dc-us-1.absamcloud.com'
+      'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
 
@@ -119,6 +119,7 @@ export default class TestPixSimple extends BaseCommand {
     }
 
     let url = getRandomUrl(apiUrls)
+
 
 
     const dataReq = await axios.get(url + '/api/data');
