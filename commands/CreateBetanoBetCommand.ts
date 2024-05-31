@@ -121,9 +121,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
        executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -134,7 +134,7 @@ export default class TestPixSimple extends BaseCommand {
 
       args: [
         '--proxy-server=http://' + proxy.proxy,
-        // '--proxy-server=http://x279.fxdx.in:15783',
+        // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
         '--start-maximized',
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -202,7 +202,6 @@ export default class TestPixSimple extends BaseCommand {
 
 
 
-
       //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
 
@@ -212,9 +211,22 @@ export default class TestPixSimple extends BaseCommand {
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
-
       await page.type('#identifierId', email.email);
       await new Promise(resolve => setTimeout(resolve, 5000));
+      const targetElement = await page.$('#identifierId');
+
+      let { x, y } = await targetElement.boundingBox();
+
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Move o mouse para a posição inicial antes de começar os movimentos
+      await page.mouse.move(x, y);
+
+      // Move o mouse para várias posições ao redor do elemento alvo
+      for (let i = 0; i < 5; i++) {
+        await page.mouse.move(x + Math.random() * 50 - 25, y + Math.random() * 50 - 25);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       await buttonNext(page)
       await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -226,7 +238,17 @@ export default class TestPixSimple extends BaseCommand {
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
       await page.type('#password', email.password);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const targetElementPassword = await page.$('#password');
+
+      let { a, b } = await targetElementPassword.boundingBox();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Move o mouse para a posição inicial antes de começar os movimentos
+      await page.mouse.move(a, b);
+      for (let i = 0; i < 5; i++) {
+        await page.mouse.move(a + Math.random() * 50 - 25, b + Math.random() * 50 - 25);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       await buttonNext(page)
 
 
