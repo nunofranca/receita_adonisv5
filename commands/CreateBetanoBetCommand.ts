@@ -143,8 +143,8 @@ export default class TestPixSimple extends BaseCommand {
         DISPLAY: ":10.0"
       },
       // userDataDir: '../profiles/dateBirth',
-      // executablePath: '/usr/bin/microsoft-edge',
-      executablePath: '/usr/bin/chromium-browser',
+       executablePath: '/usr/bin/microsoft-edge',
+      //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
       headless: false,
