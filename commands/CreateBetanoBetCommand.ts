@@ -92,7 +92,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const proxies = [
       {
-        proxy: 'geo.iproyal.com:1120',
+        proxy: 'geo.iproyal.com:11222',
         username: 'PSqAoBQrU9fCnfiX',
         password: 'Nuno1201_country-br'
       },
