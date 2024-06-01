@@ -113,6 +113,7 @@ export default class TestPixSimple extends BaseCommand {
     console.log(proxy)
 
 
+
     if (data.length === 0 || email.length === 0) {
       console.log('sem dados suficientes')
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -160,6 +161,7 @@ export default class TestPixSimple extends BaseCommand {
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
+      console.log(randomUserAgent)
 
 
       // Definindo cabeçalhos HTTP adicionais para pt-BR
