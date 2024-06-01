@@ -487,6 +487,7 @@ export default class TestPixSimple extends BaseCommand {
           data: data,
           email: email,
           address: {
+            id: address.id,
             street:addressApi.logradouro,
             city: addressApi.localidade,
             postCode: addressApi.cep
