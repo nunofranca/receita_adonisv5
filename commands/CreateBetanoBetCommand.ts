@@ -312,7 +312,7 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.waitForSelector('body');
 
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
 
 
