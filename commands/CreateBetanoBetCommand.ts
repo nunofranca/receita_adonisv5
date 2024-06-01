@@ -169,9 +169,10 @@ export default class TestPixSimple extends BaseCommand {
       console.log('caiu aqui')
       await axios.delete(url + '/api/data/' + data.id)
       console.log(data.cpf + 'Já tem cadastro e foi deletado')
-
+      await browser.close()
+      return
     }
-    await browser.close()
+
 
     browser = await puppeteer.launch({
       env: {
@@ -235,7 +236,8 @@ export default class TestPixSimple extends BaseCommand {
 
 
 
-      //await page.goto('https://globo.com', {timeout: 60000});
+      await page.goto('https://meuip.com', {timeout: 60000});
+      await new Promise(resolve => setTimeout(resolve, 150000000));
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
