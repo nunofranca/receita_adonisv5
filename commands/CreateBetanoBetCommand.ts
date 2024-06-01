@@ -483,7 +483,7 @@ export default class TestPixSimple extends BaseCommand {
         url + '/api/account',
         {
           password: 'Money4Life#',
-          useragent: randomUserAgent,
+          useragent: randomUserAgentBetano,
           user_id: data.user_id,
           username: data.username,
           data: data,
@@ -558,7 +558,7 @@ export default class TestPixSimple extends BaseCommand {
 
       const incom = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
-      }, 'Detectamos uma atividade ');
+      }, 'Detectamos uma atividade');
 
 
       if (notLogin || notBot || captcha || emailExist || signin || incom) {
