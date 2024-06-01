@@ -99,7 +99,6 @@ export default class TestPixSimple extends BaseCommand {
     let url = getRandomUrl(apiUrls)
 
 
-
     const dataReq = await axios.get(url + '/api/data');
 
     const proxyReq = await axios.get(url + '/api/proxy');
@@ -113,7 +112,6 @@ export default class TestPixSimple extends BaseCommand {
     console.log(proxy)
 
 
-
     if (data.length === 0 || email.length === 0) {
       console.log('sem dados suficientes')
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -121,13 +119,12 @@ export default class TestPixSimple extends BaseCommand {
     }
 
 
-
     browser = await puppeteer.launch({
       env: {
         DISPLAY: ":10.0"
       },
       // userDataDir: '../profiles/dateBirth',
-       executablePath: '/usr/bin/microsoft-edge',
+      executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
@@ -180,8 +177,9 @@ export default class TestPixSimple extends BaseCommand {
         );
       };
 
-      const ip  = await  axios.get('https://meuip.com/api/meuip.php')
-      console.log(ip);
+
+      await page.goto('https://meuip.com', {timeout: 180000});
+      await new Promise(resolve => setTimeout(resolve, 5000));
       await page.goto('https://brbetano.com/register', {timeout: 180000});
 
       await new Promise(resolve => setTimeout(resolve, 5000));
@@ -209,7 +207,6 @@ export default class TestPixSimple extends BaseCommand {
         console.log(data.cpf + 'Já tem cadastro e foi deletado')
         await browser.close()
       }
-
 
 
       //await page.goto('https://globo.com', {timeout: 60000});
@@ -415,8 +412,8 @@ export default class TestPixSimple extends BaseCommand {
       }
 
       await clickProxima()
-      const addressProxy = await axios.get(url + '/api/cep/'+proxy.slug);
-      const addressReq = await axios.get('https://viacep.com.br/ws/'+addressProxy.data.cep+'/json/' );
+      const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
+      const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
       console.log(addressReq)
       await new Promise(resolve => setTimeout(resolve, 3000));
       const addressApi = addressReq.data
@@ -491,7 +488,7 @@ export default class TestPixSimple extends BaseCommand {
           email: email,
           address: {
             id: address.id,
-            street:addressApi.logradouro,
+            street: addressApi.logradouro,
             city: addressApi.localidade,
             postCode: addressApi.cep
           }
@@ -537,7 +534,7 @@ export default class TestPixSimple extends BaseCommand {
       });
     }
 
-    async function notLogin(page){
+    async function notLogin(page) {
       const notLogin = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
       }, 'Não foi possível fazer o login');
