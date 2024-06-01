@@ -179,7 +179,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       await page.goto('https://ipinfo.io', {timeout: 180000});
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 20000));
       await page.goto('https://brbetano.com/register', {timeout: 180000});
 
       await new Promise(resolve => setTimeout(resolve, 5000));
