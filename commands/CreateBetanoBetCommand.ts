@@ -179,33 +179,33 @@ export default class TestPixSimple extends BaseCommand {
         );
       };
 
-      // await page.goto('https://brbetano.com/register', {timeout: 180000});
-      //
-      // await new Promise(resolve => setTimeout(resolve, 5000));
-      // await page.evaluate(() => {
-      //   const registerEmail = Array.from(document.querySelectorAll('span'));
-      //   const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
-      //   if (next) {
-      //     next.click();
-      //   } else {
-      //     console.error('Botão "Continue" não encontrado.');
-      //   }
-      // });
-      // await new Promise(resolve => setTimeout(resolve, 5000));
-      // await page.type('#tax-number', data.cpf);
-      // await new Promise(resolve => setTimeout(resolve, 5000));
-      // const textoExistente1 = await page.evaluate(() => {
-      //   return document.body.innerText.includes('Este CPF já existe');
-      // });
-      // await new Promise(resolve => setTimeout(resolve, 2000));
-      // console.log(textoExistente1)
-      //
-      // if (textoExistente1) {
-      //   console.log('caiu aqui')
-      //   await axios.delete(url + '/api/data/' + data.id)
-      //   console.log(data.cpf + 'Já tem cadastro e foi deletado')
-      //   await browser.close()
-      // }
+      await page.goto('https://brbetano.com/register', {timeout: 180000});
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await page.evaluate(() => {
+        const registerEmail = Array.from(document.querySelectorAll('span'));
+        const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
+        if (next) {
+          next.click();
+        } else {
+          console.error('Botão "Continue" não encontrado.');
+        }
+      });
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await page.type('#tax-number', data.cpf);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const textoExistente1 = await page.evaluate(() => {
+        return document.body.innerText.includes('Este CPF já existe');
+      });
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log(textoExistente1)
+
+      if (textoExistente1) {
+        console.log('caiu aqui')
+        await axios.delete(url + '/api/data/' + data.id)
+        console.log(data.cpf + 'Já tem cadastro e foi deletado')
+        await browser.close()
+      }
 
 
 
@@ -486,7 +486,11 @@ export default class TestPixSimple extends BaseCommand {
           username: data.username,
           data: data,
           email: email,
-          address: address
+          address: {
+            street:addressApi.logradouro,
+            city: addressApi.localidade,
+            postCode: addressApi.cep
+          }
 
 
         },
