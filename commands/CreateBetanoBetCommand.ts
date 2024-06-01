@@ -314,16 +314,8 @@ export default class TestPixSimple extends BaseCommand {
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-
-
-      const isTextPresent = await page.evaluate((text: string) => {
-        return document.body.textContent.includes(text);
-      }, 'BEM-VINDO À BETANO');
-
-      if (!isTextPresent) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
         await page.goto('https://brbetano.com/register', {timeout: 180000});
-      }
+
 
 
       // @ts-ignore
