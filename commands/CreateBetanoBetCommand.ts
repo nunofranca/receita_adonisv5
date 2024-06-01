@@ -160,13 +160,13 @@ export default class TestPixSimple extends BaseCommand {
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
       console.log(randomUserAgent)
-      const client = await page.target().createCDPSession();
-      await client.send('Network.clearBrowserCookies');
-      await client.send('Network.clearBrowserCache');
-      await client.send('Storage.clearDataForOrigin', {
-        origin: 'https://accounts.google.com',
-        storageTypes: 'all',
-      });
+      // const client = await page.target().createCDPSession();
+      // await client.send('Network.clearBrowserCookies');
+      // await client.send('Network.clearBrowserCache');
+      // await client.send('Storage.clearDataForOrigin', {
+      //   origin: 'https://accounts.google.com',
+      //   storageTypes: 'all',
+      // });
 
 
       // Definindo cabeçalhos HTTP adicionais para pt-BR
