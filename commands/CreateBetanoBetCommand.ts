@@ -41,7 +41,8 @@ xvfb.start((err) => {
 import axios from 'axios';
 
 import userAgents from "../userAgents";
-import ViewPort from "../ViewPort";
+import userAgentBetano from "../UserAgentBetano";
+
 
 const stealth = StealthPlugin()
 stealth.enabledEvasions.delete('iframe.contentWindow')
@@ -282,7 +283,8 @@ export default class TestPixSimple extends BaseCommand {
 
 
       await new Promise(resolve => setTimeout(resolve, 10000));
-
+      const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
+      await page.setUserAgent(randomUserAgentBetano);
       await page.setViewport({
         width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
         height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
@@ -295,6 +297,8 @@ export default class TestPixSimple extends BaseCommand {
       await page.waitForSelector('body');
 
       await new Promise(resolve => setTimeout(resolve, 3000));
+
+
 
       const isTextPresent = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
