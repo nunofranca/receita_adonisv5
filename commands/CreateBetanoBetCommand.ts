@@ -42,6 +42,8 @@ import axios from 'axios';
 
 import userAgents from "../userAgents";
 import userAgentBetano from "../UserAgentBetano";
+import * as fs from "fs";
+import * as path from "path";
 
 
 const stealth = StealthPlugin()
@@ -120,6 +122,17 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
+// Função para limpar o diretório do perfil do usuário
+    function clearProfileDir(profileDir) {
+      fs.rmSync(profileDir, { recursive: true, force: true });
+    }
+
+// Função para criar um novo perfil baseado no CPF
+    async function loginWithNewProfile(email, password, cpf) {
+      const profileDir = path.join(__dirname, 'profiles', cpf);
+
+      // Certifique-se de que o diretório do perfil está limpo
+      clearProfileDir(profileDir);
 
     browser = await puppeteer.launch({
       env: {
@@ -144,6 +157,7 @@ export default class TestPixSimple extends BaseCommand {
         '--disable-gpu',
         '--window-size=1920x1080',
         '--disable-features=IsolateOrigins,site-per-process',
+        `--user-data-dir=${profileDir}`
       ],
     });
 
