@@ -421,10 +421,10 @@ export default class TestPixSimple extends BaseCommand {
       const addressApi = addressReq.data
       await page.waitForSelector('#street', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.type("#street", addressApi.logradouro)
+      await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('#city', {visible: true});
-      await page.type("#city", addressApi.localidade)
+      await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('#postalcode', {visible: true});
       await page.type("#postalcode", addressApi.cep)
