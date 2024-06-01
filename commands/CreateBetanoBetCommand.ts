@@ -286,20 +286,12 @@ export default class TestPixSimple extends BaseCommand {
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-      const selectedViewport = ViewPort[Math.floor(Math.random() * ViewPort.length)];
-      const randomWidth = Math.floor(Math.random() * (selectedViewport.options.width + 200 - selectedViewport.options.width + 1)) + selectedViewport.options.width - 200;
-      const randomHeight = Math.floor(Math.random() * (selectedViewport.options.height + 200 - selectedViewport.options.height + 1)) + selectedViewport.options.height - 200;
       await page.setViewport({
-        width: randomWidth,
-        height: randomHeight,
+        width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
+        height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
+
         deviceScaleFactor: 1
       });
-      // await page.setViewport({
-      //   width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
-      //   height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
-      //
-      //   deviceScaleFactor: 1
-      // });
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
 
