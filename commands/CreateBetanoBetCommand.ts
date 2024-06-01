@@ -155,13 +155,18 @@ export default class TestPixSimple extends BaseCommand {
 
       // Interceptar e bloquear recursos pesados
 
-      const client = await page.target().createCDPSession();
-      await client.send('Network.clearBrowserCookies');
-      await client.send('Network.clearBrowserCache');
+
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
       console.log(randomUserAgent)
+      const client = await page.target().createCDPSession();
+      await client.send('Network.clearBrowserCookies');
+      await client.send('Network.clearBrowserCache');
+      await client.send('Storage.clearDataForOrigin', {
+        origin: 'https://accounts.google.com',
+        storageTypes: 'all',
+      });
 
 
       // Definindo cabeçalhos HTTP adicionais para pt-BR
