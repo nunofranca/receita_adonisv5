@@ -142,6 +142,7 @@ export default class TestPixSimple extends BaseCommand {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
         '--window-size=1920x1080',
+        '--disable-features=IsolateOrigins,site-per-process',
       ],
     });
 
