@@ -149,7 +149,7 @@ export default class TestPixSimple extends BaseCommand {
         '--disable-gpu',
         '--window-size=1920x1080',
         '--disable-features=IsolateOrigins,site-per-process',
-        '--user-data-dir=../profiles/dateBirth'
+        // '--user-data-dir=../profiles/dateBirth'
       ],
     });
 
