@@ -144,6 +144,8 @@ export default class TestPixSimple extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
+    await page.goto('https://meuip.com', {timeout: 60000});
+    await new Promise(resolve => setTimeout(resolve, 15000));
     await page.goto('https://brbetano.com/register', {timeout: 180000});
 
     await new Promise(resolve => setTimeout(resolve, 5000));
