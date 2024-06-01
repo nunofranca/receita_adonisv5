@@ -119,61 +119,7 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 3000));
       return
     }
-    browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
-      // userDataDir: '../profiles/dateBirth',
-      executablePath: '/usr/bin/microsoft-edge',
-      //executablePath: '/usr/bin/chromium-browser',
-      slowMo: 10,
-      defaultViewport: null,
-      headless: false,
-      ignoreDefaultArgs: ["--disable-extensions"],
 
-      args: [
-
-        // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
-        '--start-maximized',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        '--window-size=1920x1080',
-      ],
-    });
-    const page = await browser.newPage();
-    await page.goto('https://meuip.com', {timeout: 60000});
-    await new Promise(resolve => setTimeout(resolve, 15000));
-    await page.goto('https://brbetano.com/register', {timeout: 180000});
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    await page.evaluate(() => {
-      const registerEmail = Array.from(document.querySelectorAll('span'));
-      const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
-      if (next) {
-        next.click();
-      } else {
-        console.error('Botão "Continue" não encontrado.');
-      }
-    });
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    await page.type('#tax-number', data.cpf);
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    const textoExistente1 = await page.evaluate(() => {
-      return document.body.innerText.includes('Este CPF já existe');
-    });
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log(textoExistente1)
-
-    if (textoExistente1) {
-      console.log('caiu aqui')
-      await axios.delete(url + '/api/data/' + data.id)
-      console.log(data.cpf + 'Já tem cadastro e foi deletado')
-      await browser.close()
-      return
-    }
 
 
     browser = await puppeteer.launch({
@@ -234,9 +180,39 @@ export default class TestPixSimple extends BaseCommand {
         );
       };
 
+      const ip  = await  axios.get('https://meuip.com/api/meuip.php')
+      console.log(ip);
+      await page.goto('https://brbetano.com/register', {timeout: 180000});
 
-      await page.goto('https://meuip.com', {timeout: 60000});
-      await new Promise(resolve => setTimeout(resolve, 15000));
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await page.evaluate(() => {
+        const registerEmail = Array.from(document.querySelectorAll('span'));
+        const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
+        if (next) {
+          next.click();
+        } else {
+          console.error('Botão "Continue" não encontrado.');
+        }
+      });
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await page.type('#tax-number', data.cpf);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const textoExistente1 = await page.evaluate(() => {
+        return document.body.innerText.includes('Este CPF já existe');
+      });
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log(textoExistente1)
+
+      if (textoExistente1) {
+        console.log('caiu aqui')
+        await axios.delete(url + '/api/data/' + data.id)
+        console.log(data.cpf + 'Já tem cadastro e foi deletado')
+        await browser.close()
+      }
+
+
+
+      //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
