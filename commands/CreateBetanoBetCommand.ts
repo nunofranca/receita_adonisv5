@@ -247,10 +247,11 @@ export default class TestPixSimple extends BaseCommand {
       await randomMouseMovePopup();
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
+      await notLogin(page)
       await page.type('#password', email.password);
       await randomMouseMovePopup();
 
-
+      await notLogin(page)
       await new Promise(resolve => setTimeout(resolve, 5000));
 
       await randomMouseMovePopup();
@@ -282,7 +283,7 @@ export default class TestPixSimple extends BaseCommand {
         const isEmailInputPresent = await page.evaluate(() => {
           return !!document.querySelector('input[type="email"]');
         });
-
+        await notLogin(page)
         if (isEmailInputPresent) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           await page.type('input[type="email"]', email.emailRecovery);
@@ -294,7 +295,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await browser.close();
       }
-
+      await notLogin(page)
 
       await new Promise(resolve => setTimeout(resolve, 10000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
@@ -305,6 +306,7 @@ export default class TestPixSimple extends BaseCommand {
 
         deviceScaleFactor: 1
       });
+      await notLogin(page)
 
       await page.goto('https://brbetano.com/register', {timeout: 180000});
 
