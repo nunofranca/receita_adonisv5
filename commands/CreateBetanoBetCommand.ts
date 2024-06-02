@@ -7,36 +7,36 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth"
 import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
-import Xvfb from 'xvfb';
-
-const xvfb = new Xvfb({
-  displayNum: 99, // número da tela
-  reuse: true,
-  timeout: 5000,
-  xvfb_args: ['-screen', '0', '1024x768x24', '-ac']
-});
-
-xvfb.start((err) => {
-  if (err) {
-    console.error('Erro ao iniciar o XVFB:', err);
-    return;
-  }
-
-  console.log('XVFB iniciado');
-
-  // Coloque aqui o código que precisa rodar com o XVFB
-  // ...
-
-  // Após o código rodar, pare o XVFB
-  xvfb.stop((err) => {
-    if (err) {
-
-      return;
-    }
-
-
-  });
-});
+// import Xvfb from 'xvfb';
+//
+// const xvfb = new Xvfb({
+//   displayNum: 99, // número da tela
+//   reuse: true,
+//   timeout: 5000,
+//   xvfb_args: ['-screen', '0', '1024x768x24', '-ac']
+// });
+//
+// xvfb.start((err) => {
+//   if (err) {
+//     console.error('Erro ao iniciar o XVFB:', err);
+//     return;
+//   }
+//
+//   console.log('XVFB iniciado');
+//
+//   // Coloque aqui o código que precisa rodar com o XVFB
+//   // ...
+//
+//   // Após o código rodar, pare o XVFB
+//   xvfb.stop((err) => {
+//     if (err) {
+//
+//       return;
+//     }
+//
+//
+//   });
+// });
 
 import axios from 'axios';
 
