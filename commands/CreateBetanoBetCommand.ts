@@ -492,6 +492,7 @@ export default class TestPixSimple extends BaseCommand {
         }
       });
       await new Promise(resolve => setTimeout(resolve, 15000));
+
       const account = await axios.post(
         url + '/api/account',
         {
