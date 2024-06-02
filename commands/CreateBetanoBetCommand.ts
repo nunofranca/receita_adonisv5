@@ -42,8 +42,6 @@ import axios from 'axios';
 
 import userAgents from "../userAgents";
 import userAgentBetano from "../UserAgentBetano";
-import * as fs from "fs";
-import * as path from "path";
 
 
 const stealth = StealthPlugin()
@@ -542,6 +540,7 @@ export default class TestPixSimple extends BaseCommand {
       // const cookiesAfterBetano = await page.cookies();
       // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
+    }
     }
 
     async function buttonNext(page) {
