@@ -89,8 +89,8 @@ export default class TestPixSimple extends BaseCommand {
 
     let browser;
     const apiUrls = [
-      'https://app-54674.dc-sp-1.absamcloud.com',
-      'https://app-54653.dc-us-1.absamcloud.com'
+      'https://botbetano.com.br',
+      //'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
     function getRandomUrl(urls) {
@@ -129,9 +129,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -139,7 +139,7 @@ export default class TestPixSimple extends BaseCommand {
       defaultViewport: null,
       headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
-
+      defaultViewport: null,
       args: [
         '--proxy-server=http://' + proxy.proxy,
         // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
@@ -335,15 +335,7 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 3000));
 
 
-      const isTextPresent = await page.evaluate((text: string) => {
-        // @ts-ignore
-        return document.body.textContent.includes(text);
-      }, 'BEM-VINDO À BETANO');
 
-      if (!isTextPresent) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.goto('https://brbetano.com/register', {timeout: 180000});
-      }
 
 
       // @ts-ignore
@@ -368,7 +360,7 @@ export default class TestPixSimple extends BaseCommand {
       const pages = await browser.pages();
 
       const popup = pages[pages.length - 1]
-      await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+      await popup.setUserAgent(randomUserAgent);
 
       console.log('Abriu popup do google pra logar')
       await popup.setExtraHTTPHeaders({
