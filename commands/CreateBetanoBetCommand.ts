@@ -2,7 +2,12 @@ import {BaseCommand} from '@adonisjs/core/build/standalone';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 
+import axios from 'axios';
 
+// @ts-ignore
+import userAgents from "../userAgents";
+// @ts-ignore
+import userAgentBetano from "../UserAgentBetano";
 // @ts-ignore
 import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
@@ -38,12 +43,7 @@ import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 //   });
 // });
 
-import axios from 'axios';
 
-// @ts-ignore
-import userAgents from "../userAgents";
-// @ts-ignore
-import userAgentBetano from "../UserAgentBetano";
 
 
 const stealth = StealthPlugin()
@@ -101,7 +101,7 @@ export default class TestPixSimple extends BaseCommand {
 
     let url = getRandomUrl(apiUrls)
 
-
+    console.log('Chegou nas requisições')
     const dataReq = await axios.get(url + '/api/data');
 
     const proxyReq = await axios.get(url + '/api/proxy');
@@ -113,6 +113,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const proxy = proxyReq.data;
     console.log(proxy)
+    console.log('Passou das requisicoes')
 
 
     if (data.length === 0 || email.length === 0) {
