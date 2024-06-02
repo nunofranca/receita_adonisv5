@@ -295,7 +295,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await browser.close();
       }
-      await notLogin(page)
+
 
       await new Promise(resolve => setTimeout(resolve, 10000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
