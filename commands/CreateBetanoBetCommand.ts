@@ -391,7 +391,7 @@ export default class TestPixSimple extends BaseCommand {
         //     console.error('Botão "Continue" não encontrado.');
         //   }
         // });
-        await new Promise(resolve => setTimeout(resolve, 7000));
+        await new Promise(resolve => setTimeout(resolve, 12000));
         await popup.evaluate(() => {
           const nextt = Array.from(document.querySelectorAll('span'));
           // @ts-ignore
@@ -406,7 +406,7 @@ export default class TestPixSimple extends BaseCommand {
         });
         await new Promise(resolve => setTimeout(resolve, 7000));
       } catch (error) {
-
+          console.log(error)
       }
       const date = new Date(data.dateBirth);
       const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
