@@ -214,13 +214,17 @@ export default class TestPixSimple extends BaseCommand {
 
         if (textoExistente1) {
           console.log('caiu aqui')
-          await axios.delete(url + '/api/data/' + data.id)
+          await axios.delete(url + '/api/data/' + data.id).then(() => {
+            console.log('CPF atualizado com sucesso')
+          })
           console.log(data.cpf + 'Já tem cadastro e foi deletado')
           await browser.close()
           return
         }
         await axios.put(url + '/api/data/' + data.id, {
           betano: false
+        }).then(() => {
+          console.log('CPF atualizado com sucesso')
         })
       }
 
@@ -519,7 +523,9 @@ export default class TestPixSimple extends BaseCommand {
             'Content-Type': 'application/json'
           }
         }
-      );
+      ).then(() =>{
+        console.log('CPF atualizado com sucesso')
+      });
       console.log(account)
       await new Promise(resolve => setTimeout(resolve, 15000));
 
