@@ -12,38 +12,38 @@ import userAgentBetano from "../UserAgentBetano";
 import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
-// import Xvfb from 'xvfb';
-//
-// const xvfb = new Xvfb({
-//   displayNum: 99, // número da tela
-//   reuse: true,
-//   timeout: 5000,
-//   xvfb_args: ['-screen', '0', '1024x768x24', '-ac']
-// });
-//
-// xvfb.start((err) => {
-//   if (err) {
-//     console.error('Erro ao iniciar o XVFB:', err);
-//     return;
-//   }
-//
-//   console.log('XVFB iniciado');
-//
-//   // Coloque aqui o código que precisa rodar com o XVFB
-//   // ...
-//
-//   // Após o código rodar, pare o XVFB
-//   xvfb.stop((err) => {
-//     if (err) {
-//
-//       return;
-//     }
-//
-//
-//   });
-// });
+import Xvfb from 'xvfb';
+
+const xvfb = new Xvfb({
+  displayNum: 99, // número da tela
+  reuse: true,
+  timeout: 5000,
+  xvfb_args: ['-screen', '0', '1024x768x24', '-ac']
+});
+
+xvfb.start((err) => {
+  if (err) {
+    console.error('Erro ao iniciar o XVFB:', err);
+    return;
+  }
+
+  console.log('XVFB iniciado');
+
+  // Coloque aqui o código que precisa rodar com o XVFB
+  // ...
+
+  // Após o código rodar, pare o XVFB
+  xvfb.stop((err) => {
+    if (err) {
+
+      return;
+    }
 
 
+  });
+});
+
+console.log('depois do xvfb')
 
 
 const stealth = StealthPlugin()
@@ -111,9 +111,12 @@ export default class TestPixSimple extends BaseCommand {
     const email = emailReq.data;
     const address = addressReq.data;
 
+
+
     const proxy = proxyReq.data;
     console.log(proxy)
     console.log('Passou das requisicoes')
+    console.log('Iniciado cadastro de conta par ao usuário: ' +data.user_id)
 
 
     if (data.length === 0 || email.length === 0) {
@@ -126,15 +129,15 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
 
       args: [
@@ -215,11 +218,11 @@ export default class TestPixSimple extends BaseCommand {
         console.log(textoExistente1)
 
         if (textoExistente1) {
-          console.log('caiu aqui')
+
           await axios.delete(url + '/api/data/' + data.id).then(() => {
-            console.log('CPF atualizado com sucesso')
+            console.log(data.cpf + 'Já tem cadastro e foi deletado')
           })
-          console.log(data.cpf + 'Já tem cadastro e foi deletado')
+
           await browser.close()
           return
         }
@@ -235,13 +238,15 @@ export default class TestPixSimple extends BaseCommand {
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
-
+      console.log(data.cpf + ' Abriu a página do google')
 
       // @ts-ignore
       await page.waitForSelector('#identifierId', {visible: true});
+      console.log(data.cpf + ' Adicionou a email principal')
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
       await page.type('#identifierId', email.email)
+      console.log('Adicionou a email principal: ' + email.email)
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 5000));
       await buttonNext(page)
@@ -258,6 +263,7 @@ export default class TestPixSimple extends BaseCommand {
       await page.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
       await page.type('#password', email.password);
+      console.log('Adicionou a senha do email: ' + email.password)
       await randomMouseMovePopup();
 
 
@@ -274,12 +280,14 @@ export default class TestPixSimple extends BaseCommand {
         await page.evaluate(() => {
           const divs = Array.from(document.querySelectorAll('div'));
           const div = divs.find(div => {
-
+            console.log('Pediu para escolhe a forma de recuperação de email')
             // @ts-ignore
             return div && div.textContent.trim() === 'Confirme seu e-mail de recuperação';
+
           });
           if (div) {
             div.click();
+            console.log('Clicou no botao para seguir')
           } else {
             console.error('Botão "PRÓXIMA" não encontrado.');
           }
@@ -294,9 +302,11 @@ export default class TestPixSimple extends BaseCommand {
           return !!document.querySelector('input[type="email"]');
         });
 
+
         if (isEmailInputPresent) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           await page.type('input[type="email"]', email.emailRecovery);
+          console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
           await new Promise(resolve => setTimeout(resolve, 5000));
           await buttonNext(page)
 
@@ -317,8 +327,9 @@ export default class TestPixSimple extends BaseCommand {
         deviceScaleFactor: 1
       });
 
-      await page.goto('https://brbetano.com/register', {timeout: 180000});
 
+      await page.goto('https://brbetano.com/register', {timeout: 180000});
+      console.log('Abriu a pagina da betano')
       await page.waitForSelector('body');
 
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -345,6 +356,7 @@ export default class TestPixSimple extends BaseCommand {
         const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
         if (next) {
           next.click();
+          console.log('Clicou para logar com email')
         } else {
           console.error('Botão "Continue" não encontrado.');
         }
@@ -358,7 +370,7 @@ export default class TestPixSimple extends BaseCommand {
       const popup = pages[pages.length - 1]
       await popup.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 
-
+      console.log('Abriu popup do google pra logar')
       await popup.setExtraHTTPHeaders({
         'accept-language': 'pt-BR,pt;q=0.9',
       });
@@ -368,6 +380,7 @@ export default class TestPixSimple extends BaseCommand {
         await popup.keyboard.press('Tab');
         await popup.keyboard.press('Tab');
         await popup.keyboard.press('Enter');
+        console.log('Selecionou o email e apertou enter')
 
         // await popup.evaluate(() => {
         //   const loginGoogle = Array.from(document.querySelectorAll('div'));
@@ -385,6 +398,7 @@ export default class TestPixSimple extends BaseCommand {
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
+            console.log('Clicou no botão de continue para logar')
 
           } else {
             console.error('Botão "Continue" não encontrado.');
@@ -392,7 +406,7 @@ export default class TestPixSimple extends BaseCommand {
         });
         await new Promise(resolve => setTimeout(resolve, 7000));
       } catch (error) {
-        console.log('NAO FEZ OS TABS DE CONFIRMAR CONTA')
+
       }
       const date = new Date(data.dateBirth);
       const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
@@ -402,27 +416,18 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.waitForSelector('#day', {visible: true});
       await page.select('#day', day);
+      console.log('Adicionou o dia de nascimento '+ day)
 
       await page.select('#month', month);
-
+      console.log('Adicionou o mês de nascimento '+ month)
       await page.waitForSelector('#year', {visible: true});
       await page.select('#year', year);
-
+      console.log('Adicionou o ano de nascimento '+ year)
       await page.waitForSelector('#tax-number', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.type('#tax-number', data.cpf);
       await new Promise(resolve => setTimeout(resolve, 5000));
-      const textoExistente = await page.evaluate(() => {
-        return document.body.innerText.includes('Este CPF já existe');
-      });
 
-      if (textoExistente) {
-        await axios.delete(url + '/api/data/' + data.id)
-        console.log(data.cpf + 'Já tem cadastro e foi deletado')
-        await browser.close()
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
 
       async function clickProxima() {
         await page.evaluate(() => {
@@ -434,6 +439,7 @@ export default class TestPixSimple extends BaseCommand {
           });
           if (button) {
             button.click();
+
           } else {
             console.error('Botão "PRÓXIMA" não encontrado.');
           }
@@ -442,48 +448,64 @@ export default class TestPixSimple extends BaseCommand {
 
       await clickProxima()
       const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
+      console.log('Fez a requisição para pegar o proxy')
       const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
-      console.log(addressReq)
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log('Fez a requisição no VIACEP')
+      await new Promise(resolve => setTimeout(resolve, 10000));
       const addressApi = addressReq.data
-      await page.waitForSelector('#street', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.waitForSelector('#city', {visible: true});
-      await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.waitForSelector('#postalcode', {visible: true});
-      await page.type("#postalcode", addressApi.cep)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.waitForSelector('#mobilePhone', {visible: true});
-      await page.type("#mobilePhone", address.phone)
+      console.log(addressApi)
+
+      try {
+        await page.waitForSelector('#street', {visible: true});
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+        console.log('Adicionou o nome da rua: '+ addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.waitForSelector('#city', {visible: true});
+        await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+        console.log('Adicionou a cidade: '+ addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.waitForSelector('#postalcode', {visible: true});
+        await page.type("#postalcode", addressApi.cep)
+        console.log('Adicionou o CEP: '+ addressApi.cep)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.waitForSelector('#mobilePhone', {visible: true});
+        await page.type("#mobilePhone", address.phone)
+        console.log('Adicionou o Telefone: '+ address.phone)
+      }catch (error){
+        console.log(error)
+      }
+
 
       await new Promise(resolve => setTimeout(resolve, 2000));
       await clickProxima()
+      console.log('Clicou no botão para a próxima pagina')
       await new Promise(resolve => setTimeout(resolve, 7000));
       await page.focus('#username');
       await page.keyboard.down('Control');
       await page.keyboard.press('A');
       await page.keyboard.up('Control');
       await page.keyboard.press('Backspace');
+      console.log('Deletou o username padrão')
       await new Promise(resolve => setTimeout(resolve, 2000))
       await page.type('#username', data.username)
+      console.log('Adicinou o useraname: ' + data.username)
       // const username = await page.evaluate(selector => {
       //   return document.querySelector(selector).value;
       // }, '#username');
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('input[type="password"]', {visible: true});
       await page.type('input[type="password"]', 'Money4Life#')
-      await new Promise(resolve => setTimeout(resolve, 4000))
+      console.log('Adicinou a senha')
+      await new Promise(resolve => setTimeout(resolve, 6000))
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
       await clickProxima()
+      console.log('Clicou no botão para a próxima pagina')
       await new Promise(resolve => setTimeout(resolve, 8000));
       const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
       if (checkbox) {
         await checkbox.click();
-        console.log('Checkbox clicado com sucesso.');
+        console.log('Clicou no checkbox');
       } else {
         console.error('Checkbox não encontrado.');
       }
@@ -500,6 +522,7 @@ export default class TestPixSimple extends BaseCommand {
 
         if (register) {
           register.click();
+          console.log('Clicou no botao de registrar')
 
 
         } else {
@@ -539,7 +562,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
     } catch (error) {
-      console.log(error)
+
     } finally {
       // const cookiesBetano = await page.cookies();
       // for (let cookieBe of cookiesBetano) {
