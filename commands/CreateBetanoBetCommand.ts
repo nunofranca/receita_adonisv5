@@ -492,12 +492,12 @@ export default class TestPixSimple extends BaseCommand {
         }
       });
       await new Promise(resolve => setTimeout(resolve, 15000));
-
+      console.log(randomUserAgentBetano);
       const account = await axios.post(
         url + '/api/account',
         {
           password: 'Money4Life#',
-          useragent: randomUserAgentBetano,
+          useragent: randomUserAgentBetano ?? 'null',
           user_id: data.user_id,
           username: data.username,
           data: data,
