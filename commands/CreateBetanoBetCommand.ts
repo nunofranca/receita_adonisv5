@@ -40,7 +40,9 @@ xvfb.start((err) => {
 
 import axios from 'axios';
 
+// @ts-ignore
 import userAgents from "../userAgents";
+// @ts-ignore
 import userAgentBetano from "../UserAgentBetano";
 
 
@@ -194,6 +196,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 5000));
         await page.evaluate(() => {
           const registerEmail = Array.from(document.querySelectorAll('span'));
+          // @ts-ignore
           const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
           if (next) {
             next.click();
@@ -271,6 +274,7 @@ export default class TestPixSimple extends BaseCommand {
           const divs = Array.from(document.querySelectorAll('div'));
           const div = divs.find(div => {
 
+            // @ts-ignore
             return div && div.textContent.trim() === 'Confirme seu e-mail de recuperação';
           });
           if (div) {
@@ -320,6 +324,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       const isTextPresent = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'BEM-VINDO À BETANO');
 
@@ -335,6 +340,7 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.evaluate(() => {
         const loginGoogle = Array.from(document.querySelectorAll('span'));
+        // @ts-ignore
         const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
         if (next) {
           next.click();
@@ -374,6 +380,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 7000));
         await popup.evaluate(() => {
           const nextt = Array.from(document.querySelectorAll('span'));
+          // @ts-ignore
           const next = nextt.find(span => span.textContent.trim() === 'Continue');
           if (next) {
             next.click();
@@ -421,6 +428,7 @@ export default class TestPixSimple extends BaseCommand {
           const buttons = Array.from(document.querySelectorAll('button'));
           const button = buttons.find(btn => {
             const span = btn.querySelector('span');
+            // @ts-ignore
             return span && span.textContent.trim() === 'PRÓXIMA';
           });
           if (button) {
@@ -485,6 +493,7 @@ export default class TestPixSimple extends BaseCommand {
         const buttonRegister = Array.from(document.querySelectorAll('button'));
         const register = buttonRegister.find(regis => {
           const span = regis.querySelector('span');
+          // @ts-ignore
           return span && span.textContent.trim() === 'REGISTRAR';
         });
 
@@ -502,7 +511,7 @@ export default class TestPixSimple extends BaseCommand {
         url + '/api/account',
         {
           password: 'Money4Life#',
-          useragent: randomUserAgentBetano ?? 'null',
+          useragent: randomUserAgentBetano ?? 'Sem informação',
           user_id: data.user_id,
           username: data.username,
           data: data,
@@ -521,8 +530,8 @@ export default class TestPixSimple extends BaseCommand {
             'Content-Type': 'application/json'
           }
         }
-      ).then(() =>{
-        console.log('CPF atualizado com sucesso')
+      ).then(() => {
+        console.log('Conta cadastrada com sucesso')
       });
       console.log(account)
       await new Promise(resolve => setTimeout(resolve, 15000));
@@ -541,7 +550,7 @@ export default class TestPixSimple extends BaseCommand {
       // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
     }
-    }
+
 
     async function buttonNext(page) {
       await page.evaluate(() => {
@@ -558,27 +567,34 @@ export default class TestPixSimple extends BaseCommand {
       });
     }
 
-    async function notLogin(page) {
+    async function
+
+    notLogin(page) {
       const notLogin = await page.evaluate((text: string) => {
         return document.body.textContent.includes(text);
       }, 'Não foi possível fazer o login');
 
       const notBot = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'Confirme que você não é um robô');
 
       const captcha = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'CAPTCHA Security check');
       const emailExist = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'Parece que já tem uma conta Betano. Por favor, digite sua senha para continuar.');
 
       const signin = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'Sign in');
 
       const incom = await page.evaluate((text: string) => {
+        // @ts-ignore
         return document.body.textContent.includes(text);
       }, 'Detectamos uma atividade');
 
