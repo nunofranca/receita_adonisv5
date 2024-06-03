@@ -384,7 +384,7 @@ export default class TestPixSimple extends BaseCommand {
         await popup.keyboard.press('Enter');
         console.log('Selecionou o email e apertou enter')
 
-        await new Promise(resolve => setTimeout(resolve, 12000));
+        await new Promise(resolve => setTimeout(resolve, 7000));
         await popup.evaluate(() => {
           const nextt = Array.from(document.querySelectorAll('span'));
           // @ts-ignore
@@ -402,6 +402,7 @@ export default class TestPixSimple extends BaseCommand {
         console.log(error)
       }
       await new Promise(resolve => setTimeout(resolve, 10000));
+      await notLogin(pageBetano)
 
       const date = new Date(data.dateBirth);
       const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
