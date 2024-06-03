@@ -235,7 +235,7 @@ export default class TestPixSimple extends BaseCommand {
           Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
         );
       };
-
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       await pageGoogle.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
@@ -304,21 +304,20 @@ export default class TestPixSimple extends BaseCommand {
 
 
         if (isEmailInputPresent) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
           await pageGoogle.type('input[type="email"]', email.emailRecovery);
           console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
           await new Promise(resolve => setTimeout(resolve, 5000));
           await buttonNext(pageGoogle)
-
-
         }
-        await new Promise(resolve => setTimeout(resolve, 60000));
+
 
         const pageBetano = await browser.newPage()
         await pageBetano.authenticate({
           username: proxy.username,
           password: proxy.password,
         });
+        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
         await pageBetano.setDefaultNavigationTimeout(60000);
         await pageBetano.setDefaultTimeout(60000);
         await new Promise(resolve => setTimeout(resolve, 30000));
@@ -330,8 +329,8 @@ export default class TestPixSimple extends BaseCommand {
 
           deviceScaleFactor: 1
         });
+        await new Promise(resolve => setTimeout(resolve, 60000));
 
-        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
         console.log('Abriu a pagina da betano')
         await pageBetano.waitForSelector('body');
 
@@ -448,11 +447,12 @@ export default class TestPixSimple extends BaseCommand {
         }
 
         await clickProxima()
+        await new Promise(resolve => setTimeout(resolve, 20000));
         const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
         console.log('Fez a requisição para pegar o proxy')
         const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
         console.log('Fez a requisição no VIACEP')
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 20000));
         const addressApi = addressReq.data
         console.log(addressApi)
 
@@ -562,10 +562,13 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 15000));
 
       } catch (error) {
+        console.log('Primeiro catch:' +error)
 
+      }finally {
         await browser.close();
       }
     } catch (error) {
+      console.log('Ultimo catch:' +error)
 
     } finally {
       // const cookiesBetano = await page.cookies();
