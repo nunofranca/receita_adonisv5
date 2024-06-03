@@ -57,7 +57,7 @@ export default class TestPixSimple extends BaseCommand {
   /**
    * Command name is used to run the command
    */
-  public static commandName = 'test:create_betano';
+  public static commandName = 'test:create_betano_teste';
 
   /**
    * Command description is displayed in the "help" output

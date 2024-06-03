@@ -23,16 +23,10 @@ const xvfb = new Xvfb({
 
 xvfb.start((err) => {
   if (err) {
-    console.error('Erro ao iniciar o XVFB:', err);
+
     return;
   }
 
-  console.log('XVFB iniciado');
-
-  // Coloque aqui o código que precisa rodar com o XVFB
-  // ...
-
-  // Após o código rodar, pare o XVFB
   xvfb.stop((err) => {
     if (err) {
 
@@ -85,8 +79,7 @@ export default class TestPixSimple extends BaseCommand {
   };
 
   public async run() {
-
-
+    console.log('Entrou no metodo RUN')
     let browser;
     const apiUrls = [
       'https://botbetano.com.br',
@@ -112,11 +105,8 @@ export default class TestPixSimple extends BaseCommand {
     const address = addressReq.data;
 
 
-
     const proxy = proxyReq.data;
-    console.log(proxy)
-    console.log('Passou das requisicoes')
-    console.log('Iniciado cadastro de conta par ao usuário: ' +data.user_id)
+    console.log('Fez todas as requisições necessára à API')
 
 
     if (data.length === 0 || email.length === 0) {
@@ -137,9 +127,8 @@ export default class TestPixSimple extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
-      defaultViewport: null,
       args: [
         '--proxy-server=http://' + proxy.proxy,
         // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
@@ -154,28 +143,16 @@ export default class TestPixSimple extends BaseCommand {
         // '--user-data-dir=../profiles/dateBirth'
       ],
     });
-
+    console.log('Iniciou o Launch')
     try {
       const page = await browser.newPage();
       // Aumentar tempos de espera padrão
       await page.setDefaultNavigationTimeout(60000);
       await page.setDefaultTimeout(60000);
 
-      // Interceptar e bloquear recursos pesados
-
-
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
       await page.setUserAgent(randomUserAgent);
-      console.log(randomUserAgent)
-      // const client = await page.target().createCDPSession();
-      // await client.send('Network.clearBrowserCookies');
-      // await client.send('Network.clearBrowserCache');
-      // await client.send('Storage.clearDataForOrigin', {
-      //   origin: 'https://accounts.google.com',
-      //   storageTypes: 'all',
-      // });
-
-
+      console.log('Setou o userargent')
       // Definindo cabeçalhos HTTP adicionais para pt-BR
       await page.setExtraHTTPHeaders({
         'accept-language': 'pt-BR,pt;q=0.9',
@@ -186,6 +163,7 @@ export default class TestPixSimple extends BaseCommand {
         username: proxy.username,
         password: proxy.password,
       });
+      console.log('Autenticou no proxy')
       const randomMouseMovePopup = async () => {
         await page.mouse.move(
           Math.floor(Math.random() * 800), // Coordenada X aleatória na página
@@ -196,6 +174,7 @@ export default class TestPixSimple extends BaseCommand {
       if (data.betano === null) {
 
         await page.goto('https://brbetano.com/register', {timeout: 180000});
+        console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
         await new Promise(resolve => setTimeout(resolve, 5000));
         await page.evaluate(() => {
@@ -204,37 +183,52 @@ export default class TestPixSimple extends BaseCommand {
           const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
           if (next) {
             next.click();
-          } else {
-            console.error('Botão "Continue" não encontrado.');
           }
         });
+
+
         await new Promise(resolve => setTimeout(resolve, 5000));
         await page.type('#tax-number', data.cpf);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        const textoExistente1 = await page.evaluate(() => {
+        console.log('Digitou o CPF');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const cpfExist = await page.evaluate(() => {
           return document.body.innerText.includes('Este CPF já existe');
         });
         await new Promise(resolve => setTimeout(resolve, 2000));
-        console.log(textoExistente1)
+        if (cpfExist) {
+          console.log('CPF já existe: ', cpfExist);
+          await axios.delete(`${url}/api/data/${data.id}`);
+          console.log(`${data.cpf} foi deletado do sistema`);
+          await browser.close();
+        } else {
+          await axios.put(`${url}/api/data/${data.id}`, {
+            betano: false
+          });
+          console.log('CPF não está cadastrado na Betano');
+        }
+        new Promise(resolve => setTimeout(resolve, 2000));
 
-        if (textoExistente1) {
+        page.type('#email', email.email);
+        console.log('Digitou o email');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const emailExist = await page.evaluate(() => {
+          return document.body.innerText.includes('Este email já está sendo utilizado');
+        });
 
-          await axios.delete(url + '/api/data/' + data.id).then(() => {
-            console.log(data.cpf + 'Já tem cadastro e foi deletado')
-          })
-
-          await browser.close()
+        if (emailExist) {
+          axios.delete(url + '/api/email/' + data.id)
+            .then(() => {
+              console.log(email.email + ' Já tem cadastro e foi deletado')
+            })
+          browser.close()
           return
         }
-        await axios.put(url + '/api/data/' + data.id, {
-          betano: false
-        }).then(() => {
-          console.log('CPF atualizado com sucesso')
-        })
+        console.log('Email e CPF disponíveis para cadastro');
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
       }
 
-
-      //await page.goto('https://globo.com', {timeout: 60000});
       await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
@@ -275,9 +269,12 @@ export default class TestPixSimple extends BaseCommand {
 
 
       await new Promise(resolve => setTimeout(resolve, 10000));
+      console.log('depois de logar no google chegou aqui')
+      // await notLogin(page)
       try {
 
         await page.evaluate(() => {
+
           const divs = Array.from(document.querySelectorAll('div'));
           const div = divs.find(div => {
             console.log('Pediu para escolhe a forma de recuperação de email')
@@ -296,6 +293,7 @@ export default class TestPixSimple extends BaseCommand {
         console.log(error)
       }
       await randomMouseMovePopup();
+      await page.waitForSelector('input[type="email"]', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 7000));
       try {
         const isEmailInputPresent = await page.evaluate(() => {
@@ -317,7 +315,7 @@ export default class TestPixSimple extends BaseCommand {
       }
 
 
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await new Promise(resolve => setTimeout(resolve, 30000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
       await page.setUserAgent(randomUserAgentBetano);
       await page.setViewport({
@@ -333,9 +331,6 @@ export default class TestPixSimple extends BaseCommand {
       await page.waitForSelector('body');
 
       await new Promise(resolve => setTimeout(resolve, 3000));
-
-
-
 
 
       // @ts-ignore
@@ -374,15 +369,6 @@ export default class TestPixSimple extends BaseCommand {
         await popup.keyboard.press('Enter');
         console.log('Selecionou o email e apertou enter')
 
-        // await popup.evaluate(() => {
-        //   const loginGoogle = Array.from(document.querySelectorAll('div'));
-        //   const next = loginGoogle.find(span => span.textContent.trim() ===email.email);
-        //   if (next) {
-        //     next.click();
-        //   } else {
-        //     console.error('Botão "Continue" não encontrado.');
-        //   }
-        // });
         await new Promise(resolve => setTimeout(resolve, 12000));
         await popup.evaluate(() => {
           const nextt = Array.from(document.querySelectorAll('span'));
@@ -396,10 +382,12 @@ export default class TestPixSimple extends BaseCommand {
             console.error('Botão "Continue" não encontrado.');
           }
         });
-        await new Promise(resolve => setTimeout(resolve, 7000));
+
       } catch (error) {
-          console.log(error)
+        console.log(error)
       }
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      await notLogin(page)
       const date = new Date(data.dateBirth);
       const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
       const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
@@ -408,18 +396,32 @@ export default class TestPixSimple extends BaseCommand {
 
       await page.waitForSelector('#day', {visible: true});
       await page.select('#day', day);
-      console.log('Adicionou o dia de nascimento '+ day)
+      console.log('Adicionou o dia de nascimento ' + day)
 
       await page.select('#month', month);
-      console.log('Adicionou o mês de nascimento '+ month)
+      console.log('Adicionou o mês de nascimento ' + month)
       await page.waitForSelector('#year', {visible: true});
       await page.select('#year', year);
-      console.log('Adicionou o ano de nascimento '+ year)
+      console.log('Adicionou o ano de nascimento ' + year)
       await page.waitForSelector('#tax-number', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
       await page.type('#tax-number', data.cpf);
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const cpfExist2 = await page.evaluate(() => {
+        return document.body.innerText.includes('Este CPF já existe');
+      });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (cpfExist2) {
+        console.log('CPF já existe: ', cpfExist2);
+        await axios.delete(`${url}/api/data/${data.id}`);
+        console.log(`${data.cpf} foi deletado do sistema`);
+        await browser.close();
+      } else {
+        await axios.put(`${url}/api/data/${data.id}`, {
+          betano: false
+        });
+        console.log('CPF não está cadastrado na Betano');
+      }
 
       async function clickProxima() {
         await page.evaluate(() => {
@@ -451,20 +453,20 @@ export default class TestPixSimple extends BaseCommand {
         await page.waitForSelector('#street', {visible: true});
         await new Promise(resolve => setTimeout(resolve, 2000));
         await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-        console.log('Adicionou o nome da rua: '+ addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+        console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
         await new Promise(resolve => setTimeout(resolve, 2000));
         await page.waitForSelector('#city', {visible: true});
         await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-        console.log('Adicionou a cidade: '+ addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+        console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
         await new Promise(resolve => setTimeout(resolve, 2000));
         await page.waitForSelector('#postalcode', {visible: true});
         await page.type("#postalcode", addressApi.cep)
-        console.log('Adicionou o CEP: '+ addressApi.cep)
+        console.log('Adicionou o CEP: ' + addressApi.cep)
         await new Promise(resolve => setTimeout(resolve, 2000));
         await page.waitForSelector('#mobilePhone', {visible: true});
         await page.type("#mobilePhone", address.phone)
-        console.log('Adicionou o Telefone: '+ address.phone)
-      }catch (error){
+        console.log('Adicionou o Telefone: ' + address.phone)
+      } catch (error) {
         console.log(error)
       }
 
@@ -620,6 +622,8 @@ export default class TestPixSimple extends BaseCommand {
         browser.close()
         return
       }
+      console.log('Tudo ok nas verificações de login')
+      return
     }
   }
 
