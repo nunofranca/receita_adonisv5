@@ -119,9 +119,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -244,7 +244,6 @@ export default class TestPixSimple extends BaseCommand {
 
       // @ts-ignore
       await pageGoogle.waitForSelector('#identifierId', {visible: true});
-      console.log(data.cpf + ' Adicionou a email principal')
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
       await pageGoogle.type('#identifierId', email.email)
@@ -253,17 +252,12 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 5000));
       await buttonNext(pageGoogle)
 
-      await randomMouseMovePopup();
-
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
       await notLogin(pageGoogle)
 
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
-      await randomMouseMovePopup();
       await pageGoogle.waitForSelector('#password', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 5000));
+
       await pageGoogle.type('#password', email.password);
       console.log('Adicionou a senha do email: ' + email.password)
       await randomMouseMovePopup();
@@ -271,7 +265,6 @@ export default class TestPixSimple extends BaseCommand {
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-      await randomMouseMovePopup();
 
       await buttonNext(pageGoogle)
 
@@ -300,7 +293,8 @@ export default class TestPixSimple extends BaseCommand {
       } catch (error) {
         console.log(error)
       }
-      await randomMouseMovePopup();
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
       await pageGoogle.waitForSelector('input[type="email"]', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 7000));
       try {
@@ -315,254 +309,258 @@ export default class TestPixSimple extends BaseCommand {
           console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
           await new Promise(resolve => setTimeout(resolve, 5000));
           await buttonNext(pageGoogle)
-          const pageBetano = await browser.newPage()
-          await pageBetano.authenticate({
-            username: proxy.username,
-            password: proxy.password,
-          });
-          await pageBetano.setDefaultNavigationTimeout(60000);
-          await pageBetano.setDefaultTimeout(60000);
-          await new Promise(resolve => setTimeout(resolve, 30000));
-          const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-          await pageBetano.setUserAgent(randomUserAgentBetano);
-          await pageBetano.setViewport({
-            width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
-            height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
-
-            deviceScaleFactor: 1
-          });
-          await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
-          console.log('Abriu a pagina da betano')
-          await pageBetano.waitForSelector('body');
-
-          await new Promise(resolve => setTimeout(resolve, 3000));
 
 
+        }
+        await new Promise(resolve => setTimeout(resolve, 60000));
+
+        const pageBetano = await browser.newPage()
+        await pageBetano.authenticate({
+          username: proxy.username,
+          password: proxy.password,
+        });
+        await pageBetano.setDefaultNavigationTimeout(60000);
+        await pageBetano.setDefaultTimeout(60000);
+        await new Promise(resolve => setTimeout(resolve, 30000));
+        const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
+        await pageBetano.setUserAgent(randomUserAgentBetano);
+        await pageBetano.setViewport({
+          width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
+          height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
+
+          deviceScaleFactor: 1
+        });
+
+        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
+        console.log('Abriu a pagina da betano')
+        await pageBetano.waitForSelector('body');
+
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+
+        // @ts-ignore
+        await new Promise(resolve => setTimeout(resolve, 7000));
+
+
+        await pageBetano.evaluate(() => {
+          const loginGoogle = Array.from(document.querySelectorAll('span'));
           // @ts-ignore
+          const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
+          if (next) {
+            next.click();
+            console.log('Clicou para logar com email')
+          } else {
+            console.error('Botão "Continue" não encontrado.');
+          }
+        });
+
+
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        // Espera até que uma nova página seja aberta (pop-up)
+        const pages = await browser.pages();
+
+        const popup = pages[pages.length - 1]
+        await popup.setUserAgent(randomUserAgent);
+
+        console.log('Abriu popup do google pra logar')
+        await popup.setExtraHTTPHeaders({
+          'accept-language': 'pt-BR,pt;q=0.9',
+        });
+
+        try {
           await new Promise(resolve => setTimeout(resolve, 7000));
+          await notLogin(pageBetano)
+          await popup.keyboard.press('Tab');
+          await popup.keyboard.press('Tab');
+          await popup.keyboard.press('Enter');
+          console.log('Selecionou o email e apertou enter')
 
-
-          await pageBetano.evaluate(() => {
-            const loginGoogle = Array.from(document.querySelectorAll('span'));
+          await new Promise(resolve => setTimeout(resolve, 7000));
+          await popup.evaluate(() => {
+            const nextt = Array.from(document.querySelectorAll('span'));
             // @ts-ignore
-            const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
+            const next = nextt.find(span => span.textContent.trim() === 'Continue');
             if (next) {
               next.click();
-              console.log('Clicou para logar com email')
+              console.log('Clicou no botão de continue para logar')
+
             } else {
               console.error('Botão "Continue" não encontrado.');
             }
           });
 
+        } catch (error) {
+          console.log(error)
+        }
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        await notLogin(pageBetano)
 
-          await new Promise(resolve => setTimeout(resolve, 10000));
-          // Espera até que uma nova página seja aberta (pop-up)
-          const pages = await browser.pages();
+        const date = new Date(data.dateBirth);
+        const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
+        const year = String(date.getUTCFullYear()); // Converte para string
+        await new Promise(resolve => setTimeout(resolve, 15000));
 
-          const popup = pages[pages.length - 1]
-          await popup.setUserAgent(randomUserAgent);
+        await pageBetano.waitForSelector('#day', {visible: true});
+        await pageBetano.select('#day', day);
+        console.log('Adicionou o dia de nascimento ' + day)
 
-          console.log('Abriu popup do google pra logar')
-          await popup.setExtraHTTPHeaders({
-            'accept-language': 'pt-BR,pt;q=0.9',
+        await pageBetano.select('#month', month);
+        console.log('Adicionou o mês de nascimento ' + month)
+        await pageBetano.waitForSelector('#year', {visible: true});
+        await pageBetano.select('#year', year);
+        console.log('Adicionou o ano de nascimento ' + year)
+        await pageBetano.waitForSelector('#tax-number', {visible: true});
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await pageBetano.type('#tax-number', data.cpf);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const cpfExist2 = await pageBetano.evaluate(() => {
+          return document.body.innerText.includes('Este CPF já existe');
+        });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (cpfExist2) {
+          console.log('CPF já existe: ', cpfExist2);
+          await axios.delete(`${url}/api/data/${data.id}`);
+          console.log(`${data.cpf} foi deletado do sistema`);
+          await browser.close();
+        } else {
+          await axios.put(`${url}/api/data/${data.id}`, {
+            betano: false
           });
+          console.log('CPF não está cadastrado na Betano');
+        }
 
-          try {
-            await new Promise(resolve => setTimeout(resolve, 7000));
-            await notLogin(pageBetano)
-            await popup.keyboard.press('Tab');
-            await popup.keyboard.press('Tab');
-            await popup.keyboard.press('Enter');
-            console.log('Selecionou o email e apertou enter')
-
-            await new Promise(resolve => setTimeout(resolve, 7000));
-            await popup.evaluate(() => {
-              const nextt = Array.from(document.querySelectorAll('span'));
-              // @ts-ignore
-              const next = nextt.find(span => span.textContent.trim() === 'Continue');
-              if (next) {
-                next.click();
-                console.log('Clicou no botão de continue para logar')
-
-              } else {
-                console.error('Botão "Continue" não encontrado.');
-              }
-            });
-
-          } catch (error) {
-            console.log(error)
-          }
-          await new Promise(resolve => setTimeout(resolve, 10000));
-          await notLogin(pageBetano)
-
-          const date = new Date(data.dateBirth);
-          const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
-          const year = String(date.getUTCFullYear()); // Converte para string
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
-          await pageBetano.waitForSelector('#day', {visible: true});
-          await pageBetano.select('#day', day);
-          console.log('Adicionou o dia de nascimento ' + day)
-
-          await pageBetano.select('#month', month);
-          console.log('Adicionou o mês de nascimento ' + month)
-          await pageBetano.waitForSelector('#year', {visible: true});
-          await pageBetano.select('#year', year);
-          console.log('Adicionou o ano de nascimento ' + year)
-          await pageBetano.waitForSelector('#tax-number', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.type('#tax-number', data.cpf);
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          const cpfExist2 = await pageBetano.evaluate(() => {
-            return document.body.innerText.includes('Este CPF já existe');
-          });
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          if (cpfExist2) {
-            console.log('CPF já existe: ', cpfExist2);
-            await axios.delete(`${url}/api/data/${data.id}`);
-            console.log(`${data.cpf} foi deletado do sistema`);
-            await browser.close();
-          } else {
-            await axios.put(`${url}/api/data/${data.id}`, {
-              betano: false
-            });
-            console.log('CPF não está cadastrado na Betano');
-          }
-
-          async function clickProxima() {
-            await pageBetano.evaluate(() => {
-              const buttons = Array.from(document.querySelectorAll('button'));
-              const button = buttons.find(btn => {
-                const span = btn.querySelector('span');
-                // @ts-ignore
-                return span && span.textContent.trim() === 'PRÓXIMA';
-              });
-              if (button) {
-                button.click();
-
-              } else {
-                console.error('Botão "PRÓXIMA" não encontrado.');
-              }
-            });
-          }
-
-          await clickProxima()
-          const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
-          console.log('Fez a requisição para pegar o proxy')
-          const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
-          console.log('Fez a requisição no VIACEP')
-          await new Promise(resolve => setTimeout(resolve, 10000));
-          const addressApi = addressReq.data
-          console.log(addressApi)
-
-          try {
-            await pageBetano.waitForSelector('#street', {visible: true});
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await pageBetano.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-            console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await pageBetano.waitForSelector('#city', {visible: true});
-            await pageBetano.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-            console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await pageBetano.waitForSelector('#postalcode', {visible: true});
-            await pageBetano.type("#postalcode", addressApi.cep)
-            console.log('Adicionou o CEP: ' + addressApi.cep)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await pageBetano.waitForSelector('#mobilePhone', {visible: true});
-            await pageBetano.type("#mobilePhone", address.phone)
-            console.log('Adicionou o Telefone: ' + address.phone)
-          } catch (error) {
-            console.log(error)
-          }
-
-
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await clickProxima()
-          console.log('Clicou no botão para a próxima pagina')
-          await new Promise(resolve => setTimeout(resolve, 7000));
-          await pageBetano.focus('#username');
-          await pageBetano.keyboard.down('Control');
-          await pageBetano.keyboard.press('A');
-          await pageBetano.keyboard.up('Control');
-          await pageBetano.keyboard.press('Backspace');
-          console.log('Deletou o username padrão')
-          await new Promise(resolve => setTimeout(resolve, 2000))
-          await pageBetano.type('#username', data.username)
-          console.log('Adicinou o useraname: ' + data.username)
-          // const username = await page.evaluate(selector => {
-          //   return document.querySelector(selector).value;
-          // }, '#username');
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.waitForSelector('input[type="password"]', {visible: true});
-          await pageBetano.type('input[type="password"]', 'Money4Life#')
-          console.log('Adicinou a senha')
-          await new Promise(resolve => setTimeout(resolve, 6000))
-
-          await clickProxima()
-          console.log('Clicou no botão para a próxima pagina')
-          await new Promise(resolve => setTimeout(resolve, 8000));
-          const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
-          if (checkbox) {
-            await checkbox.click();
-            console.log('Clicou no checkbox');
-          } else {
-            console.error('Checkbox não encontrado.');
-          }
-
-
-          await new Promise(resolve => setTimeout(resolve, 8000));
+        async function clickProxima() {
           await pageBetano.evaluate(() => {
-            const buttonRegister = Array.from(document.querySelectorAll('button'));
-            const register = buttonRegister.find(regis => {
-              const span = regis.querySelector('span');
+            const buttons = Array.from(document.querySelectorAll('button'));
+            const button = buttons.find(btn => {
+              const span = btn.querySelector('span');
               // @ts-ignore
-              return span && span.textContent.trim() === 'REGISTRAR';
+              return span && span.textContent.trim() === 'PRÓXIMA';
             });
-
-            if (register) {
-              register.click();
-              console.log('Clicou no botao de registrar')
-
+            if (button) {
+              button.click();
 
             } else {
               console.error('Botão "PRÓXIMA" não encontrado.');
             }
           });
-          await new Promise(resolve => setTimeout(resolve, 15000));
-          console.log(randomUserAgentBetano);
-          const account = await axios.post(
-            url + '/api/account',
-            {
-              password: 'Money4Life#',
-              useragent: randomUserAgentBetano ?? 'Sem informação',
-              user_id: data.user_id,
-              username: data.username,
-              data: data,
-              email: email,
-              address: {
-                id: address.id,
-                street: addressApi.logradouro,
-                city: addressApi.localidade,
-                postCode: addressApi.cep
-              }
-
-
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          ).then(() => {
-            console.log('Conta cadastrada com sucesso')
-          });
-          console.log(account)
-          await new Promise(resolve => setTimeout(resolve, 15000));
-
-
         }
+
+        await clickProxima()
+        const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
+        console.log('Fez a requisição para pegar o proxy')
+        const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
+        console.log('Fez a requisição no VIACEP')
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        const addressApi = addressReq.data
+        console.log(addressApi)
+
+        try {
+          await pageBetano.waitForSelector('#street', {visible: true});
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await pageBetano.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+          console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await pageBetano.waitForSelector('#city', {visible: true});
+          await pageBetano.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+          console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await pageBetano.waitForSelector('#postalcode', {visible: true});
+          await pageBetano.type("#postalcode", addressApi.cep)
+          console.log('Adicionou o CEP: ' + addressApi.cep)
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await pageBetano.waitForSelector('#mobilePhone', {visible: true});
+          await pageBetano.type("#mobilePhone", address.phone)
+          console.log('Adicionou o Telefone: ' + address.phone)
+        } catch (error) {
+          console.log(error)
+        }
+
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await clickProxima()
+        console.log('Clicou no botão para a próxima pagina')
+        await new Promise(resolve => setTimeout(resolve, 7000));
+        await pageBetano.focus('#username');
+        await pageBetano.keyboard.down('Control');
+        await pageBetano.keyboard.press('A');
+        await pageBetano.keyboard.up('Control');
+        await pageBetano.keyboard.press('Backspace');
+        console.log('Deletou o username padrão')
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        await pageBetano.type('#username', data.username)
+        console.log('Adicinou o useraname: ' + data.username)
+        // const username = await page.evaluate(selector => {
+        //   return document.querySelector(selector).value;
+        // }, '#username');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await pageBetano.waitForSelector('input[type="password"]', {visible: true});
+        await pageBetano.type('input[type="password"]', 'Money4Life#')
+        console.log('Adicinou a senha')
+        await new Promise(resolve => setTimeout(resolve, 6000))
+
+        await clickProxima()
+        console.log('Clicou no botão para a próxima pagina')
+        await new Promise(resolve => setTimeout(resolve, 8000));
+        const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
+        if (checkbox) {
+          await checkbox.click();
+          console.log('Clicou no checkbox');
+        } else {
+          console.error('Checkbox não encontrado.');
+        }
+
+
+        await new Promise(resolve => setTimeout(resolve, 8000));
+        await pageBetano.evaluate(() => {
+          const buttonRegister = Array.from(document.querySelectorAll('button'));
+          const register = buttonRegister.find(regis => {
+            const span = regis.querySelector('span');
+            // @ts-ignore
+            return span && span.textContent.trim() === 'REGISTRAR';
+          });
+
+          if (register) {
+            register.click();
+            console.log('Clicou no botao de registrar')
+
+
+          } else {
+            console.error('Botão "PRÓXIMA" não encontrado.');
+          }
+        });
+        await new Promise(resolve => setTimeout(resolve, 15000));
+        console.log(randomUserAgentBetano);
+        const account = await axios.post(
+          url + '/api/account',
+          {
+            password: 'Money4Life#',
+            useragent: randomUserAgentBetano ?? 'Sem informação',
+            user_id: data.user_id,
+            username: data.username,
+            data: data,
+            email: email,
+            address: {
+              id: address.id,
+              street: addressApi.logradouro,
+              city: addressApi.localidade,
+              postCode: addressApi.cep
+            }
+
+
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        ).then(() => {
+          console.log('Conta cadastrada com sucesso')
+        });
+        console.log(account)
+        await new Promise(resolve => setTimeout(resolve, 15000));
+
       } catch (error) {
 
         await browser.close();
