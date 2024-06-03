@@ -127,7 +127,7 @@ export default class TestPixSimple extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         '--proxy-server=http://' + proxy.proxy,
@@ -145,27 +145,34 @@ export default class TestPixSimple extends BaseCommand {
     });
     console.log('Iniciou o Launch')
     try {
-      const page = await browser.newPage();
+      const pageGoogle = await browser.newPage();
+      const pageBetano = await browser.newPage();
       // Aumentar tempos de espera padrão
-      await page.setDefaultNavigationTimeout(60000);
-      await page.setDefaultTimeout(60000);
+      await pageGoogle.setDefaultNavigationTimeout(60000);
+      await pageGoogle.setDefaultTimeout(60000);
+      await pageBetano.setDefaultNavigationTimeout(60000);
+      await pageBetano.setDefaultTimeout(60000);
 
       const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-      await page.setUserAgent(randomUserAgent);
+      await pageGoogle.setUserAgent(randomUserAgent);
       console.log('Setou o userargent')
       // Definindo cabeçalhos HTTP adicionais para pt-BR
-      await page.setExtraHTTPHeaders({
+      await pageGoogle.setExtraHTTPHeaders({
         'accept-language': 'pt-BR,pt;q=0.9',
       });
 
 
-      await page.authenticate({
+      await pageGoogle.authenticate({
+        username: proxy.username,
+        password: proxy.password,
+      });
+      await pageBetano.authenticate({
         username: proxy.username,
         password: proxy.password,
       });
       console.log('Autenticou no proxy')
       const randomMouseMovePopup = async () => {
-        await page.mouse.move(
+        await pageGoogle.mouse.move(
           Math.floor(Math.random() * 800), // Coordenada X aleatória na página
           Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
         );
@@ -173,11 +180,11 @@ export default class TestPixSimple extends BaseCommand {
 
       if (data.betano === null) {
 
-        await page.goto('https://brbetano.com/register', {timeout: 180000});
+        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
         console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
         await new Promise(resolve => setTimeout(resolve, 5000));
-        await page.evaluate(() => {
+        await pageBetano.evaluate(() => {
           const registerEmail = Array.from(document.querySelectorAll('span'));
           // @ts-ignore
           const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
@@ -188,10 +195,10 @@ export default class TestPixSimple extends BaseCommand {
 
 
         await new Promise(resolve => setTimeout(resolve, 5000));
-        await page.type('#tax-number', data.cpf);
+        await pageBetano.type('#tax-number', data.cpf);
         console.log('Digitou o CPF');
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const cpfExist = await page.evaluate(() => {
+        const cpfExist = await pageBetano.evaluate(() => {
           return document.body.innerText.includes('Este CPF já existe');
         });
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -208,10 +215,10 @@ export default class TestPixSimple extends BaseCommand {
         }
         new Promise(resolve => setTimeout(resolve, 2000));
 
-        page.type('#email', email.email);
+        pageBetano.type('#email', email.email);
         console.log('Digitou o email');
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const emailExist = await page.evaluate(() => {
+        const emailExist = await pageBetano.evaluate(() => {
           return document.body.innerText.includes('Este email já está sendo utilizado');
         });
 
@@ -229,34 +236,34 @@ export default class TestPixSimple extends BaseCommand {
 
       }
 
-      await page.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
+      await pageGoogle.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 15000));
       console.log(data.cpf + ' Abriu a página do google')
 
       // @ts-ignore
-      await page.waitForSelector('#identifierId', {visible: true});
+      await pageGoogle.waitForSelector('#identifierId', {visible: true});
       console.log(data.cpf + ' Adicionou a email principal')
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
-      await page.type('#identifierId', email.email)
+      await pageGoogle.type('#identifierId', email.email)
       console.log('Adicionou a email principal: ' + email.email)
       await randomMouseMovePopup();
       await new Promise(resolve => setTimeout(resolve, 5000));
-      await buttonNext(page)
+      await buttonNext(pageGoogle)
 
       await randomMouseMovePopup();
 
       await new Promise(resolve => setTimeout(resolve, 5000));
       await randomMouseMovePopup();
-      await notLogin(page)
+      await notLogin(pageGoogle)
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
       await randomMouseMovePopup();
-      await page.waitForSelector('#password', {visible: true});
+      await pageGoogle.waitForSelector('#password', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 5000));
-      await page.type('#password', email.password);
+      await pageGoogle.type('#password', email.password);
       console.log('Adicionou a senha do email: ' + email.password)
       await randomMouseMovePopup();
 
@@ -265,15 +272,15 @@ export default class TestPixSimple extends BaseCommand {
 
       await randomMouseMovePopup();
 
-      await buttonNext(page)
+      await buttonNext(pageGoogle)
 
 
       await new Promise(resolve => setTimeout(resolve, 10000));
-      console.log('depois de logar no google chegou aqui')
+
       // await notLogin(page)
       try {
 
-        await page.evaluate(() => {
+        await pageGoogle.evaluate(() => {
 
           const divs = Array.from(document.querySelectorAll('div'));
           const div = divs.find(div => {
@@ -293,20 +300,20 @@ export default class TestPixSimple extends BaseCommand {
         console.log(error)
       }
       await randomMouseMovePopup();
-      await page.waitForSelector('input[type="email"]', {visible: true});
+      await pageGoogle.waitForSelector('input[type="email"]', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 7000));
       try {
-        const isEmailInputPresent = await page.evaluate(() => {
+        const isEmailInputPresent = await pageGoogle.evaluate(() => {
           return !!document.querySelector('input[type="email"]');
         });
 
 
         if (isEmailInputPresent) {
           await new Promise(resolve => setTimeout(resolve, 2000));
-          await page.type('input[type="email"]', email.emailRecovery);
+          await pageGoogle.type('input[type="email"]', email.emailRecovery);
           console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
           await new Promise(resolve => setTimeout(resolve, 5000));
-          await buttonNext(page)
+          await buttonNext(pageGoogle)
 
         }
       } catch (error) {
@@ -315,10 +322,11 @@ export default class TestPixSimple extends BaseCommand {
       }
 
 
+
       await new Promise(resolve => setTimeout(resolve, 30000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-      await page.setUserAgent(randomUserAgentBetano);
-      await page.setViewport({
+      await pageBetano.setUserAgent(randomUserAgentBetano);
+      await pageBetano.setViewport({
         width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
         height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
 
@@ -326,9 +334,9 @@ export default class TestPixSimple extends BaseCommand {
       });
 
 
-      await page.goto('https://brbetano.com/register', {timeout: 180000});
+      await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
       console.log('Abriu a pagina da betano')
-      await page.waitForSelector('body');
+      await pageBetano.waitForSelector('body');
 
       await new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -337,7 +345,7 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 7000));
 
 
-      await page.evaluate(() => {
+      await pageBetano.evaluate(() => {
         const loginGoogle = Array.from(document.querySelectorAll('span'));
         // @ts-ignore
         const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
@@ -387,27 +395,27 @@ export default class TestPixSimple extends BaseCommand {
         console.log(error)
       }
       await new Promise(resolve => setTimeout(resolve, 10000));
-      await notLogin(page)
+
       const date = new Date(data.dateBirth);
       const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
       const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
       const year = String(date.getUTCFullYear()); // Converte para string
       await new Promise(resolve => setTimeout(resolve, 15000));
 
-      await page.waitForSelector('#day', {visible: true});
-      await page.select('#day', day);
+      await pageBetano.waitForSelector('#day', {visible: true});
+      await pageBetano.select('#day', day);
       console.log('Adicionou o dia de nascimento ' + day)
 
-      await page.select('#month', month);
+      await pageBetano.select('#month', month);
       console.log('Adicionou o mês de nascimento ' + month)
-      await page.waitForSelector('#year', {visible: true});
-      await page.select('#year', year);
+      await pageBetano.waitForSelector('#year', {visible: true});
+      await pageBetano.select('#year', year);
       console.log('Adicionou o ano de nascimento ' + year)
-      await page.waitForSelector('#tax-number', {visible: true});
+      await pageBetano.waitForSelector('#tax-number', {visible: true});
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.type('#tax-number', data.cpf);
+      await pageBetano.type('#tax-number', data.cpf);
       await new Promise(resolve => setTimeout(resolve, 2000));
-      const cpfExist2 = await page.evaluate(() => {
+      const cpfExist2 = await pageBetano.evaluate(() => {
         return document.body.innerText.includes('Este CPF já existe');
       });
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -424,7 +432,7 @@ export default class TestPixSimple extends BaseCommand {
       }
 
       async function clickProxima() {
-        await page.evaluate(() => {
+        await pageBetano.evaluate(() => {
           const buttons = Array.from(document.querySelectorAll('button'));
           const button = buttons.find(btn => {
             const span = btn.querySelector('span');
@@ -450,21 +458,21 @@ export default class TestPixSimple extends BaseCommand {
       console.log(addressApi)
 
       try {
-        await page.waitForSelector('#street', {visible: true});
+        await pageBetano.waitForSelector('#street', {visible: true});
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+        await pageBetano.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
         console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.waitForSelector('#city', {visible: true});
-        await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+        await pageBetano.waitForSelector('#city', {visible: true});
+        await pageBetano.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
         console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.waitForSelector('#postalcode', {visible: true});
-        await page.type("#postalcode", addressApi.cep)
+        await pageBetano.waitForSelector('#postalcode', {visible: true});
+        await pageBetano.type("#postalcode", addressApi.cep)
         console.log('Adicionou o CEP: ' + addressApi.cep)
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.waitForSelector('#mobilePhone', {visible: true});
-        await page.type("#mobilePhone", address.phone)
+        await pageBetano.waitForSelector('#mobilePhone', {visible: true});
+        await pageBetano.type("#mobilePhone", address.phone)
         console.log('Adicionou o Telefone: ' + address.phone)
       } catch (error) {
         console.log(error)
@@ -475,28 +483,28 @@ export default class TestPixSimple extends BaseCommand {
       await clickProxima()
       console.log('Clicou no botão para a próxima pagina')
       await new Promise(resolve => setTimeout(resolve, 7000));
-      await page.focus('#username');
-      await page.keyboard.down('Control');
-      await page.keyboard.press('A');
-      await page.keyboard.up('Control');
-      await page.keyboard.press('Backspace');
+      await pageBetano.focus('#username');
+      await pageBetano.keyboard.down('Control');
+      await pageBetano.keyboard.press('A');
+      await pageBetano.keyboard.up('Control');
+      await pageBetano.keyboard.press('Backspace');
       console.log('Deletou o username padrão')
       await new Promise(resolve => setTimeout(resolve, 2000))
-      await page.type('#username', data.username)
+      await pageBetano.type('#username', data.username)
       console.log('Adicinou o useraname: ' + data.username)
       // const username = await page.evaluate(selector => {
       //   return document.querySelector(selector).value;
       // }, '#username');
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.waitForSelector('input[type="password"]', {visible: true});
-      await page.type('input[type="password"]', 'Money4Life#')
+      await pageBetano.waitForSelector('input[type="password"]', {visible: true});
+      await pageBetano.type('input[type="password"]', 'Money4Life#')
       console.log('Adicinou a senha')
       await new Promise(resolve => setTimeout(resolve, 6000))
 
       await clickProxima()
       console.log('Clicou no botão para a próxima pagina')
       await new Promise(resolve => setTimeout(resolve, 8000));
-      const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+      const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
       if (checkbox) {
         await checkbox.click();
         console.log('Clicou no checkbox');
@@ -506,7 +514,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
       await new Promise(resolve => setTimeout(resolve, 8000));
-      await page.evaluate(() => {
+      await pageBetano.evaluate(() => {
         const buttonRegister = Array.from(document.querySelectorAll('button'));
         const register = buttonRegister.find(regis => {
           const span = regis.querySelector('span');
