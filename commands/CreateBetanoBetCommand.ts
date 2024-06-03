@@ -145,41 +145,14 @@ export default class TestPixSimple extends BaseCommand {
     });
     console.log('Iniciou o Launch')
     try {
-      const pageGoogle = await browser.newPage();
-      const pageBetano = await browser.newPage();
-      // Aumentar tempos de espera padrão
-      await pageGoogle.setDefaultNavigationTimeout(60000);
-      await pageGoogle.setDefaultTimeout(60000);
-      await pageBetano.setDefaultNavigationTimeout(60000);
-      await pageBetano.setDefaultTimeout(60000);
 
-      const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-      await pageGoogle.setUserAgent(randomUserAgent);
-      console.log('Setou o userargent')
-      // Definindo cabeçalhos HTTP adicionais para pt-BR
-      await pageGoogle.setExtraHTTPHeaders({
-        'accept-language': 'pt-BR,pt;q=0.9',
-      });
-
-
-      await pageGoogle.authenticate({
-        username: proxy.username,
-        password: proxy.password,
-      });
-      await pageBetano.authenticate({
-        username: proxy.username,
-        password: proxy.password,
-      });
-      console.log('Autenticou no proxy')
-      const randomMouseMovePopup = async () => {
-        await pageGoogle.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
 
       if (data.betano === null) {
-
+        const pageBetano = await browser.newPage();
+        await pageBetano.authenticate({
+          username: proxy.username,
+          password: proxy.password,
+        });
         await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
         console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
@@ -233,8 +206,36 @@ export default class TestPixSimple extends BaseCommand {
         console.log('Email e CPF disponíveis para cadastro');
 
         await new Promise(resolve => setTimeout(resolve, 2000));
-
+        pageBetano.close()
       }
+      const pageGoogle = await browser.newPage();
+      // Aumentar tempos de espera padrão
+      await pageGoogle.setDefaultNavigationTimeout(60000);
+      await pageGoogle.setDefaultTimeout(60000);
+
+
+      const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+      await pageGoogle.setUserAgent(randomUserAgent);
+      console.log('Setou o userargent')
+      // Definindo cabeçalhos HTTP adicionais para pt-BR
+      await pageGoogle.setExtraHTTPHeaders({
+        'accept-language': 'pt-BR,pt;q=0.9',
+      });
+
+
+      await pageGoogle.authenticate({
+        username: proxy.username,
+        password: proxy.password,
+      });
+
+      console.log('Autenticou no proxy')
+      const randomMouseMovePopup = async () => {
+        await pageGoogle.mouse.move(
+          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
+          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
+        );
+      };
+
 
       await pageGoogle.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
       await randomMouseMovePopup();
@@ -321,8 +322,13 @@ export default class TestPixSimple extends BaseCommand {
         await browser.close();
       }
 
-
-
+      const pageBetano = await  browser.newPage()
+      await pageBetano.authenticate({
+        username: proxy.username,
+        password: proxy.password,
+      });
+      await pageBetano.setDefaultNavigationTimeout(60000);
+      await pageBetano.setDefaultTimeout(60000);
       await new Promise(resolve => setTimeout(resolve, 30000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
       await pageBetano.setUserAgent(randomUserAgentBetano);
