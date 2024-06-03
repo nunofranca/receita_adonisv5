@@ -119,9 +119,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -321,7 +321,7 @@ export default class TestPixSimple extends BaseCommand {
 
         await browser.close();
       }
-
+      await new Promise(resolve => setTimeout(resolve, 15000));
       const pageBetano = await  browser.newPage()
       await pageBetano.authenticate({
         username: proxy.username,
@@ -329,7 +329,7 @@ export default class TestPixSimple extends BaseCommand {
       });
       await pageBetano.setDefaultNavigationTimeout(60000);
       await pageBetano.setDefaultTimeout(60000);
-      await new Promise(resolve => setTimeout(resolve, 30000));
+
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
       await pageBetano.setUserAgent(randomUserAgentBetano);
       await pageBetano.setViewport({
