@@ -378,6 +378,7 @@ export default class TestPixSimple extends BaseCommand {
 
       try {
         await new Promise(resolve => setTimeout(resolve, 7000));
+        await notLogin(pageBetano)
         await popup.keyboard.press('Tab');
         await popup.keyboard.press('Tab');
         await popup.keyboard.press('Enter');
