@@ -119,9 +119,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -457,6 +457,8 @@ export default class TestPixSimple extends BaseCommand {
       }
 
       await clickProxima()
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      await notLogin(pageBetano)
       const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
       console.log('Fez a requisição para pegar o proxy')
       const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
