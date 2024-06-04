@@ -15,29 +15,29 @@ const Login = async (page, browser) => {
     }
   }
 
-
-  const pages = await browser.pages();
-
-  const popup = pages[pages.length - 1]
+  //
+  // const pages = await browser.pages();
+  //
+  // const popup = pages[pages.length - 1]
 
 
   console.log('Abriu popup do google pra logar')
-  await popup.setExtraHTTPHeaders({
+  await page.setExtraHTTPHeaders({
     'accept-language': 'pt-BR,pt;q=0.9',
   });
   await new Promise(resolve => setTimeout(resolve, 7000));
   await NoteLogin(page, browser)
   await new Promise(resolve => setTimeout(resolve, 7000));
-  await popup.keyboard.press('Tab');
-  await popup.keyboard.press('Tab');
-  await popup.keyboard.press('Enter');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
   console.log('Selecionou o email e apertou enter')
 
   await new Promise(resolve => setTimeout(resolve, 10000));
+  const spansContinue = await page.$$('span');
 
-
-  for (let next of spans) {
-    const text= await popup.evaluate(element => element.textContent.trim(), next);
+  for (let next of spansContinue) {
+    const text= await page.evaluate(element => element.textContent.trim(), next);
     if (text === 'Continue') {
       console.log('antes de clicar no botão de continue para logar');
       await next.click();

@@ -41,7 +41,7 @@ const LoginGoogle = async (email, data, proxy, browser) => {
 
   // @ts-ignore
   await pageGoogle.waitForSelector('#identifierId', {visible: true});
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
   await randomMouseMovePopup();
   await pageGoogle.type('#identifierId', email.email)
   console.log('Adicionou a email principal: ' + email.email)
