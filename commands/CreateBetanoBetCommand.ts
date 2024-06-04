@@ -13,6 +13,12 @@ import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import Xvfb from 'xvfb';
+import VerifyCpfAndEmailInBetano from "./Actions/VerifyCpfAndEmailInBetano";
+import LoginGoogle from "./Actions/LoginGoogle";
+import Launch from "./Actions/Launch";
+import AuthProxy from "./Actions/Betano/AuthProxy";
+import ConfigPage from "./Actions/Betano/ConfigPage";
+import Login from "./Actions/Betano/Login";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -115,301 +121,35 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
-// Função para limpar o diretório do perfil do usuário
 
+    browser = await Launch(proxy)
 
-    browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
-      // userDataDir: '../profiles/dateBirth',
-      executablePath: '/usr/bin/microsoft-edge',
-      //executablePath: '/usr/bin/chromium-browser',
-      slowMo: 10,
-      defaultViewport: null,
-      headless: false,
-      ignoreDefaultArgs: ["--disable-extensions"],
-      args: [
-        '--proxy-server=http://' + proxy.proxy,
-        // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
-        '--start-maximized',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        '--window-size=1920x1080',
-        '--disable-features=IsolateOrigins,site-per-process',
-        // '--user-data-dir=../profiles/dateBirth'
-      ],
-    });
-    console.log('Iniciou o Launch')
     try {
 
+      await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)
 
-      if (data.betano === null) {
-        const pageBetano = await browser.newPage();
-        await pageBetano.authenticate({
-          username: proxy.username,
-          password: proxy.password,
-        });
-        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
-        console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
-
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        await pageBetano.waitForSelector('span');
-
-        // Encontrar todos os elementos <span> e procurar pelo texto desejado
-        const spans = await pageBetano.$$('span');
-        let found = false;
-
-        for (let span of spans) {
-          const textContent = await pageBetano.evaluate(el => el.textContent.trim(), span);
-          if (textContent === 'Registrar com email') {
-            await span.click();
-            console.log('Clicou no botão "Registrar com email"');
-            found = true;
-            break;
-          }
-        }
-
-        if (!found) {
-          console.error('Botão "Registrar com email" não encontrado.');
-        }
-
-
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        await pageBetano.type('#tax-number', data.cpf);
-        console.log('Digitou o CPF');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const cpfExist = await pageBetano.evaluate(() => {
-          return document.body.innerText.includes('Este CPF já existe');
-        });
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        if (cpfExist) {
-          console.log('CPF já existe: ', cpfExist);
-          await axios.delete(`${url}/api/data/${data.id}`);
-          console.log(`${data.cpf} foi deletado do sistema`);
-          await browser.close();
-        } else {
-          await axios.put(`${url}/api/data/${data.id}`, {
-            betano: false
-          });
-          console.log('CPF não está cadastrado na Betano');
-        }
-        new Promise(resolve => setTimeout(resolve, 2000));
-
-        pageBetano.type('#email', email.email);
-        console.log('Digitou o email');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const emailExist = await pageBetano.evaluate(() => {
-          return document.body.innerText.includes('Este email já está sendo utilizado');
-        });
-
-        if (emailExist) {
-          axios.delete(url + '/api/email/' + data.id)
-            .then(() => {
-              console.log(email.email + ' Já tem cadastro e foi deletado')
-            })
-          browser.close()
-          return
-        }
-        console.log('Email e CPF disponíveis para cadastro');
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        pageBetano.close()
-      }
-      const pageGoogle = await browser.newPage();
-      // Aumentar tempos de espera padrão
-      await pageGoogle.setDefaultNavigationTimeout(60000);
-      await pageGoogle.setDefaultTimeout(60000);
-
-
-      const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-      await pageGoogle.setUserAgent(randomUserAgent);
-      console.log('Setou o userargent')
-      // Definindo cabeçalhos HTTP adicionais para pt-BR
-      await pageGoogle.setExtraHTTPHeaders({
-        'accept-language': 'pt-BR,pt;q=0.9',
-      });
-
-
-      await pageGoogle.authenticate({
-        username: proxy.username,
-        password: proxy.password,
-      });
-
-      console.log('Autenticou no proxy')
-      const randomMouseMovePopup = async () => {
-        await pageGoogle.mouse.move(
-          Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-          Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-        );
-      };
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
-      await pageGoogle.goto('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fwww.google.com.br%2F&ec=GAZAmgQ&hl=pt-BR&ifkv=AS5LTAQniEoHUgJl13A3qmCBu5onhiRkW3pIYGnnK22SMJxAfC75ulKzXXMtDamun64Ls4b5jN2HpA&passive=true&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-218042109%3A1717111244684717&ddm=0', {timeout: 60000});
-      await randomMouseMovePopup();
-      await new Promise(resolve => setTimeout(resolve, 15000));
-      console.log(data.cpf + ' Abriu a página do google')
-
-      // @ts-ignore
-      await pageGoogle.waitForSelector('#identifierId', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      await randomMouseMovePopup();
-      await pageGoogle.type('#identifierId', email.email)
-      console.log('Adicionou a email principal: ' + email.email)
-      await randomMouseMovePopup();
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      await buttonNext(pageGoogle)
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      await randomMouseMovePopup();
-      await notLogin(pageGoogle)
-
-      await pageGoogle.waitForSelector('#password', {visible: true});
-
-      await pageGoogle.type('#password', email.password);
-      console.log('Adicionou a senha do email: ' + email.password)
-      await randomMouseMovePopup();
-
+      await LoginGoogle(email, data, proxy, browser)
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
 
-      await buttonNext(pageGoogle)
-
-
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
-      // await notLogin(page)
       try {
-
-        await pageGoogle.evaluate(() => {
-
-          const divs = Array.from(document.querySelectorAll('div'));
-          const div = divs.find(div => {
-            console.log('Pediu para escolhe a forma de recuperação de email')
-            // @ts-ignore
-            return div && div.textContent.trim() === 'Confirme seu e-mail de recuperação';
-
-          });
-          if (div) {
-            div.click();
-            console.log('Clicou no botao para seguir')
-          } else {
-            console.error('Botão "PRÓXIMA" não encontrado.');
-          }
-        });
-      } catch (error) {
-        console.log(error)
-      }
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
-      await pageGoogle.waitForSelector('input[type="email"]', {visible: true});
-      await new Promise(resolve => setTimeout(resolve, 7000));
-      try {
-        const isEmailInputPresent = await pageGoogle.evaluate(() => {
-          return !!document.querySelector('input[type="email"]');
-        });
-
-
-        if (isEmailInputPresent) {
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          await pageGoogle.type('input[type="email"]', email.emailRecovery);
-          console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          await buttonNext(pageGoogle)
-          await new Promise(resolve => setTimeout(resolve, 7000));
-        }
-
 
         const pageBetano = await browser.newPage()
-        await pageBetano.authenticate({
-          username: proxy.username,
-          password: proxy.password,
-        });
-        await new Promise(resolve => setTimeout(resolve, 7000));
-        await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
-
-        await new Promise(resolve => setTimeout(resolve, 30000));
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
+
         await pageBetano.setUserAgent(randomUserAgentBetano);
-        await pageBetano.setViewport({
-          width: Math.floor(Math.random() * (1920 - 800 + 1)) + 800,
-          height: Math.floor(Math.random() * (1080 - 600 + 1)) + 600,
-
-          deviceScaleFactor: 1
-        });
-        await new Promise(resolve => setTimeout(resolve, 60000));
-
-        console.log('Abriu a pagina da betano')
-        await pageBetano.waitForSelector('body');
 
 
-        // @ts-ignore
+        await AuthProxy(proxy, pageBetano)
+
+        await ConfigPage(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 7000));
+        await Login(pageBetano, browser)
 
-// Esperar pelo carregamento da página e pelo elemento desejado
-        await pageBetano.waitForSelector('span');
-
-        // Encontrar todos os elementos <span> e procurar pelo texto desejado
-        const spans = await pageBetano.$$('span');
-        let found = false;
-
-        for (let span of spans) {
-          const textContent = await pageBetano.evaluate(el => el.textContent.trim(), span);
-          if (textContent === 'Registrar com Google') {
-            await span.click();
-            console.log('Clicou para logar com email');
-            found = true;
-            break;
-          }
-        }
-
-        if (!found) {
-          console.error('Botão "Continue" não encontrado.');
-        }
 
         await new Promise(resolve => setTimeout(resolve, 10000));
-        // Espera até que uma nova página seja aberta (pop-up)
-        const pages = await browser.pages();
 
-        const popup = pages[pages.length - 1]
-        await popup.setUserAgent(randomUserAgent);
-
-        console.log('Abriu popup do google pra logar')
-        await popup.setExtraHTTPHeaders({
-          'accept-language': 'pt-BR,pt;q=0.9',
-        });
-
-        try {
-          await new Promise(resolve => setTimeout(resolve, 7000));
-          await notLogin(pageBetano)
-          await popup.keyboard.press('Tab');
-          await popup.keyboard.press('Tab');
-          await popup.keyboard.press('Enter');
-          console.log('Selecionou o email e apertou enter')
-
-          await new Promise(resolve => setTimeout(resolve, 7000));
-          await popup.evaluate(() => {
-            const nextt = Array.from(document.querySelectorAll('span'));
-            // @ts-ignore
-            const next = nextt.find(span => span.textContent.trim() === 'Continue');
-            if (next) {
-              next.click();
-              console.log('Clicou no botão de continue para logar')
-
-            } else {
-              console.error('Botão "Continue" não encontrado.');
-            }
-          });
-
-        } catch (error) {
-          console.log(error)
-        }
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        await notLogin(pageBetano)
 
         const date = new Date(data.dateBirth);
         const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
@@ -615,56 +355,7 @@ export default class TestPixSimple extends BaseCommand {
       });
     }
 
-    async function
 
-    notLogin(page) {
-      const notLogin = await page.evaluate((text: string) => {
-        return document.body.textContent.includes(text);
-      }, 'Não foi possível fazer o login');
-
-      const notBot = await page.evaluate((text: string) => {
-        // @ts-ignore
-        const not = document.body.textContent.includes(text);
-        if (not) console.log('Confirme que você não é um robô')
-        return not
-      }, 'Confirme que você não é um robô');
-
-      const captcha = await page.evaluate((text: string) => {
-        // @ts-ignore
-        document.body.textContent.includes(text);
-        const not = document.body.textContent.includes(text);
-        if (not) console.log('CAPTCHA Security check')
-        return not
-      }, 'CAPTCHA Security check');
-      const emailExist = await page.evaluate((text: string) => {
-
-        const not = document.body.textContent.includes(text);
-        if (not) console.log('Parece que já tem uma conta Betano. Por favor, digite sua senha para continuar')
-        return not
-      }, 'Parece que já tem uma conta Betano. Por favor, digite sua senha para continuar.');
-
-      const signin = await page.evaluate((text: string) => {
-        // @ts-ignore
-        const not = document.body.textContent.includes(text);
-        if (not) console.log('Sign ink')
-        return not
-      }, 'Sign in');
-
-      const incom = await page.evaluate((text: string) => {
-        // @ts-ignore
-        const not = document.body.textContent.includes(text);
-        if (not) console.log('Detectamos uma atividade')
-      }, 'Detectamos uma atividade');
-
-
-      if (notLogin || notBot || captcha || emailExist || signin || incom) {
-
-        browser.close()
-        return
-      }
-      console.log('Tudo ok nas verificações de login')
-      return
-    }
   }
 
 
