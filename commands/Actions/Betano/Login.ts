@@ -28,15 +28,17 @@ const Login = async (page, browser) => {
   await page.setExtraHTTPHeaders({
     'accept-language': 'pt-BR,pt;q=0.9',
   });
-  await new Promise(resolve => setTimeout(resolve, 7000));
-  //await NoteLogin(popup, browser)
-  await new Promise(resolve => setTimeout(resolve, 7000));
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Enter');
+
+  await new Promise(resolve => setTimeout(resolve, 30000));
+  await NoteLogin(popup, browser)
+  await new Promise(resolve => setTimeout(resolve, 30000));
+  await popup.keyboard.press('Tab');
+  await popup.keyboard.press('Tab');
+  await popup.keyboard.press('Enter');
+
   console.log('Selecionou o email e apertou enter')
 
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 30000));
   const spansContinue = await page.$$('span');
 
   for (let next of spansContinue) {
