@@ -119,9 +119,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      env: {
-        DISPLAY: ":10.0"
-      },
+      // env: {
+      //   DISPLAY: ":10.0"
+      // },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
@@ -309,6 +309,7 @@ export default class TestPixSimple extends BaseCommand {
           console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
           await new Promise(resolve => setTimeout(resolve, 5000));
           await buttonNext(pageGoogle)
+          await new Promise(resolve => setTimeout(resolve, 7000));
         }
 
 
@@ -317,9 +318,9 @@ export default class TestPixSimple extends BaseCommand {
           username: proxy.username,
           password: proxy.password,
         });
+        await new Promise(resolve => setTimeout(resolve, 7000));
         await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
-        await pageBetano.setDefaultNavigationTimeout(60000);
-        await pageBetano.setDefaultTimeout(60000);
+
         await new Promise(resolve => setTimeout(resolve, 30000));
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
         await pageBetano.setUserAgent(randomUserAgentBetano);
@@ -334,25 +335,30 @@ export default class TestPixSimple extends BaseCommand {
         console.log('Abriu a pagina da betano')
         await pageBetano.waitForSelector('body');
 
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
 
         // @ts-ignore
         await new Promise(resolve => setTimeout(resolve, 7000));
 
+// Esperar pelo carregamento da página e pelo elemento desejado
+        await pageBetano.waitForSelector('span');
 
-        await pageBetano.evaluate(() => {
-          const loginGoogle = Array.from(document.querySelectorAll('span'));
-          // @ts-ignore
-          const next = loginGoogle.find(span => span.textContent.trim() === 'Registrar com Google');
-          if (next) {
-            next.click();
-            console.log('Clicou para logar com email')
-          } else {
-            console.error('Botão "Continue" não encontrado.');
+        // Encontrar todos os elementos <span> e procurar pelo texto desejado
+        const spans = await pageBetano.$$('span');
+        let found = false;
+
+        for (let span of spans) {
+          const textContent = await pageBetano.evaluate(el => el.textContent.trim(), span);
+          if (textContent === 'Registrar com Google') {
+            await span.click();
+            console.log('Clicou para logar com email');
+            found = true;
+            break;
           }
-        });
+        }
 
+        if (!found) {
+          console.error('Botão "Continue" não encontrado.');
+        }
 
         await new Promise(resolve => setTimeout(resolve, 10000));
         // Espera até que uma nova página seja aberta (pop-up)
@@ -562,13 +568,13 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 15000));
 
       } catch (error) {
-        console.log('Primeiro catch:' +error)
+        console.log('Primeiro catch:' + error)
 
-      }finally {
+      } finally {
         await browser.close();
       }
     } catch (error) {
-      console.log('Ultimo catch:' +error)
+      console.log('Ultimo catch:' + error)
 
     } finally {
       // const cookiesBetano = await page.cookies();
