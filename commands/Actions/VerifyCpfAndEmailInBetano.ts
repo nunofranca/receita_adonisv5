@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const VerifyCpfAndEmailInBetano =async (data, email, page, proxy, url) =>{
+const VerifyCpfAndEmailInBetano =async (data, email, page, url, browser) =>{
 
   if (data.betano === null) {
 
@@ -69,7 +69,7 @@ const VerifyCpfAndEmailInBetano =async (data, email, page, proxy, url) =>{
     console.log('Email e CPF disponíveis para cadastro');
 
     await new Promise(resolve => setTimeout(resolve, 2000));
-    page.close()
+    browser.close()
   }
 }
 
