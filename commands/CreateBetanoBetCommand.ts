@@ -125,30 +125,28 @@ export default class TestPixSimple extends BaseCommand {
     }
 
 
-    browser = await Launch(proxy)
+    const page = await Launch(proxy)
 
     try {
 
-      await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)
+      await AuthProxy(proxy, page)
+      await VerifyCpfAndEmailInBetano(data, email, page, proxy, url)
 
-      await LoginGoogle(email, data, proxy, browser)
+      await LoginGoogle(email, data, page)
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
 
       try {
 
-        const pageBetano = await browser.newPage()
+
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
 
-        await pageBetano.setUserAgent(randomUserAgentBetano);
+        await page.setUserAgent(randomUserAgentBetano);
 
-
-        await AuthProxy(proxy, pageBetano)
-
-        await ConfigPage(pageBetano)
+        await ConfigPage(page)
         await new Promise(resolve => setTimeout(resolve, 7000));
-        await Login(pageBetano, browser)
+        await Login(page, browser)
 
 
         await new Promise(resolve => setTimeout(resolve, 10000));
@@ -160,24 +158,24 @@ export default class TestPixSimple extends BaseCommand {
         const year = String(date.getUTCFullYear()); // Converte para string
         await new Promise(resolve => setTimeout(resolve, 15000));
         console.log('pantes do swaitForselect do day')
-        await pageBetano.waitForSelector('#day', {visible: true});
+        await page.waitForSelector('#day', {visible: true});
         console.log('pantes do select do day')
-        await pageBetano.select('#day', day);
+        await page.select('#day', day);
         console.log('passou do select do day')
         console.log('Adicionou o dia de nascimento ' + day)
 
-        await pageBetano.select('#month', month);
+        await page.select('#month', month);
         console.log('passou do select do month')
         console.log('Adicionou o mês de nascimento ' + month)
-        await pageBetano.waitForSelector('#year', {visible: true});
-        await pageBetano.select('#year', year);
+        await page.waitForSelector('#year', {visible: true});
+        await page.select('#year', year);
         console.log('passou do select do year')
         console.log('Adicionou o ano de nascimento ' + year)
-        await pageBetano.waitForSelector('#tax-number', {visible: true});
+        await page.waitForSelector('#tax-number', {visible: true});
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await pageBetano.type('#tax-number', data.cpf);
+        await page.type('#tax-number', data.cpf);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const cpfExist2 = await pageBetano.evaluate(() => {
+        const cpfExist2 = await page.evaluate(() => {
           return document.body.innerText.includes('Este CPF já existe');
         });
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -193,35 +191,35 @@ export default class TestPixSimple extends BaseCommand {
           console.log('CPF não está cadastrado na Betano');
         }
         await new Promise(resolve => setTimeout(resolve, 10000));
-        await ButtonNextBetano(pageBetano)
+        await ButtonNextBetano(page)
         await new Promise(resolve => setTimeout(resolve, 10000));
-        const addressApi = await Address(pageBetano, address);
+        const addressApi = await Address(page, address);
 
 
         console.log('Clicou no botão para a próxima pagina')
         await new Promise(resolve => setTimeout(resolve, 7000));
-        await pageBetano.focus('#username');
-        await pageBetano.keyboard.down('Control');
-        await pageBetano.keyboard.press('A');
-        await pageBetano.keyboard.up('Control');
-        await pageBetano.keyboard.press('Backspace');
+        await page.focus('#username');
+        await page.keyboard.down('Control');
+        await page.keyboard.press('A');
+        await page.keyboard.up('Control');
+        await page.keyboard.press('Backspace');
         console.log('Deletou o username padrão')
         await new Promise(resolve => setTimeout(resolve, 2000))
-        await pageBetano.type('#username', data.username)
+        await page.type('#username', data.username)
         console.log('Adicinou o useraname: ' + data.username)
         // const username = await page.evaluate(selector => {
         //   return document.querySelector(selector).value;
         // }, '#username');
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await pageBetano.waitForSelector('input[type="password"]', {visible: true});
-        await pageBetano.type('input[type="password"]', 'Money4Life#')
+        await page.waitForSelector('input[type="password"]', {visible: true});
+        await page.type('input[type="password"]', 'Money4Life#')
         console.log('Adicinou a senha')
         await new Promise(resolve => setTimeout(resolve, 6000))
 
-        await ButtonNextBetano(pageBetano)
+        await ButtonNextBetano(page)
         console.log('Clicou no botão para a próxima pagina')
         await new Promise(resolve => setTimeout(resolve, 8000));
-        const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
+        const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
         if (checkbox) {
           await checkbox.click();
           console.log('Clicou no checkbox');
@@ -231,7 +229,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
         await new Promise(resolve => setTimeout(resolve, 8000));
-        await pageBetano.evaluate(() => {
+        await page.evaluate(() => {
           const buttonRegister = Array.from(document.querySelectorAll('button'));
           const register = buttonRegister.find(regis => {
             const span = regis.querySelector('span');
@@ -298,22 +296,6 @@ export default class TestPixSimple extends BaseCommand {
       // const cookiesAfterBetano = await page.cookies();
       // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
-    }
-
-
-    async function buttonNext(page) {
-      await page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const button = buttons.find(btn => {
-          const span = btn.querySelector('span');
-          // @ts-ignore
-          return span && span.textContent.trim() === 'Avançar';
-        });
-        if (button) {
-
-          button.click();
-        }
-      });
     }
 
 

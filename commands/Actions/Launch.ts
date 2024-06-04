@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 
 const Launch = async (proxy) => {
-  return await puppeteer.launch({
+  const browser =  await puppeteer.launch({
     // env: {
     //   DISPLAY: ":10.0"
     // },
@@ -26,5 +26,7 @@ const Launch = async (proxy) => {
       // '--user-data-dir=../profiles/dateBirth'
     ],
   });
+
+  return browser.newPage()
 }
 export default Launch

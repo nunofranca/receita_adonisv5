@@ -40,7 +40,7 @@ const NoteLogin =async (page, browser)=>{
 
   if (notLogin || notBot || captcha || emailExist || signin || incom) {
 
-    browser.close()
+    // browser.close()
     return
   }
   console.log('Tudo ok nas verificações de login')

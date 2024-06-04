@@ -1,25 +1,22 @@
 import axios from "axios";
 
-const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
+const VerifyCpfAndEmailInBetano =async (data, email, page, proxy, url) =>{
 
   if (data.betano === null) {
-    const pageBetano = await browser.newPage();
-    await pageBetano.authenticate({
-      username: proxy.username,
-      password: proxy.password,
-    });
-    await pageBetano.goto('https://brbetano.com/register', {timeout: 180000});
+
+
+    await page.goto('https://brbetano.com/register', {timeout: 180000});
     console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
     await new Promise(resolve => setTimeout(resolve, 10000));
-    await pageBetano.waitForSelector('span');
+    await page.waitForSelector('span');
 
     // Encontrar todos os elementos <span> e procurar pelo texto desejado
-    const spans = await pageBetano.$$('span');
+    const spans = await page.$$('span');
     let found = false;
 
     for (let span of spans) {
-      const textContent = await pageBetano.evaluate(el => el.textContent.trim(), span);
+      const textContent = await page.evaluate(el => el.textContent.trim(), span);
       if (textContent === 'Registrar com email') {
         await span.click();
         console.log('Clicou no botão "Registrar com email"');
@@ -34,10 +31,10 @@ const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
 
 
     await new Promise(resolve => setTimeout(resolve, 5000));
-    await pageBetano.type('#tax-number', data.cpf);
+    await page.type('#tax-number', data.cpf);
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 2000));
-    const cpfExist = await pageBetano.evaluate(() => {
+    const cpfExist = await page.evaluate(() => {
       return document.body.innerText.includes('Este CPF já existe');
     });
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -45,7 +42,7 @@ const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
       console.log('CPF já existe: ', cpfExist);
       await axios.delete(`${url}/api/data/${data.id}`);
       console.log(`${data.cpf} foi deletado do sistema`);
-      await browser.close();
+      await page.close();
     } else {
       await axios.put(`${url}/api/data/${data.id}`, {
         betano: false
@@ -54,10 +51,10 @@ const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
     }
     new Promise(resolve => setTimeout(resolve, 2000));
 
-    pageBetano.type('#email', email.email);
+    page.type('#email', email.email);
     console.log('Digitou o email');
     await new Promise(resolve => setTimeout(resolve, 2000));
-    const emailExist = await pageBetano.evaluate(() => {
+    const emailExist = await page.evaluate(() => {
       return document.body.innerText.includes('Este email já está sendo utilizado');
     });
 
@@ -66,13 +63,13 @@ const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
         .then(() => {
           console.log(email.email + ' Já tem cadastro e foi deletado')
         })
-      browser.close()
+      page.close()
       return
     }
     console.log('Email e CPF disponíveis para cadastro');
 
     await new Promise(resolve => setTimeout(resolve, 2000));
-    pageBetano.close()
+    page.close()
   }
 }
 
