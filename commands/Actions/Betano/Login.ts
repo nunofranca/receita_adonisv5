@@ -15,12 +15,6 @@ const Login = async (page, browser) => {
     }
   }
 
-  //
-  // const pages = await browser.pages();
-  //
-  // const popup = pages[pages.length - 1]
-
-
   console.log('Abriu popup do google pra logar')
   await page.setExtraHTTPHeaders({
     'accept-language': 'pt-BR,pt;q=0.9',

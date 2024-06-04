@@ -19,6 +19,7 @@ import Launch from "./Actions/Launch";
 import AuthProxy from "./Actions/Betano/AuthProxy";
 import ConfigPage from "./Actions/Betano/ConfigPage";
 import Login from "./Actions/Betano/Login";
+import BasicData from "./Actions/Betano/BasicData";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -151,40 +152,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 10000));
 
 
-        const date = new Date(data.dateBirth);
-        const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
-        const year = String(date.getUTCFullYear()); // Converte para string
-        await new Promise(resolve => setTimeout(resolve, 15000));
-
-        await pageBetano.waitForSelector('#day', {visible: true});
-        await pageBetano.select('#day', day);
-        console.log('Adicionou o dia de nascimento ' + day)
-
-        await pageBetano.select('#month', month);
-        console.log('Adicionou o mês de nascimento ' + month)
-        await pageBetano.waitForSelector('#year', {visible: true});
-        await pageBetano.select('#year', year);
-        console.log('Adicionou o ano de nascimento ' + year)
-        await pageBetano.waitForSelector('#tax-number', {visible: true});
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        await pageBetano.type('#tax-number', data.cpf);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const cpfExist2 = await pageBetano.evaluate(() => {
-          return document.body.innerText.includes('Este CPF já existe');
-        });
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (cpfExist2) {
-          console.log('CPF já existe: ', cpfExist2);
-          await axios.delete(`${url}/api/data/${data.id}`);
-          console.log(`${data.cpf} foi deletado do sistema`);
-          await browser.close();
-        } else {
-          await axios.put(`${url}/api/data/${data.id}`, {
-            betano: false
-          });
-          console.log('CPF não está cadastrado na Betano');
-        }
+        await BasicData(pageBetano, data, url, browser)
 
         async function clickProxima() {
           await pageBetano.evaluate(() => {
