@@ -119,15 +119,15 @@ export default class TestPixSimple extends BaseCommand {
 
 
     browser = await puppeteer.launch({
-      // env: {
-      //   DISPLAY: ":10.0"
-      // },
+      env: {
+        DISPLAY: ":10.0"
+      },
       // userDataDir: '../profiles/dateBirth',
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         '--proxy-server=http://' + proxy.proxy,
@@ -157,14 +157,25 @@ export default class TestPixSimple extends BaseCommand {
         console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
         await new Promise(resolve => setTimeout(resolve, 5000));
-        await pageBetano.evaluate(() => {
-          const registerEmail = Array.from(document.querySelectorAll('span'));
-          // @ts-ignore
-          const next = registerEmail.find(span => span.textContent.trim() === 'Registrar com email');
-          if (next) {
-            next.click();
+        await pageBetano.waitForSelector('span');
+
+        // Encontrar todos os elementos <span> e procurar pelo texto desejado
+        const spans = await pageBetano.$$('span');
+        let found = false;
+
+        for (let span of spans) {
+          const textContent = await pageBetano.evaluate(el => el.textContent.trim(), span);
+          if (textContent === 'Registrar com email') {
+            await span.click();
+            console.log('Clicou no botão "Registrar com email"');
+            found = true;
+            break;
           }
-        });
+        }
+
+        if (!found) {
+          console.error('Botão "Registrar com email" não encontrado.');
+        }
 
 
         await new Promise(resolve => setTimeout(resolve, 5000));
