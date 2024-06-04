@@ -5,9 +5,11 @@ import ButtonNext from "./ButtonNext";
 import RandomUserAgent from "./RandomUserAgent";
 
 
-const LoginGoogle = async (email, data, page, browser) => {
 
-  await page.goto('https://brbetano.com/register', {timeout: 180000});
+const LoginGoogle = async (email, data, proxy, browser) => {
+  console.log('Entrou no componente que loga no google')
+  const pageGoogle = await browser.newPage();
+
   // Aumentar tempos de espera padrão
   await page.setDefaultNavigationTimeout(60000);
   await page.setDefaultTimeout(60000);
@@ -94,6 +96,6 @@ const LoginGoogle = async (email, data, page, browser) => {
     await new Promise(resolve => setTimeout(resolve, 7000));
   }
 
-
+  console.log('FIM do componente que loga no google')
 }
 export default LoginGoogle
