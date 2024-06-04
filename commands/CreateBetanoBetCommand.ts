@@ -131,10 +131,10 @@ export default class TestPixSimple extends BaseCommand {
         try {
 
             await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)
-
+            await new Promise(resolve => setTimeout(resolve, 30000));
             await LoginGoogle(email, data, proxy, browser)
 
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, 30000));
 
 
             try {
@@ -151,21 +151,20 @@ export default class TestPixSimple extends BaseCommand {
                 await new Promise(resolve => setTimeout(resolve, 7000));
                 await Login(pageBetano, browser)
 
-
-                await new Promise(resolve => setTimeout(resolve, 20000));
+                await new Promise(resolve => setTimeout(resolve, 30000));
 
                 await BasicData(pageBetano, data, url, browser)
 
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 await ButtonNextBetano(pageBetano)
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                await new Promise(resolve => setTimeout(resolve, 30000));
                 const addressApi = await Address(pageBetano, address, url);
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 await ButtonNextBetano(pageBetano)
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                await new Promise(resolve => setTimeout(resolve, 30000));
 
                 console.log('Clicou no botão para a próxima pagina')
-                await new Promise(resolve => setTimeout(resolve, 7000));
+
                 await pageBetano.focus('#username');
                 await pageBetano.keyboard.down('Control');
                 await pageBetano.keyboard.press('A');
@@ -182,7 +181,7 @@ export default class TestPixSimple extends BaseCommand {
                 await pageBetano.waitForSelector('input[type="password"]', {visible: true});
                 await pageBetano.type('input[type="password"]', 'Money4Life#')
                 console.log('Adicinou a senha')
-                await new Promise(resolve => setTimeout(resolve, 6000))
+                await new Promise(resolve => setTimeout(resolve, 30000));
 
                 await ButtonNextBetano(pageBetano)
                 console.log('Clicou no botão para a próxima pagina')
