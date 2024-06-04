@@ -20,6 +20,7 @@ import AuthProxy from "./Actions/Betano/AuthProxy";
 import ConfigPage from "./Actions/Betano/ConfigPage";
 import Login from "./Actions/Betano/Login";
 import BasicData from "./Actions/Betano/BasicData";
+import Address from "./Actions/Betano/Address";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -153,58 +154,9 @@ export default class TestPixSimple extends BaseCommand {
 
 
         await BasicData(pageBetano, data, url, browser)
-
-        async function clickProxima() {
-          await pageBetano.evaluate(() => {
-            const buttons = Array.from(document.querySelectorAll('button'));
-            const button = buttons.find(btn => {
-              const span = btn.querySelector('span');
-              // @ts-ignore
-              return span && span.textContent.trim() === 'PRÓXIMA';
-            });
-            if (button) {
-              button.click();
-
-            } else {
-              console.error('Botão "PRÓXIMA" não encontrado.');
-            }
-          });
-        }
-
-        await clickProxima()
-        await new Promise(resolve => setTimeout(resolve, 20000));
-        const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
-        console.log('Fez a requisição para pegar o proxy')
-        const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
-        console.log('Fez a requisição no VIACEP')
-        await new Promise(resolve => setTimeout(resolve, 20000));
-        const addressApi = addressReq.data
-        console.log(addressApi)
-
-        try {
-          await pageBetano.waitForSelector('#street', {visible: true});
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-          console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.waitForSelector('#city', {visible: true});
-          await pageBetano.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-          console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.waitForSelector('#postalcode', {visible: true});
-          await pageBetano.type("#postalcode", addressApi.cep)
-          console.log('Adicionou o CEP: ' + addressApi.cep)
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          await pageBetano.waitForSelector('#mobilePhone', {visible: true});
-          await pageBetano.type("#mobilePhone", address.phone)
-          console.log('Adicionou o Telefone: ' + address.phone)
-        } catch (error) {
-          console.log(error)
-        }
+        await Address(pageBetano, address);
 
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        await clickProxima()
         console.log('Clicou no botão para a próxima pagina')
         await new Promise(resolve => setTimeout(resolve, 7000));
         await pageBetano.focus('#username');

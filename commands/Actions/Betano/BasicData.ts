@@ -1,4 +1,5 @@
 import axios from "axios";
+import ButtonNextBetano from "./ButtonNextBetano";
 
 
 const BasicData = async  (page, data, url, browser) =>{
@@ -36,5 +37,9 @@ const BasicData = async  (page, data, url, browser) =>{
     });
     console.log('CPF não está cadastrado na Betano');
   }
+  await new Promise(resolve => setTimeout(resolve, 10000));
+    await ButtonNextBetano(page)
+
+
 }
 export default BasicData
