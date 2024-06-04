@@ -90,7 +90,7 @@ export default class TestPixSimple extends BaseCommand {
 
     public async run() {
         console.log('Entrou no metodo RUN')
-        let browser;
+
         const apiUrls = [
             'https://botbetano.com.br',
             //'https://app-54653.dc-us-1.absamcloud.com'
@@ -126,7 +126,7 @@ export default class TestPixSimple extends BaseCommand {
         }
 
 
-        browser = await Launch(proxy)
+       const browser = await Launch(proxy)
 
         try {
 
