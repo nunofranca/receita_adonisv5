@@ -11,12 +11,15 @@ const BasicData = async  (page, data, url, browser) =>{
 
   await page.waitForSelector('#day', {visible: true});
   await page.select('#day', day);
+  console.log('passou do select do day')
   console.log('Adicionou o dia de nascimento ' + day)
 
   await page.select('#month', month);
+  console.log('passou do select do month')
   console.log('Adicionou o mês de nascimento ' + month)
   await page.waitForSelector('#year', {visible: true});
   await page.select('#year', year);
+  console.log('passou do select do year')
   console.log('Adicionou o ano de nascimento ' + year)
   await page.waitForSelector('#tax-number', {visible: true});
   await new Promise(resolve => setTimeout(resolve, 2000));

@@ -21,6 +21,7 @@ import ConfigPage from "./Actions/Betano/ConfigPage";
 import Login from "./Actions/Betano/Login";
 import BasicData from "./Actions/Betano/BasicData";
 import Address from "./Actions/Betano/Address";
+import ButtonNextBetano from "./Actions/Betano/ButtonNextBetano";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -153,8 +154,48 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 10000));
 
 
-        await BasicData(pageBetano, data, url, browser)
-        await Address(pageBetano, address);
+        const date = new Date(data.dateBirth);
+        const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
+        const year = String(date.getUTCFullYear()); // Converte para string
+        await new Promise(resolve => setTimeout(resolve, 15000));
+        console.log('pantes do swaitForselect do day')
+        await pageBetano.waitForSelector('#day', {visible: true});
+        console.log('pantes do select do day')
+        await pageBetano.select('#day', day);
+        console.log('passou do select do day')
+        console.log('Adicionou o dia de nascimento ' + day)
+
+        await pageBetano.select('#month', month);
+        console.log('passou do select do month')
+        console.log('Adicionou o mês de nascimento ' + month)
+        await pageBetano.waitForSelector('#year', {visible: true});
+        await pageBetano.select('#year', year);
+        console.log('passou do select do year')
+        console.log('Adicionou o ano de nascimento ' + year)
+        await pageBetano.waitForSelector('#tax-number', {visible: true});
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await pageBetano.type('#tax-number', data.cpf);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const cpfExist2 = await pageBetano.evaluate(() => {
+          return document.body.innerText.includes('Este CPF já existe');
+        });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (cpfExist2) {
+          console.log('CPF já existe: ', cpfExist2);
+          await axios.delete(`${url}/api/data/${data.id}`);
+          console.log(`${data.cpf} foi deletado do sistema`);
+          await browser.close();
+        } else {
+          await axios.put(`${url}/api/data/${data.id}`, {
+            betano: false
+          });
+          console.log('CPF não está cadastrado na Betano');
+        }
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        await ButtonNextBetano(pageBetano)
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        const addressApi = await Address(pageBetano, address);
 
 
         console.log('Clicou no botão para a próxima pagina')
@@ -177,7 +218,7 @@ export default class TestPixSimple extends BaseCommand {
         console.log('Adicinou a senha')
         await new Promise(resolve => setTimeout(resolve, 6000))
 
-        await clickProxima()
+        await ButtonNextBetano(pageBetano)
         console.log('Clicou no botão para a próxima pagina')
         await new Promise(resolve => setTimeout(resolve, 8000));
         const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');

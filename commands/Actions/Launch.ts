@@ -2,9 +2,9 @@ import puppeteer from "puppeteer-extra";
 
 const Launch = async (proxy) => {
   return await puppeteer.launch({
-    env: {
-      DISPLAY: ":10.0"
-    },
+    // env: {
+    //   DISPLAY: ":10.0"
+    // },
     // userDataDir: '../profiles/dateBirth',
     executablePath: '/usr/bin/microsoft-edge',
     //executablePath: '/usr/bin/chromium-browser',
