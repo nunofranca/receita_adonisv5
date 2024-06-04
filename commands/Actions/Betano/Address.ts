@@ -1,7 +1,7 @@
 import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 
-const Address = async (page, address) =>{
+const Address = async (page, address, url) =>{
   await new Promise(resolve => setTimeout(resolve, 20000));
   const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
   console.log('Fez a requisição para pegar o proxy')
@@ -33,8 +33,7 @@ const Address = async (page, address) =>{
   }
 
 
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  await ButtonNextBetano(page)
+
   return addressApi
 
 }

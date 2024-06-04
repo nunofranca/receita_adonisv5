@@ -3,22 +3,23 @@ import ButtonNextBetano from "./ButtonNextBetano";
 
 
 const BasicData = async  (page, data, url, browser) =>{
+  console.log('Etrou no BasicData')
   const date = new Date(data.dateBirth);
   const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
   const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
   const year = String(date.getUTCFullYear()); // Converte para string
   await new Promise(resolve => setTimeout(resolve, 15000));
 
-  await page.waitForSelector('#day', {visible: true});
-  await page.select('#day', day);
+  await page.waitForSelector('select[name="Day"]', {visible: true});
+  await page.select('select[name="Day"]', day);
   console.log('passou do select do day')
   console.log('Adicionou o dia de nascimento ' + day)
 
-  await page.select('#month', month);
+  await page.select('select[name="Month"]', month);
   console.log('passou do select do month')
   console.log('Adicionou o mês de nascimento ' + month)
-  await page.waitForSelector('#year', {visible: true});
-  await page.select('#year', year);
+  await page.waitForSelector('select[name="Year"]', {visible: true});
+  await page.select('select[name="Year"]', year);
   console.log('passou do select do year')
   console.log('Adicionou o ano de nascimento ' + year)
   await page.waitForSelector('#tax-number', {visible: true});
@@ -40,8 +41,7 @@ const BasicData = async  (page, data, url, browser) =>{
     });
     console.log('CPF não está cadastrado na Betano');
   }
-  await new Promise(resolve => setTimeout(resolve, 10000));
-    await ButtonNextBetano(page)
+  console.log('FIM do basic data')
 
 
 }

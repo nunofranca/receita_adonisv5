@@ -3,6 +3,7 @@ import NoteLogin from "../NoteLogin";
 
 
 const Login = async (page, browser) => {
+  console.log('Entrou no componente que loga a betano')
   const spans = await page.$$('span');
 
 
@@ -48,7 +49,7 @@ const Login = async (page, browser) => {
   await new Promise(resolve => setTimeout(resolve, 10000));
   await NoteLogin(popup, browser)
 
-
+  console.log('FIM do componente que loga a betano')
 
 }
 export default Login

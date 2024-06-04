@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
-
+  console.log('Entrou no componente que verifica se ja tem conta')
   if (data.betano === null) {
     const pageBetano = await browser.newPage();
     await pageBetano.authenticate({
@@ -74,6 +74,7 @@ const VerifyCpfAndEmailInBetano =async (data, email, browser, proxy, url) =>{
     await new Promise(resolve => setTimeout(resolve, 2000));
     pageBetano.close()
   }
+  console.log('FIM componente que verifica se ja tem conta')
 }
 
 export default VerifyCpfAndEmailInBetano
