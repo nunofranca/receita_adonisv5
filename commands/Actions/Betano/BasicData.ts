@@ -34,7 +34,7 @@ const BasicData = async  (page, data, url, browser) =>{
     console.log('CPF já existe: ', cpfExist2);
     await axios.delete(`${url}/api/data/${data.id}`);
     console.log(`${data.cpf} foi deletado do sistema`);
-    await browser.close();
+    //await browser.close();
   } else {
     await axios.put(`${url}/api/data/${data.id}`, {
       betano: false
