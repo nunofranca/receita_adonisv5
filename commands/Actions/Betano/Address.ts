@@ -1,7 +1,7 @@
 import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 
-const Address = async (page, cep) =>{
+const Address = async (page, cep, phone) =>{
   console.log('Entrou no Componente de Address')
   console.log(cep.cep)
 
@@ -29,8 +29,8 @@ const Address = async (page, cep) =>{
     console.log('Adicionou o CEP: ' + addressApi.cep)
     await new Promise(resolve => setTimeout(resolve, 2000));
     await page.waitForSelector('#mobilePhone', {visible: true});
-    await page.type("#mobilePhone", address.phone)
-    console.log('Adicionou o Telefone: ' + address.phone)
+    await page.type("#mobilePhone", phone)
+    console.log('Adicionou o Telefone: ' + phone)
   } catch (error) {
     console.log(error)
   }

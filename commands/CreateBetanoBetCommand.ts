@@ -185,7 +185,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 10000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 15000));
-        const addressApi = await Address(pageBetano, cep);
+        const addressApi = await Address(pageBetano, cep, address.phone);
         await new Promise(resolve => setTimeout(resolve, 5000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 20000));
