@@ -213,7 +213,6 @@ export default class TestPixSimple extends BaseCommand {
                     }
                 });
 
-                await new Promise(resolve => setTimeout(resolve, 30000));
 
                 await new Promise(resolve => setTimeout(resolve, 15000));
                 console.log(randomUserAgentBetano);
