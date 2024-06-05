@@ -128,7 +128,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const addressReq = await axios.get(url + '/api/address');
 
-    const cepReq =  await axios.get(url + '/cep/' + proxy.slug);
+    const cepReq =  await axios.get(url + '/api/cep/' + proxy.slug);
     const cep = cepReq.data
 
     const email =proxy.user.emails[0];
