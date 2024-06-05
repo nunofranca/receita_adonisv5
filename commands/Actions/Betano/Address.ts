@@ -1,11 +1,10 @@
 import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 
-const Address = async (page, address, url, proxy) =>{
+const Address = async (page, address) =>{
   await new Promise(resolve => setTimeout(resolve, 20000));
-  const addressProxy = await axios.get(url + '/api/cep/' + proxy.slug);
   console.log('Fez a requisição para pegar o proxy')
-  const addressReq = await axios.get('https://viacep.com.br/ws/' + addressProxy.data.cep + '/json/');
+  const addressReq = await axios.get('https://viacep.com.br/ws/' + address.postCode + '/json/');
   console.log('Fez a requisição no VIACEP')
   const addressApi = addressReq.data
   console.log(addressApi)
