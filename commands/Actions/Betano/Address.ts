@@ -2,6 +2,8 @@ import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 
 const Address = async (page, address) =>{
+  console.log('Entrou no Componente de Address')
+  console.log(address.postCode)
   await new Promise(resolve => setTimeout(resolve, 20000));
   console.log('Fez a requisição para pegar o proxy')
   const addressReq = await axios.get('https://viacep.com.br/ws/' + address.postCode + '/json/');
