@@ -3,7 +3,7 @@ import puppeteer from "puppeteer-extra";
 const Launch = async (proxy) => {
     return await puppeteer.launch({
         env: {
-          DISPLAY: ":0"
+          DISPLAY: ":10"
         },
         // userDataDir: '../profiles/dateBirth',
         executablePath: '/usr/bin/microsoft-edge',
