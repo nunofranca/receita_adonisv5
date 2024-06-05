@@ -128,12 +128,16 @@ export default class TestPixSimple extends BaseCommand {
 
     const addressReq = await axios.get(url + '/api/address');
 
+    const cepReq =  await axios.get(url + '/cep/' + proxy.slug);
+    const cep = cepReq.data
+
     const email =proxy.user.emails[0];
     const address = addressReq.data;
     console.log(proxy)
     console.log(data)
     console.log(email)
     console.log(address)
+    console.log(cep)
     console.log('IP: ' + ip.data)
 
     console.log('Fez todas as requisições necessára à API')
@@ -181,7 +185,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 10000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 15000));
-        const addressApi = await Address(pageBetano, address);
+        const addressApi = await Address(pageBetano, cep);
         await new Promise(resolve => setTimeout(resolve, 5000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 20000));
