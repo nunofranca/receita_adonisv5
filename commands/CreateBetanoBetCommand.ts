@@ -116,7 +116,7 @@ export default class TestPixSimple extends BaseCommand {
     const ip = await axios.get('https://ipv4.icanhazip.com', {httpsAgent: agent})
 
 
-    const account = await axios.get(url + '/api/account/'+ip, {httpsAgent: agent})
+    const account = await axios.get(url + '/api/account/'+ip.data, {httpsAgent: agent})
 
     if(account.data){
       console.log('IP ja usado: '+ ip.data)
@@ -125,6 +125,22 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const data = proxy.user.datas[0];
+    async function generateUsername(data) {
+      const asciiName = data.replace(/[^\x00-\x7F]/g, ''); // Remove caracteres não ASCII
+      const baseName = asciiName.split(' ')[0].toLowerCase();
+      const randomString = Math.random().toString(36).substring(2, 5);
+      const randomNumber = Math.floor(Math.random() * 10);
+      let username = `${baseName}${randomString}${randomNumber}`;
+      if (username.length > 12) {
+        username = username.substring(0, 12);
+      }
+
+      return username;
+    }
+
+    const username = await generateUsername(data.name)
+
+
 
     const addressReq = await axios.get(url + '/api/address');
 
@@ -199,8 +215,8 @@ export default class TestPixSimple extends BaseCommand {
         await pageBetano.keyboard.press('Backspace');
         console.log('Deletou o username padrão')
         await new Promise(resolve => setTimeout(resolve, 2000))
-        await pageBetano.type('#username', data.username)
-        console.log('Adicinou o useraname: ' + data.username)
+        await pageBetano.type('#username',  username)
+        console.log('Adicinou o useraname: ' +  username)
         // const username = await page.evaluate(selector => {
         //   return document.querySelector(selector).value;
         // }, '#username');
@@ -243,11 +259,11 @@ export default class TestPixSimple extends BaseCommand {
         const account = await axios.post(
           url + '/api/account',
           {
-            ip: ip,
+            ip: ip.data,
             password: 'Money4Life#',
             useragent: randomUserAgentBetano ?? 'Sem informação',
             user_id: data.user_id,
-            username: data.username,
+            username: username,
             data: data,
             email: email,
             address: {
@@ -290,6 +306,7 @@ export default class TestPixSimple extends BaseCommand {
       // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
     }
+
 
 
     async function buttonNext(page) {
