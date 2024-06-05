@@ -126,12 +126,15 @@ export default class TestPixSimple extends BaseCommand {
         }
 
 
-       const browser = await Launch(proxy)
+        const browser = await Launch(proxy)
 
         try {
 
-            await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)
-            await new Promise(resolve => setTimeout(resolve, 30000));
+            if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+                await browser.close()
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 5000));
             await LoginGoogle(email, data, proxy, browser)
 
             await new Promise(resolve => setTimeout(resolve, 30000));
@@ -144,24 +147,24 @@ export default class TestPixSimple extends BaseCommand {
 
                 await pageBetano.setUserAgent(randomUserAgentBetano);
 
-
                 await AuthProxy(proxy, pageBetano)
+
 
                 await ConfigPage(pageBetano)
                 await new Promise(resolve => setTimeout(resolve, 7000));
                 await Login(pageBetano, browser)
 
-                await new Promise(resolve => setTimeout(resolve, 30000));
+                await new Promise(resolve => setTimeout(resolve, 20000));
 
                 await BasicData(pageBetano, data, url, browser)
 
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 await ButtonNextBetano(pageBetano)
-                await new Promise(resolve => setTimeout(resolve, 30000));
-                const addressApi = await Address(pageBetano, address, url);
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                await new Promise(resolve => setTimeout(resolve, 15000));
+                const addressApi = await Address(pageBetano, address, url, proxy);
+                await new Promise(resolve => setTimeout(resolve, 5000));
                 await ButtonNextBetano(pageBetano)
-                await new Promise(resolve => setTimeout(resolve, 30000));
+                await new Promise(resolve => setTimeout(resolve, 20000));
 
                 console.log('Clicou no botão para a próxima pagina')
 
@@ -181,7 +184,7 @@ export default class TestPixSimple extends BaseCommand {
                 await pageBetano.waitForSelector('input[type="password"]', {visible: true});
                 await pageBetano.type('input[type="password"]', 'Money4Life#')
                 console.log('Adicinou a senha')
-                await new Promise(resolve => setTimeout(resolve, 30000));
+                await new Promise(resolve => setTimeout(resolve, 10000));
 
                 await ButtonNextBetano(pageBetano)
                 console.log('Clicou no botão para a próxima pagina')
@@ -195,24 +198,23 @@ export default class TestPixSimple extends BaseCommand {
                 }
 
 
-                await new Promise(resolve => setTimeout(resolve, 8000));
+                await new Promise(resolve => setTimeout(resolve, 10000));
+
                 await pageBetano.evaluate(() => {
-                    const buttonRegister = Array.from(document.querySelectorAll('button'));
-                    const register = buttonRegister.find(regis => {
-                        const span = regis.querySelector('span');
-                        // @ts-ignore
-                        return span && span.textContent.trim() === 'REGISTRAR';
-                    });
+                    console.log('Entrou no componente que aperta o botão de próximo');
+                    const buttons = Array.from(document.querySelectorAll('button'));
+                    const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
 
-                    if (register) {
-                        register.click();
-                        console.log('Clicou no botao de registrar')
-
-
+                    if (registerButton) {
+                        registerButton.click();
+                        console.log('Clicou no botão de registrar');
                     } else {
-                        console.error('Botão "PRÓXIMA" não encontrado.');
+                        console.error('Botão "REGISTRAR" não encontrado.');
                     }
                 });
+
+                await new Promise(resolve => setTimeout(resolve, 30000));
+
                 await new Promise(resolve => setTimeout(resolve, 15000));
                 console.log(randomUserAgentBetano);
                 const account = await axios.post(

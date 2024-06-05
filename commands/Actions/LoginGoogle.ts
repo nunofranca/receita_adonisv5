@@ -3,13 +3,15 @@ import userAgents from "../../userAgents";
 import NoteLogin from "./NoteLogin";
 import ButtonNext from "./ButtonNext";
 import RandomUserAgent from "./RandomUserAgent";
+import AuthProxy from "./Betano/AuthProxy";
 
 
 
 const LoginGoogle = async (email, data, proxy, browser) => {
-  console.log('Entrou no componente que loga no google')
-  const pageGoogle = await browser.newPage();
 
+  console.log('Entrou no componente que loga no google')
+  const page = await browser.newPage();
+  await AuthProxy(proxy, page)
   // Aumentar tempos de espera padrão
   await page.setDefaultNavigationTimeout(60000);
   await page.setDefaultTimeout(60000);
@@ -43,17 +45,19 @@ const LoginGoogle = async (email, data, proxy, browser) => {
   await page.type('#identifierId', email.email)
   console.log('Adicionou a email principal: ' + email.email)
   await randomMouseMovePopup();
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 3000));
   await ButtonNext(page)
+  await new Promise(resolve => setTimeout(resolve, 12000));
 
 
   await randomMouseMovePopup();
   await NoteLogin(page, browser)
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
   await page.waitForSelector('#password', {visible: true});
 
   await page.type('#password', email.password);
   console.log('Adicionou a senha do email: ' + email.password)
+  await new Promise(resolve => setTimeout(resolve, 3000));
   await randomMouseMovePopup();
 // Esperar pelo carregamento dos divs
   await ButtonNext(page)
