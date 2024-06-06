@@ -51,7 +51,7 @@ const LoginGoogle = async (email, data, proxy, browser) => {
 
   await randomMouseMovePopup();
   await NoteLogin(page, browser)
-
+  await new Promise(resolve => setTimeout(resolve, 5000));
   await page.waitForSelector('#password', {visible: true});
 
   await page.type('#password', email.password);
