@@ -105,7 +105,7 @@ export default class TestPixSimple extends BaseCommand {
       username: 'PSqAoBQrU9fCnfiX',
       password: 'Nuno1201_country-br'
     }
-    if (await VerifyCpfAndEmailInBetanoChecker(response.data,'nunotestestte@gmail.com', browser,proxy, 'https://app-54786.dc-sp-1.absamcloud.com')) {
+    if (await VerifyCpfAndEmailInBetanoChecker(response,'nunotestestte@gmail.com', browser,proxy, 'https://app-54786.dc-sp-1.absamcloud.com')) {
       await browser.close()
       return;
     }

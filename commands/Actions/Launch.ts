@@ -10,7 +10,7 @@ const Launch = async () => {
         //executablePath: '/usr/bin/chromium-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: true,
+        headless: false,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
             '--proxy-server=http://geo.iproyal.com:12321',
