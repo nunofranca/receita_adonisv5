@@ -12,7 +12,7 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
 
-    await page.waitForSelector('span');
+    await page.waitForSelector('span', {timeout:30000});
 
     // Encontrar todos os elementos <span> e procurar pelo texto desejado
     const spans = await page.$$('span');
@@ -33,7 +33,7 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     }
 
 
-    await page.waitForSelector('#tax-number');
+    await page.waitForSelector('#tax-number', {timeout:30000});
     await page.type('#tax-number', data.cpf);
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 2000));
