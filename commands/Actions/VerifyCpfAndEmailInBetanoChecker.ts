@@ -47,7 +47,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 3000));
     const cpfExist = await page.evaluate(() => {
-      return document.body.innerText.includes('Este CPF já existe');
+      return document.body.innerText.includes('Este CPF já existe') || document.body.innerText.includes('Este CPF não é válido');
     });
     if (cpfExist) {
       console.log('CPF já existe: ', cpfExist);
