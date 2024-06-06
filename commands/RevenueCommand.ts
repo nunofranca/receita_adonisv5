@@ -36,7 +36,7 @@ export default class RevenueCommand extends BaseCommand {
 
     try {
 
-      const url = 'https://consultaxservice.online/api/getStatusNull';
+      const url = 'https://https://app-54786.dc-sp-1.absamcloud.com/api/data';
       console.log(url)
 
       this.check = await axios.get(url)
@@ -105,7 +105,7 @@ export default class RevenueCommand extends BaseCommand {
 
 
           console.log('Data de nascimento divergente ou nao encontrado na base');
-          await axios.delete(`https://consultaxservice.online/api/revenue/${check.id}`)
+          await axios.delete(`https://https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
           await browser.close();
 
         } catch (error) {
@@ -134,9 +134,8 @@ export default class RevenueCommand extends BaseCommand {
         // @ts-ignore
 
         try {
-          const response = await axios.put(`https://consultaxservice.online/api/updateRevenueStatusNull/${check.id}`, {
-            'name': valores[1],
-            'status': valores[3],
+          const response = await axios.put(`https://https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+            'revenue': valores[3] == ' REGULAR',
 
           })
           // @ts-ignore
