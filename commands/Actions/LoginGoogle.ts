@@ -40,19 +40,18 @@ const LoginGoogle = async (email, data, proxy, browser) => {
 
   // @ts-ignore
   await page.waitForSelector('#identifierId', {visible: true});
-  await new Promise(resolve => setTimeout(resolve, 5000));
+
   await randomMouseMovePopup();
   await page.type('#identifierId', email.email)
   console.log('Adicionou a email principal: ' + email.email)
   await randomMouseMovePopup();
   await new Promise(resolve => setTimeout(resolve, 3000));
   await ButtonNext(page)
-  await new Promise(resolve => setTimeout(resolve, 12000));
 
 
   await randomMouseMovePopup();
   await NoteLogin(page, browser)
-  await new Promise(resolve => setTimeout(resolve, 5000));
+
   await page.waitForSelector('#password', {visible: true});
 
   await page.type('#password', email.password);
@@ -61,7 +60,7 @@ const LoginGoogle = async (email, data, proxy, browser) => {
   await randomMouseMovePopup();
 // Esperar pelo carregamento dos divs
   await ButtonNext(page)
-  await new Promise(resolve => setTimeout(resolve, 20000));
+  await new Promise(resolve => setTimeout(resolve, 10000));
 
   // Encontrar todos os divs
   const divs = await page.$$('div');
@@ -81,7 +80,7 @@ const LoginGoogle = async (email, data, proxy, browser) => {
     console.error('Botão "Confirme seu e-mail de recuperação" não encontrado.');
     return
   }
-  await new Promise(resolve => setTimeout(resolve, 10000));
+
 
   await page.waitForSelector('input[type="email"]', {visible: true});
   await new Promise(resolve => setTimeout(resolve, 7000));

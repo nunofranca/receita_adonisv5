@@ -12,6 +12,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
 
 
   await page.waitForSelector('span', {timeout: 30000});
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Encontrar todos os elementos <span> e procurar pelo texto desejado
   const spans = await page.$$('span');

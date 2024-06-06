@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer-extra";
 
-const Launch = async () => {
+const Launch = async (proxy) => {
+  console.log(proxy)
     return await puppeteer.launch({
         env: {
           DISPLAY: ":0"
@@ -13,7 +14,7 @@ const Launch = async () => {
         headless: true,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
-            '--proxy-server=http://geo.iproyal.com:12321',
+            '--proxy-server=http://' + proxy.proxy,
             // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
             '--start-maximized',
             '--no-sandbox',

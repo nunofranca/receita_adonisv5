@@ -108,6 +108,10 @@ export default class TestPixSimple extends BaseCommand {
     const proxyReq = await axios.get(url + '/api/proxy');
 
     const proxy = proxyReq.data;
+    if (Object.keys(proxy).length == 0) {
+      console.log('Sem proxy');
+      return
+    }
 
 
     const proxyIpConsult = 'http://' + proxy.username + ':' + proxy.password + '@' + proxy.proxy;
@@ -144,6 +148,9 @@ export default class TestPixSimple extends BaseCommand {
 
     const addressReq = await axios.get(url + '/api/address');
 
+    if(proxy.slug === 'undefined') {
+      return
+    }
     const cepReq =  await axios.get(url + '/api/cep/' + proxy.slug);
     const cep = cepReq.data
 
@@ -169,6 +176,7 @@ export default class TestPixSimple extends BaseCommand {
     const browser = await Launch(proxy)
 
     try {
+
 
       if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
         await browser.close()

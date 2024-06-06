@@ -93,19 +93,18 @@ export default class TestPixSimple extends BaseCommand {
   public async run() {
 
 
-    const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data')
+    const proxy = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/proxy')
+    const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data/'+proxy.data.user_id)
     if (Object.keys(response.data).length == 0) {
       console.log('Sem dados');
       return
     }
 
-    const browser = await Launch()
+    const browser = await Launch(proxy.data)
 
-    const proxy = {
-      username: 'PSqAoBQrU9fCnfiX',
-      password: 'Nuno1201_country-br'
-    }
-    if (await VerifyCpfAndEmailInBetanoChecker(response,'nunotestestte@gmail.com', browser,proxy, 'https://app-54786.dc-sp-1.absamcloud.com')) {
+
+    // @ts-ignore
+    if (await VerifyCpfAndEmailInBetanoChecker(response,'nunotestestte@gmail.com', browser,proxy.data, 'https://app-54786.dc-sp-1.absamcloud.com')) {
       await browser.close()
       return;
     }

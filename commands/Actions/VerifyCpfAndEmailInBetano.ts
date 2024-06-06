@@ -11,8 +11,8 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     await page.goto('https://brbetano.com/register', {timeout: 180000});
     console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    await page.waitForSelector('span');
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  await page.waitForSelector('span', {timeout: 30000});
 
     // Encontrar todos os elementos <span> e procurar pelo texto desejado
     const spans = await page.$$('span');
@@ -33,7 +33,7 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     }
 
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
+  await page.waitForSelector('#tax-number', {timeout: 30000});
     await page.type('#tax-number', data.cpf);
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -54,7 +54,7 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
         });
         console.log('CPF não está cadastrado na Betano');
     }
-    new Promise(resolve => setTimeout(resolve, 2000));
+
 
     page.type('#email', email.email);
     console.log('Digitou o email');

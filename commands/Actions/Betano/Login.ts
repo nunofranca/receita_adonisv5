@@ -1,11 +1,9 @@
-
 import NoteLogin from "../NoteLogin";
-
 
 
 const Login = async (page, browser) => {
   console.log('Entrou no componente que loga a betano')
-  await new Promise(resolve => setTimeout(resolve, 30000));
+  await page.waitForSelector('span', {timeout: 30000});
 
   const spans = await page.$$('span');
 
@@ -17,25 +15,39 @@ const Login = async (page, browser) => {
       console.log('Clicou para logar com email');
       break;
     }
-  }
+  }  await new Promise(resolve => setTimeout(resolve, 5000));
 
+  await page.close()
 
-  const pages = await browser.pages();
+  // const pages = await browser.pages();
+  // const popup = pages[pages.length - 1];
 
-  const popup = pages[pages.length - 1]
-
-
-  console.log('Abriu popup do google pra logar')
-  await page.setExtraHTTPHeaders({
-    'accept-language': 'pt-BR,pt;q=0.9',
-  });
+  // console.log('Número de páginas abertas: ', pages.length);
+  // console.log('Página principal: ', pages[0].url());
+  // console.log('Popup: ', popup.url());
+  //
+  // if (popup) {
+  //   console.log('Abriu popup do google pra logar');
+  //   await popup.setExtraHTTPHeaders({
+  //     'accept-language': 'pt-BR,pt;q=0.9',
+  //   });
 
   await new Promise(resolve => setTimeout(resolve, 15000));
-  await NoteLogin(popup, browser)
+  await NoteLogin(page, browser);
   await new Promise(resolve => setTimeout(resolve, 5000));
-  await popup.keyboard.press('Tab');
-  await popup.keyboard.press('Tab');
-  await popup.keyboard.press('Enter');
+
+  // Focar no popup antes de realizar ações de teclado
+  // await popup.bringToFront();
+
+  // Verificar se o popup está focado
+  // const isPopupFocused = await popup.evaluate(() => document.hasFocus());
+  // console.log('Popup está focado: ', isPopupFocused);
+
+
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+
 
   console.log('Selecionou o email e apertou enter')
 
@@ -43,7 +55,7 @@ const Login = async (page, browser) => {
   const spansContinue = await page.$$('span');
 
   for (let next of spansContinue) {
-    const text= await page.evaluate(element => element.textContent.trim(), next);
+    const text = await page.evaluate(element => element.textContent.trim(), next);
     if (text === 'Continue') {
       console.log('antes de clicar no botão de continue para logar');
       await next.click();
@@ -55,6 +67,6 @@ const Login = async (page, browser) => {
   //await NoteLogin(popup, browser)
 
   console.log('FIM do componente que loga a betano')
-
+  await page.goto('https://br.betano.com/register/')
 }
 export default Login
