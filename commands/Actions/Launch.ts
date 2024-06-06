@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 
 const Launch = async (proxy) => {
-  console.log(proxy)
+
     return await puppeteer.launch({
         env: {
           DISPLAY: ":0"
