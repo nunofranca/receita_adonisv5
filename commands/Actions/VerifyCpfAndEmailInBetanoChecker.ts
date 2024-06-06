@@ -30,7 +30,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   if (!found) {
     console.error('Botão "Registrar com email" não encontrado.');
   }
-  await page.waitForSelector('#tax-number', {timeout: 30000});
+  await page.waitForSelector('#tax-number', {timeout: 60000});
 
   for (const [index, data] of Object.entries(response.data)) {
     await page.click('#tax-number');
