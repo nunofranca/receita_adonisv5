@@ -3,7 +3,7 @@ import AuthProxy from "./Betano/AuthProxy";
 
 
 const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
-    console.log('Entrou no componente que verifica se ja tem conta')
+
 
 
     const page = await browser.newPage()
@@ -33,8 +33,6 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     }
 
 
-
-    console.log(data)
     await page.waitForSelector('#tax-number');
     await page.type('#tax-number', data.cpf);
     console.log('Digitou o CPF');
@@ -62,6 +60,8 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
 
     console.log('Email e CPF disponíveis para cadastro');
     console.log('FIM componente que verifica se ja tem conta')
+
+  console.log('******************************************')
     return false;
 }
 
