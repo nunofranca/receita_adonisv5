@@ -59,7 +59,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
       await axios.put(`${url}/api/data/${data.id}`, {
         betano: true
       });
-      console.log('CPF não está cadastrado na Betano');
+      console.log(`${data.cpf} não está cadastrado na Betano`);
     }
     new Promise(resolve => setTimeout(resolve, 2000));
 
