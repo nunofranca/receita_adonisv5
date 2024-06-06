@@ -95,7 +95,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const apiUrls = [
       'https://botbetano.com.br',
-      //'https://app-54653.dc-us-1.absamcloud.com'
+      'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
     function getRandomUrl(urls) {

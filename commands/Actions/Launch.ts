@@ -1,19 +1,19 @@
 import puppeteer from "puppeteer-extra";
 
-const Launch = async (proxy) => {
+const Launch = async () => {
     return await puppeteer.launch({
         env: {
-          DISPLAY: ":10"
+          DISPLAY: ":0"
         },
         // userDataDir: '../profiles/dateBirth',
         executablePath: '/usr/bin/microsoft-edge',
         //executablePath: '/usr/bin/chromium-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: false,
+        headless: true,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
-            '--proxy-server=http://' + proxy.proxy,
+            '--proxy-server=http://geo.iproyal.com:12321',
             // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
             '--start-maximized',
             '--no-sandbox',
