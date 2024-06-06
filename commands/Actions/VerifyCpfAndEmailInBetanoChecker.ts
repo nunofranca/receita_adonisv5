@@ -54,7 +54,6 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
         betano: false
       });
       console.log(`${data.cpf} já possui cadastro na betano`);
-      await browser.close();
 
     } else {
       await axios.put(`${url}/api/data/${data.id}`, {
@@ -64,13 +63,10 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     }
     new Promise(resolve => setTimeout(resolve, 2000));
 
-
-    console.log('Email e CPF disponíveis para cadastro');
-    console.log('FIM componente que verifica se ja tem conta')
-
     console.log('******************************************')
 
   }
+  await browser.close();
   return;
 }
 
