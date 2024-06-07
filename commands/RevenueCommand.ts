@@ -145,8 +145,9 @@ export default class RevenueCommand extends BaseCommand {
          //    'dateBirth': this.formatDate(check.dateBirth),
          //
          //  })
-          console.log(this.formatCPF(check.cpf))
-          console.log(this.formatDate(check.dateBirth))
+          console.log(valores[3] == 'REGULAR')
+          console.log(await this.formatCPF(check.cpf))
+          console.log(await  this.formatDate(check.dateBirth))
 
         } catch (error) {
           console.log(error)
