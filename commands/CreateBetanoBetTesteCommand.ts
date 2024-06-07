@@ -95,7 +95,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const proxy = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/proxy')
     console.log(proxy.data)
-    const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data/'+proxy.data.user_id+'/revenue')
+    const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data/'+proxy.data.user_id+'/betano')
     if (Object.keys(response.data).length == 0) {
       console.log('Sem dados');
       return
