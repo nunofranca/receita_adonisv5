@@ -83,7 +83,7 @@ export default class RevenueCommand extends BaseCommand {
 
 
       // @ts-ignore
-      await page.type('input[name="txtCPF"]', this.formatCPF(check.cpf));
+      await page.type('input[name="txtCPF"]', await this.formatCPF(check.cpf));
       // @ts-ignore
       await page.type('input[name="txtDataNascimento"]', await this.formatDate(check.dateBirth));
 
