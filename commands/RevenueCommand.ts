@@ -87,11 +87,11 @@ export default class RevenueCommand extends BaseCommand {
       // @ts-ignore
       await page.type('input[name="txtDataNascimento"]', await this.formatDate(check.dateBirth));
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       await page.click('#hcaptcha');
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       await page.click('#id_submit');
 
