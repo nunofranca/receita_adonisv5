@@ -139,11 +139,13 @@ export default class RevenueCommand extends BaseCommand {
 
         try {
           // @ts-ignore
-          await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+         const response =  await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
             'revenue': valores[3] == 'REGULAR',
             'cpf': this.formatCPF(check.cpf),
+            'dateBirth': this.formatDate(check.dateBirth),
 
           })
+          console.log(response.data)
 
         } catch (error) {
           console.log(error)
