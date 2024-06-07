@@ -132,34 +132,15 @@ export default class RevenueCommand extends BaseCommand {
           return
         }
 
-        console.log(valores[0], valores[1], valores[3])
+        console.log(valores[0] +'-'+valores[1]+'-'+valores[3])
         // @ts-ignore
 
         try {
-          const response = await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+          await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
             'revenue': valores[3] == 'REGULAR',
 
           })
-          // @ts-ignore
-          console.log(`Iteração ${index}: Bem sucedida (BUSCA DO STATUS NA RECEITA)`);
-          console.log('');
-          console.log('DADOS TESTADOS');
-          console.log('CPF: ' + response.data.cpf)
-          console.log('Nome: ' + response.data.name)
-          console.log('DN: ' + response.data.dateBirth)
-          console.log('Status: ' + response.data.status)
-          console.log('');
-          if (response.data.upload) {
-            console.log('DADOS DO USUÁRIO');
-            console.log(`Nome: ${response.data.upload.user.name}`);
-            console.log(`Crédito: ${response.data.upload.user.credit}`);
-            console.log('');
-            console.log('DADOS DO UPLOAD');
-            console.log(`Nome: ${response.data.upload.name}`);
-            console.log(`Tipo de pagamento: ${response.data.upload.typePayment}`);
-            console.log(`Casa de teste: ${response.data.upload.homeBet}`);
-          }
-          console.log('---------------------------------------------------------')
+
         } catch (error) {
           console.log(error)
         }
