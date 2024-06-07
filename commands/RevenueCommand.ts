@@ -133,6 +133,8 @@ export default class RevenueCommand extends BaseCommand {
         }
 
         console.log(valores[0] +' - '+valores[1]+' - '+valores[3])
+        console.log()
+        console.log('***********************************************************')
         // @ts-ignore
 
         try {
@@ -171,7 +173,7 @@ export default class RevenueCommand extends BaseCommand {
     let cpf = cpfString.replace(/\D/g, '');
 
     // Adiciona zeros à esquerda, se necessário, para garantir que tenha 11 dígitos
-    console.log('cpf alterado: '+ cpf.padStart(11, '0'))
+
     return cpf.padStart(11, '0');
   }
   async formatDate(dateString) {
