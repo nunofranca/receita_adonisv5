@@ -58,10 +58,10 @@ export default class RevenueCommand extends BaseCommand {
 
       try {
         browser = await puppeteer.launch({
-          userDataDir: '../profiles/revenueStatus',
+
           slowMo: 10,
           defaultViewport: null,
-         //headless: false
+         headless: false
         });
       } catch (error) {
         browser = await puppeteer.launch({
