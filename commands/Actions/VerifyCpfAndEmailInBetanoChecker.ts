@@ -42,8 +42,8 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     await page.keyboard.up('Control');
 
     await page.keyboard.press('Backspace');
-
-    await page.type('#tax-number', data.cpf);
+    console.log('DATA DE NASCIMENT: '+ await formatCPF(data.cpf))
+    await page.type('#tax-number', await formatCPF(data.cpf));
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 3000));
     const cpfExist = await page.evaluate(() => {
@@ -70,5 +70,15 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   await browser.close();
   return;
 }
+
+async function formatCPF(cpfString) {
+  // Remove qualquer caractere que não seja número
+  let cpf = cpfString.replace(/\D/g, '');
+
+  // Adiciona zeros à esquerda, se necessário, para garantir que tenha 11 dígitos
+
+  return cpf.padStart(11, '0');
+}
+
 
 export default VerifyCpfAndEmailInBetano
