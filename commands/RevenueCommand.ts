@@ -83,7 +83,7 @@ export default class RevenueCommand extends BaseCommand {
 
 
       // @ts-ignore
-      await page.type('input[name="txtCPF"]', check.cpf);
+      await page.type('input[name="txtCPF"]', this.formatCPF(check.cpf));
       // @ts-ignore
       await page.type('input[name="txtDataNascimento"]', await this.formatDate(check.dateBirth));
 
@@ -132,12 +132,14 @@ export default class RevenueCommand extends BaseCommand {
           return
         }
 
-        console.log(valores[0] +'-'+valores[1]+'-'+valores[3])
+        console.log(valores[0] +' - '+valores[1]+' - '+valores[3])
         // @ts-ignore
 
         try {
+          // @ts-ignore
           await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
             'revenue': valores[3] == 'REGULAR',
+            'cpf': this.formatCPF(check.cpf),
 
           })
 
@@ -164,7 +166,13 @@ export default class RevenueCommand extends BaseCommand {
     }
     console.log('Contagem regressiva concluída.');
   }
+  async  formatCPF(cpfString) {
+    // Remove qualquer caractere que não seja número
+    let cpf = cpfString.replace(/\D/g, '');
 
+    // Adiciona zeros à esquerda, se necessário, para garantir que tenha 11 dígitos
+    return cpf.padStart(11, '0');
+  }
   async formatDate(dateString) {
     let [day, month, year] = dateString.split('/');
     day = day.padStart(2, '0');
