@@ -120,15 +120,21 @@ export default class TestPixSimple extends BaseCommand {
     const ip = await axios.get('https://ipv4.icanhazip.com', {httpsAgent: agent})
 
 
-    const account = await axios.get(url + '/api/account/'+ip.data, {httpsAgent: agent})
+    const account = await axios.get(url + '/api/account/' + ip.data, {httpsAgent: agent})
 
-    if(account.data){
-      console.log('IP ja usado: '+ ip.data)
+    if (account.data) {
+      console.log('IP ja usado: ' + ip.data)
       return
     }
 
 
+    if (Object.keys(proxy.user.datas).length === 0) {
+      console.log('Sem registro para verirficar')
+      return
+
+    }
     const data = proxy.user.datas[0];
+
     async function generateUsername(data) {
       const asciiName = data.replace(/[^\x00-\x7F]/g, ''); // Remove caracteres não ASCII
       const baseName = asciiName.split(' ')[0].toLowerCase();
@@ -145,16 +151,15 @@ export default class TestPixSimple extends BaseCommand {
     const username = await generateUsername(data.name)
 
 
-
     const addressReq = await axios.get(url + '/api/address');
 
-    if(proxy.slug === 'undefined') {
+    if (proxy.slug === 'undefined') {
       return
     }
-    const cepReq =  await axios.get(url + '/api/cep/' + proxy.slug);
+    const cepReq = await axios.get(url + '/api/cep/' + proxy.slug);
     const cep = cepReq.data
 
-    const email =proxy.user.emails[0];
+    const email = proxy.user.emails[0];
     const address = addressReq.data;
     console.log(proxy)
     console.log(data)
@@ -223,8 +228,8 @@ export default class TestPixSimple extends BaseCommand {
         await pageBetano.keyboard.press('Backspace');
         console.log('Deletou o username padrão')
         await new Promise(resolve => setTimeout(resolve, 2000))
-        await pageBetano.type('#username',  username)
-        console.log('Adicinou o useraname: ' +  username)
+        await pageBetano.type('#username', username)
+        console.log('Adicinou o useraname: ' + username)
         // const username = await page.evaluate(selector => {
         //   return document.querySelector(selector).value;
         // }, '#username');
@@ -314,7 +319,6 @@ export default class TestPixSimple extends BaseCommand {
       // console.log('Cookies after deletion:', cookiesAfterBetano);
       await browser.close()
     }
-
 
 
     async function buttonNext(page) {
