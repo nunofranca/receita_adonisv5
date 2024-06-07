@@ -55,32 +55,30 @@ export default class RevenueCommand extends BaseCommand {
 
 
       let browser;
-      const headless = true;
-      try {
-        browser = await puppeteer.launch({
-          userDataDir: '../profiles/revenueStatus',
-          slowMo: 10,
-          defaultViewport: null,
-          headless: headless
-        });
-      } catch (error) {
-        try {
-          browser = await puppeteer.launch({
-            userDataDir: '../profiles/revenueStatus2',
-            slowMo: 10,
-            defaultViewport: null,
-            headless: headless
-          });
-        }catch (err){
-          browser = await puppeteer.launch({
-            userDataDir: '../profiles/revenueStatus',
-            slowMo: 10,
-            defaultViewport: null,
-            headless: headless
-          });
-        }
 
-      }
+      browser =  await puppeteer.launch({
+
+        // userDataDir: '../profiles/dateBirth',
+       // executablePath: '/usr/bin/microsoft-edge',
+        //executablePath: '/usr/bin/chromium-browser',
+        slowMo: 10,
+        defaultViewport: null,
+        headless: true,
+        ignoreDefaultArgs: ["--disable-extensions"],
+        args: [
+
+          '--start-maximized',
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          '--window-size=1920x1080',
+          '--disable-features=IsolateOrigins,site-per-process',
+          // '--user-data-dir=../profiles/dateBirth'
+        ],
+      });
+
 
       const page = await browser.newPage();
 
@@ -142,20 +140,20 @@ export default class RevenueCommand extends BaseCommand {
           return
         }
 
-        console.log(valores[0] +' - '+valores[1]+' - '+valores[3])
+        console.log(valores[0] + ' - ' + valores[1] + ' - ' + valores[3])
         console.log(valores[3] == 'REGULAR')
         console.log(await this.formatCPF(check.cpf))
-        console.log(await  this.formatDate(check.dateBirth))
+        console.log(await this.formatDate(check.dateBirth))
         console.log()
         console.log('***********************************************************')
         // @ts-ignore
 
         try {
           // @ts-ignore
-         const response =  await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+          const response = await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
             'revenue': valores[3] == 'REGULAR',
-            'cpf':await this.formatCPF(check.cpf),
-            'dateBirth':await this.formatDate(check.dateBirth),
+            'cpf': await this.formatCPF(check.cpf),
+            'dateBirth': await this.formatDate(check.dateBirth),
 
           })
 
@@ -183,7 +181,8 @@ export default class RevenueCommand extends BaseCommand {
     }
     console.log('Contagem regressiva concluída.');
   }
-  async  formatCPF(cpfString) {
+
+  async formatCPF(cpfString) {
     // Remove qualquer caractere que não seja número
     let cpf = cpfString.replace(/\D/g, '');
 
@@ -191,6 +190,7 @@ export default class RevenueCommand extends BaseCommand {
 
     return cpf.padStart(11, '0');
   }
+
   async formatDate(dateString) {
     let [day, month, year] = dateString.split('/');
     day = day.padStart(2, '0');
