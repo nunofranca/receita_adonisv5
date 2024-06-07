@@ -42,7 +42,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     await page.keyboard.up('Control');
 
     await page.keyboard.press('Backspace');
-    console.log('DATA DE NASCIMENT: '+ await formatCPF(data.cpf))
+
     await page.type('#tax-number', await formatCPF(data.cpf));
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 3000));
