@@ -137,7 +137,7 @@ export default class RevenueCommand extends BaseCommand {
 
         try {
           const response = await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
-            'revenue': valores[3] == ' REGULAR',
+            'revenue': valores[3] == 'REGULAR',
 
           })
           // @ts-ignore
