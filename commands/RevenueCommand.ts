@@ -133,21 +133,22 @@ export default class RevenueCommand extends BaseCommand {
         }
 
         console.log(valores[0] +' - '+valores[1]+' - '+valores[3])
+        console.log(valores[3] == 'REGULAR')
+        console.log(await this.formatCPF(check.cpf))
+        console.log(await  this.formatDate(check.dateBirth))
         console.log()
         console.log('***********************************************************')
         // @ts-ignore
 
         try {
           // @ts-ignore
-         // const response =  await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
-         //    'revenue': valores[3] == 'REGULAR',
-         //    'cpf': this.formatCPF(check.cpf),
-         //    'dateBirth': this.formatDate(check.dateBirth),
-         //
-         //  })
-          console.log(valores[3] == 'REGULAR')
-          console.log(await this.formatCPF(check.cpf))
-          console.log(await  this.formatDate(check.dateBirth))
+         const response =  await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+            'revenue': valores[3] == 'REGULAR',
+            'cpf':await this.formatCPF(check.cpf),
+            'dateBirth':await this.formatDate(check.dateBirth),
+
+          })
+
 
         } catch (error) {
           console.log(error)
