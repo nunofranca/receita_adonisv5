@@ -36,7 +36,7 @@ export default class RevenueCommand extends BaseCommand {
 
     try {
 
-      const url = 'https://https://app-54786.dc-sp-1.absamcloud.com/api/data/betano';
+      const url = 'https://app-54786.dc-sp-1.absamcloud.com/api/data/revenue';
       console.log(url)
 
       this.check = await axios.get(url)
@@ -52,7 +52,7 @@ export default class RevenueCommand extends BaseCommand {
     }
     for (const [index, check] of Object.entries(this.check.data)) {
 
-
+    console.log(check)
       let browser;
 
       try {
