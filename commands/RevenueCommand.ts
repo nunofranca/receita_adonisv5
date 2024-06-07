@@ -84,7 +84,7 @@ export default class RevenueCommand extends BaseCommand {
       // @ts-ignore
       await page.type('input[name="txtCPF"]', check.cpf);
       // @ts-ignore
-      await page.type('input[name="txtDataNascimento"]', await this.formatDateBirth(check.dateBirth));
+      await page.type('input[name="txtDataNascimento"]', check.dateBirth);
 
       await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -168,10 +168,10 @@ export default class RevenueCommand extends BaseCommand {
 
   }
 
-  async formatDateBirth(data) {
-    const partes = data.split('-');
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-  }
+  // async formatDateBirth(data) {
+  //   const partes = data.split('-');
+  //   return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  // }
 
   async countdown(minutes) {
     for (let i = minutes; i > 0; i--) {
