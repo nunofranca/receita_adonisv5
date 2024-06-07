@@ -77,7 +77,7 @@ export default class RevenueCommand extends BaseCommand {
       await page.goto('https://servicos.receita.fazenda.gov.br/Servicos/CPF/ConsultaSituacao/ConsultaPublica.asp', {timeout: 120000});
       await page.setViewport({width: 1080, height: 1024});
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+
       await page.waitForSelector('input[name="txtCPF"]', {timeout: 0});
       await page.waitForSelector('input[name="txtDataNascimento"]', {timeout: 0});
 
@@ -85,7 +85,7 @@ export default class RevenueCommand extends BaseCommand {
       // @ts-ignore
       await page.type('input[name="txtCPF"]', check.cpf);
       // @ts-ignore
-      await page.type('input[name="txtDataNascimento"]', check.dateBirth);
+      await page.type('input[name="txtDataNascimento"]', await  this.formatDate(check.dateBirth));
 
       await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -181,5 +181,11 @@ export default class RevenueCommand extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 60000)); // Espera 1 minuto
     }
     console.log('Contagem regressiva concluída.');
+  }
+  async  formatDate(dateString) {
+    let [day, month, year] = dateString.split('/');
+    day = day.padStart(2, '0');
+    month = month.padStart(2, '0');
+    return `${day}/${month}/${year}`;
   }
 }
