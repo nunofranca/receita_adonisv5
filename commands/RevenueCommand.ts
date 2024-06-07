@@ -61,7 +61,7 @@ export default class RevenueCommand extends BaseCommand {
           userDataDir: '../profiles/revenueStatus',
           slowMo: 10,
           defaultViewport: null,
-         headless: false
+          headless: false
         });
       } catch (error) {
         browser = await puppeteer.launch({
@@ -85,7 +85,7 @@ export default class RevenueCommand extends BaseCommand {
       // @ts-ignore
       await page.type('input[name="txtCPF"]', check.cpf);
       // @ts-ignore
-      await page.type('input[name="txtDataNascimento"]', await  this.formatDate(check.dateBirth));
+      await page.type('input[name="txtDataNascimento"]', await this.formatDate(check.dateBirth));
 
       await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -106,7 +106,7 @@ export default class RevenueCommand extends BaseCommand {
 
 
           console.log('Data de nascimento divergente ou nao encontrado na base');
-          await axios.delete(`https://https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
+          await axios.delete(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
           await browser.close();
 
         } catch (error) {
@@ -128,14 +128,15 @@ export default class RevenueCommand extends BaseCommand {
         if (!valores[0] || !valores[1] || !valores[3]) {
 
           console.log('Valores indefinidos')
+          console.log('Valores indefinidos')
           return
         }
 
-
+        console.log(valores[0], valores[1], valores[3])
         // @ts-ignore
 
         try {
-          const response = await axios.put(`https://https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+          const response = await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
             'revenue': valores[3] == ' REGULAR',
 
           })
@@ -182,7 +183,8 @@ export default class RevenueCommand extends BaseCommand {
     }
     console.log('Contagem regressiva concluída.');
   }
-  async  formatDate(dateString) {
+
+  async formatDate(dateString) {
     let [day, month, year] = dateString.split('/');
     day = day.padStart(2, '0');
     month = month.padStart(2, '0');
