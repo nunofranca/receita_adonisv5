@@ -55,21 +55,31 @@ export default class RevenueCommand extends BaseCommand {
 
 
       let browser;
-
+      const headless = true;
       try {
         browser = await puppeteer.launch({
-          //userDataDir: '../profiles/revenueStatus',
+          userDataDir: '../profiles/revenueStatus',
           slowMo: 10,
           defaultViewport: null,
-          headless: true
+          headless: headless
         });
       } catch (error) {
-        browser = await puppeteer.launch({
-         // userDataDir: '../profiles/revenueStatu2',
-          slowMo: 10,
-          defaultViewport: null,
-          headless: true
-        });
+        try {
+          browser = await puppeteer.launch({
+            userDataDir: '../profiles/revenueStatus2',
+            slowMo: 10,
+            defaultViewport: null,
+            headless: headless
+          });
+        }catch (err){
+          browser = await puppeteer.launch({
+            userDataDir: '../profiles/revenueStatus',
+            slowMo: 10,
+            defaultViewport: null,
+            headless: headless
+          });
+        }
+
       }
 
       const page = await browser.newPage();
