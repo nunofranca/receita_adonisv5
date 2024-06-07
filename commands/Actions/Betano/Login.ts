@@ -16,7 +16,7 @@ const Login = async (page, browser) => {
       break;
     }
   }
-  await new Promise(resolve => setTimeout(resolve, 5000));
+  await new Promise(resolve => setTimeout(resolve, 10000));
 
 
   const pages = await browser.pages();

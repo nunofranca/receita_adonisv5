@@ -8,13 +8,13 @@ const NotBot = async (page) =>{
     });
 
     // Falsificar plugins
-    Object.defineProperty(navigator, 'plugins', {
-      get: () => [
-        { name: 'Chrome PDF Viewer', filename: 'internal-pdf-viewer', description: 'Portable Document Format' },
-        { name: 'Chrome PDF Plugin', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '' },
-        { name: 'Native Client', filename: 'internal-nacl-plugin', description: '' }
-      ],
-    });
+    // Object.defineProperty(navigator, 'plugins', {
+    //   get: () => [
+    //     { name: 'Chrome PDF Viewer', filename: 'internal-pdf-viewer', description: 'Portable Document Format' },
+    //     { name: 'Chrome PDF Plugin', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '' },
+    //     { name: 'Native Client', filename: 'internal-nacl-plugin', description: '' }
+    //   ],
+    // });
 
     // Falsificar propriedades de idiomas
     Object.defineProperty(navigator, 'languages', {

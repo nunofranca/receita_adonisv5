@@ -1,20 +1,31 @@
 import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
+import RandomClick from "../../../RandonClick";
 
 
-const BasicData = async  (page, data, url, browser) =>{
-  const randomMouseMovePopup = async () => {
-    await page.mouse.move(
-      Math.floor(Math.random() * 800), // Coordenada X aleatória na página
-      Math.floor(Math.random() * 600) // Coordenada Y aleatória na página
-    );
-  };
+const BasicData = async (page, data, url, browser) => {
+
+
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 1280); // Coordenada X aleatória dentro do viewport
+    const y =await  RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x, await y);
+    await page.mouse.click(await x,await y);
+   // Espera aleatória entre 500ms e 2500ms
+  }
   console.log('Etrou no BasicData')
   const date = new Date(data.dateBirth);
   const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
   const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Converte para string e garante dois dígitos
   const year = String(date.getUTCFullYear()); // Converte para string
-  await randomMouseMovePopup();
+
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 987); // Coordenada X aleatória dentro do viewport
+    const y =await  RandomClick(0, 1254);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+     // Espera aleatória entre 500ms e 2500ms
+  }
 
 
   for (let i = 0; i < 5; i++) {
@@ -23,14 +34,14 @@ const BasicData = async  (page, data, url, browser) =>{
 
       // Tentar encontrar o primeiro seletor
       try {
-        await page.waitForSelector('select[name="Day"]', { timeout: 30000 });
+        await page.waitForSelector('select[name="Day"]', {timeout: 30000});
       } catch (e1) {
         console.log('select[name="Day"] não encontrado.');
       }
 
       // Tentar encontrar o segundo seletor
       try {
-        await page.waitForSelector('#day', { timeout: 30000 });
+        await page.waitForSelector('#day', {timeout: 30000});
       } catch (e2) {
         console.log('#day não encontrado.');
       }
@@ -58,12 +69,19 @@ const BasicData = async  (page, data, url, browser) =>{
     return;
   }
 
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 800); // Coordenada X aleatória dentro do viewport
+    const y = await RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+
+  }
   await page.select('select[name="Day"]', day);
   console.log('Adicionou o dia de nascimento ' + day)
   for (let i = 0; i < 5; i++) {
     try {
-      console.log('Tentativa '+ i+1 +' de acha o select Month')
-      await randomMouseMovePopup();
+      console.log('Tentativa ' + i + 1 + ' de acha o select Month')
+
       await page.waitForSelector('select[name="Month"]', {timeout: 30000});
 
     } catch (e) {
@@ -74,20 +92,43 @@ const BasicData = async  (page, data, url, browser) =>{
   await page.select('select[name="Month"]', month);
   console.log('passou do select do month')
   console.log('Adicionou o mês de nascimento ' + month)
-  await randomMouseMovePopup();
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 985); // Coordenada X aleatória dentro do viewport
+    const y = await RandomClick(0, 798);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+
+  }
   await page.waitForSelector('select[name="Year"]', {timeout: 30000});
   await page.select('select[name="Year"]', year);
   console.log('passou do select do year')
   console.log('Adicionou o ano de nascimento ' + year)
-  await randomMouseMovePopup();
-  await page.waitForSelector('#tax-number', {timeout: 30000});
-  await randomMouseMovePopup();
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 1895); // Coordenada X aleatória dentro do viewport
+    const y =  await RandomClick(0, 1458);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+
+  }
+  await page.waitForSelector('#tax-number', {timeout:  await RandomClick(300, 1352)});
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 700); // Coordenada X aleatória dentro do viewport
+    const y =  await RandomClick(0, 878);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+
+  }
   await page.type('#tax-number', data.cpf);
   await new Promise(resolve => setTimeout(resolve, 2000));
   const cpfExist2 = await page.evaluate(() => {
     return document.body.innerText.includes('Este CPF já existe');
   });
-  await randomMouseMovePopup();
+  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+    const x = await  RandomClick(0, 880); // Coordenada X aleatória dentro do viewport
+    const y =  await RandomClick(0, 2541);  // Coordenada Y aleatória dentro do viewport
+    await page.mouse.move(await x,await y);
+    await page.mouse.click(await x,await y);
+  }
   await new Promise(resolve => setTimeout(resolve, 1000));
   if (cpfExist2) {
     console.log('CPF já existe: ', cpfExist2);

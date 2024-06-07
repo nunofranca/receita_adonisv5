@@ -96,7 +96,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const apiUrls = [
       'https://botbetano.com.br',
-     // 'https://app-54653.dc-us-1.absamcloud.com'
+      //'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
     function getRandomUrl(urls) {
@@ -109,24 +109,25 @@ export default class TestPixSimple extends BaseCommand {
     const proxyReq = await axios.get(url + '/api/proxy');
 
     const proxy = proxyReq.data;
+    console.log(proxy)
     if (Object.keys(proxy).length == 0) {
       console.log('Sem proxy');
       return
     }
 
 
-    const proxyIpConsult = 'http://' + proxy.username + ':' + proxy.password + '@' + proxy.proxy;
-    const agent = new HttpsProxyAgent(proxyIpConsult);
-
-    const ip = await axios.get('https://ipv4.icanhazip.com', {httpsAgent: agent})
-
-
-    const account = await axios.get(url + '/api/account/' + ip.data, {httpsAgent: agent})
-
-    if (account.data) {
-      console.log('IP ja usado: ' + ip.data)
-      return
-    }
+    // const proxyIpConsult = 'http://' + proxy.username + ':' + proxy.password + '@' + proxy.proxy;
+    // const agent = new HttpsProxyAgent(proxyIpConsult);
+    //
+    // const ip = await axios.get('http://geo.brdtest.com/mygeo.json', {httpsAgent: agent})
+    // console.log('IP ' + ip.data.geo.city)
+    //
+    // const account = await axios.get(url + '/api/account/' + ip.data, {httpsAgent: agent})
+    //
+    // if (account.data) {
+    //   console.log('IP ja usado: ' + ip.data)
+    //   return
+    // }
 
 
     if (Object.keys(proxy.user.datas).length === 0) {
@@ -157,6 +158,8 @@ export default class TestPixSimple extends BaseCommand {
     if (proxy.slug === 'undefined') {
       return
     }
+    console.log(proxy.slug)
+
     const cepReq = await axios.get(url + '/api/cep/' + proxy.slug);
     const cep = cepReq.data
 
@@ -192,7 +195,7 @@ export default class TestPixSimple extends BaseCommand {
 
         const pageBetano = await browser.newPage()
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-        await  NotBot(pageBetano)
+        //await  NotBot(pageBetano)
         await pageBetano.setUserAgent(randomUserAgentBetano);
 
         await AuthProxy(proxy, pageBetano)
