@@ -68,7 +68,7 @@ export default class RevenueCommand extends BaseCommand {
           userDataDir: '../profiles/revenueStatu2',
           slowMo: 10,
           defaultViewport: null,
-          headless: false
+          headless: true
         });
       }
 
