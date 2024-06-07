@@ -58,7 +58,7 @@ export default class RevenueCommand extends BaseCommand {
 
       try {
         browser = await puppeteer.launch({
-
+          userDataDir: '../profiles/revenueStatus',
           slowMo: 10,
           defaultViewport: null,
          headless: false
@@ -77,7 +77,7 @@ export default class RevenueCommand extends BaseCommand {
       await page.goto('https://servicos.receita.fazenda.gov.br/Servicos/CPF/ConsultaSituacao/ConsultaPublica.asp', {timeout: 120000});
       await page.setViewport({width: 1080, height: 1024});
 
-
+      await new Promise(resolve => setTimeout(resolve, 2000));
       await page.waitForSelector('input[name="txtCPF"]', {timeout: 0});
       await page.waitForSelector('input[name="txtDataNascimento"]', {timeout: 0});
 
