@@ -24,6 +24,7 @@ import Address from "./Actions/Betano/Address";
 import ButtonNextBetano from "./Actions/Betano/ButtonNextBetano";
 import {da} from "@faker-js/faker";
 import {HttpsProxyAgent} from "https-proxy-agent";
+import NotBot from "./NotBot";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -95,7 +96,7 @@ export default class TestPixSimple extends BaseCommand {
 
     const apiUrls = [
       'https://botbetano.com.br',
-      'https://app-54653.dc-us-1.absamcloud.com'
+     // 'https://app-54653.dc-us-1.absamcloud.com'
     ];
 
     function getRandomUrl(urls) {
@@ -161,12 +162,6 @@ export default class TestPixSimple extends BaseCommand {
 
     const email = proxy.user.emails[0];
     const address = addressReq.data;
-    console.log(proxy)
-    console.log(data)
-    console.log(email)
-    console.log(address)
-    console.log(cep)
-    console.log('IP: ' + ip.data)
 
     console.log('Fez todas as requisições necessára à API')
 
@@ -197,7 +192,7 @@ export default class TestPixSimple extends BaseCommand {
 
         const pageBetano = await browser.newPage()
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-
+        await  NotBot(pageBetano)
         await pageBetano.setUserAgent(randomUserAgentBetano);
 
         await AuthProxy(proxy, pageBetano)

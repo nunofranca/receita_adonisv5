@@ -16,6 +16,7 @@ const BasicData = async  (page, data, url, browser) =>{
   const year = String(date.getUTCFullYear()); // Converte para string
   await randomMouseMovePopup();
 
+
   for (let i = 0; i < 5; i++) {
     try {
       console.log('Tentativa ' + (i + 1) + ' de achar o select Day');

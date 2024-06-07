@@ -67,7 +67,7 @@ export default class RevenueCommand extends BaseCommand {
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
-          '--start-maximized',
+          '--start-minimized',
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
