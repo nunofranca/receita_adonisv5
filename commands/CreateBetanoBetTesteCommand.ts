@@ -14,9 +14,10 @@ import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import Xvfb from 'xvfb';
 
-import Launch from "App/CommandActions/Launch";
+import Launch from './CommandActions/Launch'; // Ajuste o caminho relativo conforme a estrutura de pastas
 
-import VerifyCpfAndEmailInBetanoChecker from "App/CommandActions/VerifyCpfAndEmailInBetanoChecker";
+
+import VerifyCpfAndEmailInBetanoChecker from "./CommandActions/VerifyCpfAndEmailInBetanoChecker";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
