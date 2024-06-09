@@ -19,7 +19,7 @@ const Launch = async () => {
         //executablePath: '/usr/bin/chrome-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: false,
+        headless: true,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
