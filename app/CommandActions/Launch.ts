@@ -15,7 +15,9 @@ const Launch = async (proxy) => {
     headless: false,
     ignoreDefaultArgs: ["--disable-extensions"],
     args: [
-      '--proxy-server=http://' + proxy.proxy,
+
+
+  '--proxy-server=http://' + proxy.proxy,
       // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
       // '--start-maximized',
       '--start-minimized',

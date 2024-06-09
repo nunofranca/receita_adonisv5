@@ -46,6 +46,7 @@ export default class GenerateData extends BaseCommand {
       headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
+        '--proxy-server=http://0bec7eb1a8bcde76.zqz.na.pyproxy.io:16666',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -59,6 +60,10 @@ export default class GenerateData extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
+    await page.authenticate({
+      username: 'hee54548-zone-resi-region-br',
+      password: 'gftr5154rt'
+    })
 
     // Navigate the page to a URL
     await page.goto('https://estrelabet.com/register', {
