@@ -35,7 +35,7 @@ export default class GenerateData extends BaseCommand {
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({
       env: {
-        DISPLAY: ":0"
+        DISPLAY: "10.0"
       },
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
