@@ -44,7 +44,7 @@ export default class GenerateData extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         '--proxy-server=http://0bec7eb1a8bcde76.zqz.na.pyproxy.io:16666',
