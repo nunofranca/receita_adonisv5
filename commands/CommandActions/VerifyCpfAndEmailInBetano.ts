@@ -6,7 +6,9 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     console.log('Entrou no componente que verifica se ja tem conta')
     const page = await browser.newPage()
     await AuthProxy(proxy, page)
-    await page.goto('https://brbetano.com/register', {timeout: 180000});
+    await page.goto('https://brbetano.com/register', , {
+        waitUntil: 'networkidle0'
+    });
     console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
     await page.locator('button[data-qa="email"]').click();
 
