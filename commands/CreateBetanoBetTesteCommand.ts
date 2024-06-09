@@ -13,17 +13,9 @@ import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import Xvfb from 'xvfb';
-import VerifyCpfAndEmailInBetano from "App/CommandActions/VerifyCpfAndEmailInBetano";
-import LoginGoogle from "App/CommandActions/LoginGoogle";
+
 import Launch from "App/CommandActions/Launch";
-import AuthProxy from "App/CommandActions/Betano/AuthProxy";
-import ConfigPage from "App/CommandActions/Betano/ConfigPage";
-import Login from "App/CommandActions/Betano/Login";
-import BasicData from "App/CommandActions/Betano/BasicData";
-import Address from "App/CommandActions/Betano/Address";
-import ButtonNextBetano from "App/CommandActions/Betano/ButtonNextBetano";
-import {da} from "@faker-js/faker";
-import {HttpsProxyAgent} from "https-proxy-agent";
+
 import VerifyCpfAndEmailInBetanoChecker from "App/CommandActions/VerifyCpfAndEmailInBetanoChecker";
 
 const xvfb = new Xvfb({
