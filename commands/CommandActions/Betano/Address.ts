@@ -2,17 +2,13 @@ import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 import RandomClick from "../../../RandonClick";
 
-const Address = async (page, cep, phone, addressApi) =>{
+const Address = async (page, cep, address) =>{
 
   console.log('Entrou no Componente de Address')
   console.log(cep.cep)
 
-  await new Promise(resolve => setTimeout(resolve, 20000));
-  console.log('Fez a requisição para pegar o proxy')
-
-  console.log(addressApi)
-
   await new Promise(resolve => setTimeout(resolve, 10000));
+
 
   try {
     for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
@@ -24,8 +20,8 @@ const Address = async (page, cep, phone, addressApi) =>{
     }
     await page.waitForSelector('#street', {visible: true});
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await page.type("#street", addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
-    console.log('Adicionou o nome da rua: ' + addressApi.logradouro.replace(/[^a-zA-Z0-9 ]/g, ''))
+    await page.type("#street", address.street.replace(/[^a-zA-Z0-9 ]/g, ''))
+    console.log('Adicionou o nome da rua: ' + address.street.replace(/[^a-zA-Z0-9 ]/g, ''))
     await new Promise(resolve => setTimeout(resolve, 2000));
     for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
       const x = await  RandomClick(0, 214); // Coordenada X aleatória dentro do viewport
@@ -35,25 +31,25 @@ const Address = async (page, cep, phone, addressApi) =>{
 
     }
     await page.waitForSelector('#city', {visible: true});
-    await page.type("#city", addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
-    console.log('Adicionou a cidade: ' + addressApi.localidade.replace(/[^a-zA-Z0-9 ]/g, ''))
+    await page.type("#city", address.city.replace(/[^a-zA-Z0-9 ]/g, ''))
+    console.log('Adicionou a cidade: ' + address.city.replace(/[^a-zA-Z0-9 ]/g, ''))
 
     await new Promise(resolve => setTimeout(resolve, 2000));
     await page.waitForSelector('#postalcode', {visible: true});
-    await page.type("#postalcode", addressApi.cep)
-    console.log('Adicionou o CEP: ' + addressApi.cep)
+    await page.type("#postalcode", address.postCode)
+    console.log('Adicionou o CEP: ' + address.postCode)
     await new Promise(resolve => setTimeout(resolve, 2000));
     await page.waitForSelector('#mobilePhone', {visible: true});
-    await page.type("#mobilePhone", phone)
+    await page.type("#mobilePhone", address.phone)
 
-    console.log('Adicionou o Telefone: ' + phone)
+    console.log('Adicionou o Telefone: ' + address.phone)
   } catch (error) {
     console.log(error)
   }
 
 
 
-  return addressApi
+  return address
 
 }
 export default Address

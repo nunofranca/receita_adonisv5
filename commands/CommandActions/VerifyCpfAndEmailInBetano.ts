@@ -5,8 +5,8 @@ import AuthProxy from "./Betano/AuthProxy";
 const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
     console.log('Entrou no componente que verifica se ja tem conta')
     const page = await browser.newPage()
-    await AuthProxy(proxy, page)
-    await page.goto('https://brbetano.com/register', , {
+    //await AuthProxy(proxy, page)
+    await page.goto('https://brbetano.com/register',{
         waitUntil: 'networkidle0'
     });
     console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
@@ -52,6 +52,7 @@ const VerifyCpfAndEmailInBetano = async (data, email, browser, proxy, url) => {
         return true
     }
     console.log('FIM componente que verifica se ja tem conta')
+
     return false;
 }
 

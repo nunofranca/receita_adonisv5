@@ -25,6 +25,7 @@ import ButtonNextBetano from "./CommandActions/Betano/ButtonNextBetano";
 import {da} from "@faker-js/faker";
 import {HttpsProxyAgent} from "https-proxy-agent";
 import NotBot from "./CommandActions/NotBot";
+import {add} from "slashes";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -94,6 +95,7 @@ export default class TestPixSimple extends BaseCommand {
     console.log('Entrou no metodo RUN')
 
 
+
     const apiUrls = [
       'https://botbetano.com.br',
       //'https://app-54653.dc-us-1.absamcloud.com'
@@ -109,25 +111,14 @@ export default class TestPixSimple extends BaseCommand {
     const proxyReq = await axios.get(url + '/api/proxy');
 
     const proxy = proxyReq.data;
-    console.log(proxy)
+
     if (Object.keys(proxy).length == 0) {
       console.log('Sem proxy');
       return
     }
 
 
-    // const proxyIpConsult = 'http://' + proxy.username + ':' + proxy.password + '@' + proxy.proxy;
-    // const agent = new HttpsProxyAgent(proxyIpConsult);
     //
-    // const ip = await axios.get('http://geo.brdtest.com/mygeo.json', {httpsAgent: agent})
-    // console.log('IP ' + ip.data.geo.city)
-    //
-    // const account = await axios.get(url + '/api/account/' + ip.data, {httpsAgent: agent})
-    //
-    // if (account.data) {
-    //   console.log('IP ja usado: ' + ip.data)
-    //   return
-    // }
 
 
     if (Object.keys(proxy.user.datas).length === 0) {
@@ -136,6 +127,7 @@ export default class TestPixSimple extends BaseCommand {
 
     }
     const data = proxy.user.datas[0];
+
 
     async function generateUsername(data) {
       const asciiName = data.replace(/[^\x00-\x7F]/g, ''); // Remove caracteres não ASCII
@@ -154,9 +146,14 @@ export default class TestPixSimple extends BaseCommand {
     const addressReq = await axios.get(url + '/api/address');
     const address = addressReq.data;
 
-    const addressReqVia = await axios.get('https://viacep.com.br/ws/' + address.postCode + '/json/');
-    console.log('Fez a requisição no VIACEP')
-    const addressApiVia = addressReqVia.data
+    // const addressReqVia = await axios.get('https://viacep.com.br/ws/'+address.postCode+'/json/');
+    //
+    // const addressApiVia = addressReqVia.data
+    // if (addressApiVia.erro) {
+    //     console.log(address.postCode)
+    //     console.log(addressApiVia)
+    //     return
+    // }
 
     if (proxy.slug === 'undefined') {
       return
@@ -169,103 +166,201 @@ export default class TestPixSimple extends BaseCommand {
     const email = proxy.user.emails[0];
 
 
-    console.log('Fez todas as requisições necessára à API')
-
-
     if (data.length === 0 || email.length === 0) {
       console.log('sem dados suficientes')
       await new Promise(resolve => setTimeout(resolve, 3000));
       return
     }
 
-
-    const browser = await Launch(proxy)
+    const browser = await Launch()
+    if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+      await browser.close()
+      return;
+    }
 
     try {
 
+      const pageRoteador = await browser.newPage();
+      await pageRoteador.goto('http://192.168.0.1/')
 
-      if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-        await browser.close()
-        return;
-      }
+      await pageRoteador.locator('#userName').wait()
+      await pageRoteador.locator('#userName').fill('nuno')
+      await pageRoteador.locator('#pcPassword').fill('Nuno1201#')
+      await pageRoteador.locator('#loginBtn').click()
       await new Promise(resolve => setTimeout(resolve, 5000));
-      await LoginGoogle(email, data, proxy, browser)
+      const frames = pageRoteador.frames();
+      const bottomLeftFrame = frames.find(frame => frame.name() === 'bottomLeftFrame');
 
-      await new Promise(resolve => setTimeout(resolve, 30000));
+      if (bottomLeftFrame) {
+        console.log('Frame `bottomLeftFrame` encontrado!');
+
+        // Seleciona o elemento dentro do frame
+        const elementoHandle = await bottomLeftFrame.$('#menu_network'); // Substitua `seletorDoElemento` pelo seletor real
+
+        if (elementoHandle) {
+          // Clica no elemento
+          await elementoHandle.click();
+          console.log('Clique realizado no elemento dentro do frame `bottomLeftFrame`.');
+        } else {
+          console.log('Elemento não encontrado no frame `bottomLeftFrame`.');
+        }
+      } else {
+        console.log('Frame `bottomLeftFrame` não encontrado.');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      const bottomMainFrame = frames.find(frame => frame.name() === 'mainFrame');
+
+      if (bottomMainFrame) {
+        console.log('Frame `bottomLeftFrame` encontrado!');
+
+        // Seleciona o elemento dentro do frame
+        const elementReset = await bottomMainFrame.$('#disConn'); // Substitua `seletorDoElemento` pelo seletor real
+
+        if (elementReset) {
+          // Clica no elemento
+          await elementReset.click();
+          console.log('Clicado para desconectar.');
+        } else {
+          console.log('Elemento não encontrado no frame `bottomLeftFrame`.');
+        }
+      } else {
+        console.log('Frame `bottomLeftFrame` não encontrado.');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
+      let myIp = await axios.get('https://api.ipify.org?format=json')
+      console.log(myIp.data.ip)
+      const account = await axios.get(url + '/api/account/' + myIp.data.ip)
+
+      if (account.data) {
+        console.log('IP ja usado: ' + myIp.data.ip)
+        return
+      }
+
+
+      console.log('')
+      console.log(proxy.user.name)
+      console.log('************************************')
+      console.log('email ' + email.email)
+      console.log('senha ' + email.password)
+      console.log('recuperacao ' + email.emailRecovery)
+      console.log('************************************')
+      console.log('')
+
+
+      // await LoginGoogle(email, data, proxy)
+      // myIp = await axios.get('https://api.ipify.org?format=json')
+      // console.log('IP depois de logar no proxy google: ' + myIp.data.ip)
+      // await new Promise(resolve => setTimeout(resolve, 30000));
 
 
       try {
 
-        const pageBetano = await browser.newPage()
+        const page = await browser.newPage()
+        const pageGmail = await browser.newPage()
+        await page.goto('https://br.betano.com/register', { waitUntil: 'networkidle0' })
+        await pageGmail.goto('https://gmil.com', { waitUntil: 'networkidle0' })
+        // @ts-ignore
+
         const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
         //await  NotBot(pageBetano)
-        await pageBetano.setUserAgent(randomUserAgentBetano);
+        await page.setUserAgent(randomUserAgentBetano);
 
-        await AuthProxy(proxy, pageBetano)
+        // myIp = await axios.get('https://api.ipify.org?format=json')
+        // console.log('IP da página betano: ' + myIp.data.ip)
 
+        //await AuthProxy(proxy, pageBetano)
+        console.log('')
+        console.log('************************************')
 
-        await ConfigPage(pageBetano)
-        await new Promise(resolve => setTimeout(resolve, 7000));
-        await Login(pageBetano, browser)
-
-        await new Promise(resolve => setTimeout(resolve, 20000));
-
-        await BasicData(pageBetano, data, url, browser)
-
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        await ButtonNextBetano(pageBetano)
-        await new Promise(resolve => setTimeout(resolve, 15000));
-        const addressApi = await Address(pageBetano, cep, address.phone, addressApiVia);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        await ButtonNextBetano(pageBetano)
-        await new Promise(resolve => setTimeout(resolve, 20000));
-
-        console.log('Clicou no botão para a próxima pagina')
-
-        await pageBetano.focus('#username');
-        await pageBetano.keyboard.down('Control');
-        await pageBetano.keyboard.press('A');
-        await pageBetano.keyboard.up('Control');
-        await pageBetano.keyboard.press('Backspace');
-        console.log('Deletou o username padrão')
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        await pageBetano.type('#username', username)
-        console.log('Adicinou o useraname: ' + username)
-        // const username = await page.evaluate(selector => {
-        //   return document.querySelector(selector).value;
-        // }, '#username');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        await pageBetano.waitForSelector('input[type="password"]', {visible: true});
-        await pageBetano.type('input[type="password"]', 'Money4Life#')
-        console.log('Adicinou a senha')
-        await new Promise(resolve => setTimeout(resolve, 10000));
-
-        await ButtonNextBetano(pageBetano)
-        console.log('Clicou no botão para a próxima pagina')
-        await new Promise(resolve => setTimeout(resolve, 8000));
-        const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
-        if (checkbox) {
-          await checkbox.click();
-          console.log('Clicou no checkbox');
-        } else {
-          console.error('Checkbox não encontrado.');
-        }
+        console.log('nascimento ' + data.dateBirth)
+        console.log('CPF ' + data.cpf)
 
 
-        await new Promise(resolve => setTimeout(resolve, 10000));
 
-        await pageBetano.evaluate(() => {
-          console.log('Entrou no componente que aperta o botão de próximo');
-          const buttons = Array.from(document.querySelectorAll('button'));
-          const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
+        console.log('')
+        console.log('************************************')
+        console.log('')
+        console.log('rua ' + address.street)
+        console.log('cidade ' + address.city)
+        console.log('cep ' + address.postCode)
+        console.log('telefone ' + address.phone)
 
-          if (registerButton) {
-            registerButton.click();
-            console.log('Clicou no botão de registrar');
-          } else {
-            console.error('Botão "REGISTRAR" não encontrado.');
-          }
-        });
+        console.log('')
+        console.log('************************************')
+        console.log('')
+        console.log('username ' + username)
+        console.log('password ' + 'Money4Life#')
+
+
+
+
+        //
+        //
+        // await new Promise(resolve => setTimeout(resolve, 12000));
+        // await ConfigPage(pageBetano)
+        // await new Promise(resolve => setTimeout(resolve, 7000));
+        // //await Login(pageBetano, browser)
+        //
+        // await BasicData(pageBetano, data, url, browser)
+        //
+        // await new Promise(resolve => setTimeout(resolve, 10000));
+        // await ButtonNextBetano(pageBetano)
+        // await new Promise(resolve => setTimeout(resolve, 15000));
+        // const addressApi = await Address(pageBetano, cep, address);
+        // await new Promise(resolve => setTimeout(resolve, 5000));
+        // await ButtonNextBetano(pageBetano)
+        // await new Promise(resolve => setTimeout(resolve, 20000));
+        //
+        // console.log('Clicou no botão para a próxima pagina')
+        //
+        // await pageBetano.focus('#username');
+        // await pageBetano.keyboard.down('Control');
+        // await pageBetano.keyboard.press('A');
+        // await pageBetano.keyboard.up('Control');
+        // await pageBetano.keyboard.press('Backspace');
+        // console.log('Deletou o username padrão')
+        // await new Promise(resolve => setTimeout(resolve, 2000))
+        // await pageBetano.type('#username', username)
+        // console.log('Adicinou o useraname: ' + username)
+        // // const username = await page.evaluate(selector => {
+        // //   return document.querySelector(selector).value;
+        // // }, '#username');
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        // await pageBetano.waitForSelector('input[type="password"]', {visible: true});
+        // await pageBetano.type('input[type="password"]', 'Money4Life#')
+        // console.log('Adicinou a senha')
+        // await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 180000));
+        // await ButtonNextBetano(page)
+        // console.log('Clicou no botão para a próxima pagina')
+        // await new Promise(resolve => setTimeout(resolve, 8000));
+        // const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+        // if (checkbox) {
+        //   await checkbox.click();
+        //   console.log('Clicou no checkbox');
+        // } else {
+        //   console.error('Checkbox não encontrado.');
+        // }
+        //
+        //
+        // await new Promise(resolve => setTimeout(resolve, 10000));
+        //
+        // await page.evaluate(() => {
+        //   console.log('Entrou no componente que aperta o botão de próximo');
+        //   const buttons = Array.from(document.querySelectorAll('button'));
+        //   const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
+        //
+        //   if (registerButton) {
+        //     registerButton.click();
+        //     console.log('Clicou no botão de registrar');
+        //   } else {
+        //     console.error('Botão "REGISTRAR" não encontrado.');
+        //   }
+        // });
 
 
         await new Promise(resolve => setTimeout(resolve, 15000));
@@ -273,7 +368,7 @@ export default class TestPixSimple extends BaseCommand {
         const account = await axios.post(
           url + '/api/account',
           {
-            ip: ip.data,
+            ip: myIp.data.ip,
             password: 'Money4Life#',
             useragent: randomUserAgentBetano ?? 'Sem informação',
             user_id: data.user_id,
@@ -282,9 +377,7 @@ export default class TestPixSimple extends BaseCommand {
             email: email,
             address: {
               id: address.id,
-              street: addressApi.logradouro,
-              city: addressApi.localidade,
-              postCode: addressApi.cep
+
             }
 
 

@@ -4,7 +4,7 @@ import RandomClick from "../../../RandonClick";
 
 
 const BasicData = async (page, data, url, browser) => {
-
+  await new Promise(resolve => setTimeout(resolve, 30000));
 
   for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
     const x = await  RandomClick(0, 1280); // Coordenada X aleatória dentro do viewport
