@@ -79,6 +79,7 @@ export default class GenerateData extends BaseCommand {
       }
 
       const cpf = await this.generateRandomCPF()
+      console.log(cpf)
       if (!cpf) {
         continue
       }
