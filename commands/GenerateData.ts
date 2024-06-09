@@ -114,7 +114,7 @@ export default class GenerateData extends BaseCommand {
       })
 
     }
-
+    console.log('Cliclo finalizado')
     await browser.close();
 
   }
