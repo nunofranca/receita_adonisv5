@@ -13,18 +13,18 @@ import AnonymizeUAPlugin from "puppeteer-extra-plugin-anonymize-ua";
 // @ts-ignore
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import Xvfb from 'xvfb';
-import VerifyCpfAndEmailInBetano from "./Actions/VerifyCpfAndEmailInBetano";
-import LoginGoogle from "./Actions/LoginGoogle";
-import Launch from "./Actions/Launch";
-import AuthProxy from "./Actions/Betano/AuthProxy";
-import ConfigPage from "./Actions/Betano/ConfigPage";
-import Login from "./Actions/Betano/Login";
-import BasicData from "./Actions/Betano/BasicData";
-import Address from "./Actions/Betano/Address";
-import ButtonNextBetano from "./Actions/Betano/ButtonNextBetano";
+import VerifyCpfAndEmailInBetano from "App/CommandActions/VerifyCpfAndEmailInBetano";
+import LoginGoogle from "App/CommandActions/LoginGoogle";
+import Launch from "App/CommandActions/Launch";
+import AuthProxy from "App/CommandActions/Betano/AuthProxy";
+import ConfigPage from "App/CommandActions/Betano/ConfigPage";
+import Login from "App/CommandActions/Betano/Login";
+import BasicData from "App/CommandActions/Betano/BasicData";
+import Address from "App/CommandActions/Betano/Address";
+import ButtonNextBetano from "App/CommandActions/Betano/ButtonNextBetano";
 import {da} from "@faker-js/faker";
 import {HttpsProxyAgent} from "https-proxy-agent";
-import NotBot from "./NotBot";
+import NotBot from "App/CommandActions/NotBot";
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela

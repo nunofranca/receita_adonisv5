@@ -4,14 +4,15 @@ const Launch = async (proxy) => {
 
   return await puppeteer.launch({
     env: {
-      DISPLAY: "10.0"
+      DISPLAY: ":0"
     },
+    ignoreHTTPSErrors: true,
     // userDataDir: '../profiles/dateBirth',
     executablePath: '/usr/bin/microsoft-edge',
     //executablePath: '/usr/bin/chromium-browser',
     slowMo: 10,
     defaultViewport: null,
-    headless: true,
+    headless: false,
     ignoreDefaultArgs: ["--disable-extensions"],
     args: [
       '--proxy-server=http://' + proxy.proxy,
