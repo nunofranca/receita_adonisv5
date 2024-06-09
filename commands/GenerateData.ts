@@ -68,7 +68,7 @@ export default class GenerateData extends BaseCommand {
     // })
 
     // Navigate the page to a URL
-    await page.goto('https://estrelabet.com', {
+    await page.goto('https://estrelabet.com/register', {
       waitUntil: 'networkidle0'
     });
 
