@@ -48,6 +48,7 @@ export default class GenerateData extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
+        '--proxy-server=http://geo.iproyal.com:12321',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -61,15 +62,15 @@ export default class GenerateData extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
-    // await page.authenticate({
-    //   username: 'PSqAoBQrU9fCnfiX',
-    //   password: 'Nuno1201_country-br_session-jTAgxCw3_lifetime-24h'
-    // })
+    await page.authenticate({
+      username: 'PSqAoBQrU9fCnfiX',
+      password: 'Nuno1201_country-br',
+    })
 
     // Navigate the page to a URL
-    await page.goto('https://estrelabet.com/register', {
-      waitUntil: 'networkidle0'
-    });
+    await page.goto('https://estrelabet.com', {timeout: 600000});
+
+    await page.screenshot()
 
     let total = 0
 
