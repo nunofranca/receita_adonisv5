@@ -2,16 +2,14 @@ import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 import RandomClick from "../../../RandonClick";
 
-const Address = async (page, cep, phone) =>{
+const Address = async (page, cep, phone, addressApi) =>{
 
   console.log('Entrou no Componente de Address')
   console.log(cep.cep)
 
   await new Promise(resolve => setTimeout(resolve, 20000));
   console.log('Fez a requisição para pegar o proxy')
-  const addressReq = await axios.get('https://viacep.com.br/ws/' + cep.cep + '/json/');
-  console.log('Fez a requisição no VIACEP')
-  const addressApi = addressReq.data
+
   console.log(addressApi)
 
   await new Promise(resolve => setTimeout(resolve, 10000));

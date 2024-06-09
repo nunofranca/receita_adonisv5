@@ -151,9 +151,12 @@ export default class TestPixSimple extends BaseCommand {
     }
 
     const username = await generateUsername(data.name)
-
-
     const addressReq = await axios.get(url + '/api/address');
+    const address = addressReq.data;
+
+    const addressReqVia = await axios.get('https://viacep.com.br/ws/' + address.postCode + '/json/');
+    console.log('Fez a requisição no VIACEP')
+    const addressApiVia = addressReqVia.data
 
     if (proxy.slug === 'undefined') {
       return
@@ -164,7 +167,7 @@ export default class TestPixSimple extends BaseCommand {
     const cep = cepReq.data
 
     const email = proxy.user.emails[0];
-    const address = addressReq.data;
+
 
     console.log('Fez todas as requisições necessára à API')
 
@@ -212,7 +215,7 @@ export default class TestPixSimple extends BaseCommand {
         await new Promise(resolve => setTimeout(resolve, 10000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 15000));
-        const addressApi = await Address(pageBetano, cep, address.phone);
+        const addressApi = await Address(pageBetano, cep, address.phone, addressApiVia);
         await new Promise(resolve => setTimeout(resolve, 5000));
         await ButtonNextBetano(pageBetano)
         await new Promise(resolve => setTimeout(resolve, 20000));
