@@ -96,7 +96,7 @@ export default class TestPixSimple extends BaseCommand {
 
    const browser = await puppeteer.launch({
       // env: {
-      //   DISPLAY: "10.0"
+      //   DISPLAY: ":0"
       // },
       ignoreHTTPSErrors: true,
       //userDataDir: profileDir,
@@ -105,7 +105,7 @@ export default class TestPixSimple extends BaseCommand {
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
 
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
