@@ -44,7 +44,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     await page.keyboard.press('Backspace');
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    await page.page('#tax-number', await formatCPF(data.cpf));
+    await page.type('#tax-number', await formatCPF(data.cpf));
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 3000));
     const cpfExist = await page.evaluate(() => {
