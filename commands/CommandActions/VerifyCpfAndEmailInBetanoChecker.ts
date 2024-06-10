@@ -34,7 +34,6 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   await page.waitForSelector('#tax-number', {timeout: 60000});
 
   for (const [index, data] of Object.entries(response.data)) {
-    await page.click('#tax-number');
 
 
     await page.keyboard.down('Control');
@@ -62,7 +61,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
       });
       console.log(`${data.cpf} não está cadastrado na Betano`);
     }
-    new Promise(resolve => setTimeout(resolve, 2000));
+    new Promise(resolve => setTimeout(resolve, 3000));
 
     console.log('******************************************')
 
