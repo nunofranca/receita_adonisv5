@@ -95,7 +95,6 @@ export default class TestPixSimple extends BaseCommand {
     console.log('Entrou no metodo RUN')
 
 
-
     const apiUrls = [
       'https://botbetano.com.br',
       //'https://app-54653.dc-us-1.absamcloud.com'
@@ -122,6 +121,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
     if (Object.keys(proxy.user.datas).length === 0) {
+
       console.log('Sem registro para verirficar')
       return
 
@@ -180,21 +180,20 @@ export default class TestPixSimple extends BaseCommand {
 
     try {
 
-      const pageRoteador = await browser.newPage();
-      await pageRoteador.goto('http://192.168.0.1/')
+      const page = await browser.newPage();
+      await page.goto('http://192.168.0.1/')
 
-      await pageRoteador.locator('#userName').wait()
-      await pageRoteador.locator('#userName').fill('nuno')
-      await pageRoteador.locator('#pcPassword').fill('Nuno1201#')
-      await pageRoteador.locator('#loginBtn').click()
+      await page.locator('#userName').wait()
+      await page.locator('#userName').fill('nuno')
+      await page.locator('#pcPassword').fill('Nuno1201#')
+      await page.locator('#loginBtn').click()
       await new Promise(resolve => setTimeout(resolve, 5000));
-      const frames = pageRoteador.frames();
+      const frames = page.frames();
       const bottomLeftFrame = frames.find(frame => frame.name() === 'bottomLeftFrame');
 
       if (bottomLeftFrame) {
         console.log('Frame `bottomLeftFrame` encontrado!');
 
-        // Seleciona o elemento dentro do frame
         const elementoHandle = await bottomLeftFrame.$('#menu_network'); // Substitua `seletorDoElemento` pelo seletor real
 
         if (elementoHandle) {
@@ -213,34 +212,41 @@ export default class TestPixSimple extends BaseCommand {
       const bottomMainFrame = frames.find(frame => frame.name() === 'mainFrame');
 
       if (bottomMainFrame) {
-        console.log('Frame `bottomLeftFrame` encontrado!');
-
-        // Seleciona o elemento dentro do frame
         const elementReset = await bottomMainFrame.$('#disConn'); // Substitua `seletorDoElemento` pelo seletor real
-
         if (elementReset) {
-          // Clica no elemento
-          await elementReset.click();
-          console.log('Clicado para desconectar.');
+          try {
+            // Obter o IP público
+            let myIpResponse = await axios.get('https://api.ipify.org?format=json');
+            let myIp = myIpResponse.data.ip;
+            console.log('IP atual:', myIp);
+
+            // Consultar a conta usando o IP
+            let accountResponse = await axios.get(url + '/api/account/' + myIp);
+            let account = accountResponse.data;
+
+            // Continuar tentando desconectar enquanto a conta existir
+            while (account) {
+              await new Promise(resolve => setTimeout(resolve, 3000)); // Aguardar 3 segundos
+              await elementReset.click();
+              console.log('Clicado para desconectar.');
+
+              // Re-verificar a conta após tentar desconectar
+              accountResponse = await axios.get(url + '/api/account/' + myIp);
+              if (account) break
+
+            }
+
+          } catch (error) {
+            console.error('Erro durante a execução:', error);
+          }
         } else {
-          console.log('Elemento não encontrado no frame `bottomLeftFrame`.');
+          console.error('Elemento não encontrado.');
         }
-      } else {
-        console.log('Frame `bottomLeftFrame` não encontrado.');
       }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-      let myIp = await axios.get('https://api.ipify.org?format=json')
-      console.log(myIp.data.ip)
-      const account = await axios.get(url + '/api/account/' + myIp.data.ip)
-
-      if (account.data) {
-        console.log('IP ja usado: ' + myIp.data.ip)
-        return
-      }
-
-
+      console.log('')
       console.log('')
       console.log(proxy.user.name)
       console.log('************************************')
@@ -251,185 +257,98 @@ export default class TestPixSimple extends BaseCommand {
       console.log('')
 
 
-      // await LoginGoogle(email, data, proxy)
-      // myIp = await axios.get('https://api.ipify.org?format=json')
-      // console.log('IP depois de logar no proxy google: ' + myIp.data.ip)
-      // await new Promise(resolve => setTimeout(resolve, 30000));
+      await page.goto('https://gmail.com')
+      await LoginGoogle(email, page, browser)
 
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      await page.goto('https://br.betano.com/myaccount/register')
 
-      try {
-
-        const page = await browser.newPage()
-        const pageGmail = await browser.newPage()
-        await page.goto('https://br.betano.com/register', { waitUntil: 'networkidle0' })
-        await pageGmail.goto('https://gmil.com', { waitUntil: 'networkidle0' })
-        // @ts-ignore
-
-        const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-        //await  NotBot(pageBetano)
-        await page.setUserAgent(randomUserAgentBetano);
-
-        // myIp = await axios.get('https://api.ipify.org?format=json')
-        // console.log('IP da página betano: ' + myIp.data.ip)
-
-        //await AuthProxy(proxy, pageBetano)
-        console.log('')
-        console.log('************************************')
-
-        console.log('nascimento ' + data.dateBirth)
-        console.log('CPF ' + data.cpf)
+      const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
+      //await  NotBot(pageBetano)
+      await page.setUserAgent(randomUserAgentBetano);
 
 
 
-        console.log('')
-        console.log('************************************')
-        console.log('')
-        console.log('rua ' + address.street)
-        console.log('cidade ' + address.city)
-        console.log('cep ' + address.postCode)
-        console.log('telefone ' + address.phone)
-
-        console.log('')
-        console.log('************************************')
-        console.log('')
-        console.log('username ' + username)
-        console.log('password ' + 'Money4Life#')
+      await Login(page, browser)
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
 
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
+      console.log('Carregando a página...')
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      console.log('Página carregadada')
 
-        //
-        //
-        // await new Promise(resolve => setTimeout(resolve, 12000));
-        // await ConfigPage(pageBetano)
-        // await new Promise(resolve => setTimeout(resolve, 7000));
-        // //await Login(pageBetano, browser)
-        //
-        // await BasicData(pageBetano, data, url, browser)
-        //
-        // await new Promise(resolve => setTimeout(resolve, 10000));
-        // await ButtonNextBetano(pageBetano)
-        // await new Promise(resolve => setTimeout(resolve, 15000));
-        // const addressApi = await Address(pageBetano, cep, address);
-        // await new Promise(resolve => setTimeout(resolve, 5000));
-        // await ButtonNextBetano(pageBetano)
-        // await new Promise(resolve => setTimeout(resolve, 20000));
-        //
-        // console.log('Clicou no botão para a próxima pagina')
-        //
-        // await pageBetano.focus('#username');
-        // await pageBetano.keyboard.down('Control');
-        // await pageBetano.keyboard.press('A');
-        // await pageBetano.keyboard.up('Control');
-        // await pageBetano.keyboard.press('Backspace');
-        // console.log('Deletou o username padrão')
-        // await new Promise(resolve => setTimeout(resolve, 2000))
-        // await pageBetano.type('#username', username)
-        // console.log('Adicinou o useraname: ' + username)
-        // // const username = await page.evaluate(selector => {
-        // //   return document.querySelector(selector).value;
-        // // }, '#username');
-        // await new Promise(resolve => setTimeout(resolve, 2000));
-        // await pageBetano.waitForSelector('input[type="password"]', {visible: true});
-        // await pageBetano.type('input[type="password"]', 'Money4Life#')
-        // console.log('Adicinou a senha')
-        // await new Promise(resolve => setTimeout(resolve, 10000));
-        await new Promise(resolve => setTimeout(resolve, 180000));
-        // await ButtonNextBetano(page)
-        // console.log('Clicou no botão para a próxima pagina')
-        // await new Promise(resolve => setTimeout(resolve, 8000));
-        // const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
-        // if (checkbox) {
-        //   await checkbox.click();
-        //   console.log('Clicou no checkbox');
-        // } else {
-        //   console.error('Checkbox não encontrado.');
-        // }
-        //
-        //
-        // await new Promise(resolve => setTimeout(resolve, 10000));
-        //
-        // await page.evaluate(() => {
-        //   console.log('Entrou no componente que aperta o botão de próximo');
-        //   const buttons = Array.from(document.querySelectorAll('button'));
-        //   const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
-        //
-        //   if (registerButton) {
-        //     registerButton.click();
-        //     console.log('Clicou no botão de registrar');
-        //   } else {
-        //     console.error('Botão "REGISTRAR" não encontrado.');
-        //   }
-        // });
+      await BasicData(page, data, url, browser)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      await ButtonNextBetano(page)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      await Address(page, cep, address)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      await ButtonNextBetano(page)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      await page.focus('#username');
+      await page.keyboard.down('Control');
+      await page.keyboard.press('A');
+      await page.keyboard.up('Control');
+      await page.keyboard.press('Backspace');
 
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      await page.type('#username', username)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.waitForSelector('input[type="password"]', {visible: true});
+      await page.type('input[type="password"]', 'Money4Life#')
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await ButtonNextBetano(page)
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+      if (!checkbox) return
+      await checkbox.click();
+      console.log('Clicou no checkbox');
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
-        await new Promise(resolve => setTimeout(resolve, 15000));
-        console.log(randomUserAgentBetano);
-        const account = await axios.post(
-          url + '/api/account',
-          {
-            ip: myIp.data.ip,
-            password: 'Money4Life#',
-            useragent: randomUserAgentBetano ?? 'Sem informação',
-            user_id: data.user_id,
-            username: username,
-            data: data,
-            email: email,
-            address: {
-              id: address.id,
+      await page.evaluate(() => {
+        console.log('Entrou no componente que aperta o botão de próximo');
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
 
-            }
+        if (!registerButton) return
+        registerButton.click();
+        console.log('Clicou no botão de registrar');
 
+      });
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const ip = await axios.get('https://api.ipify.org?format=json')
+      axios.post(
+        url + '/api/account',
+        {
+          ip: ip.data.ip,
+          password: 'Money4Life#',
+          useragent: randomUserAgentBetano ?? 'Sem informação',
+          user_id: data.user_id,
+          username: username,
+          data: data,
+          email: email,
+          address: {
+            id: address.id,
 
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
           }
-        ).then(() => {
-          console.log('Conta cadastrada com sucesso')
-        });
-        console.log(account)
-        await new Promise(resolve => setTimeout(resolve, 15000));
-
-      } catch (error) {
-        console.log('Primeiro catch:' + error)
-
-      } finally {
-        await browser.close();
-      }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      ).then(() => {
+        console.log('Conta cadastrada com sucesso')
+      });
     } catch (error) {
       console.log('Ultimo catch:' + error)
 
     } finally {
-      // const cookiesBetano = await page.cookies();
-      // for (let cookieBe of cookiesBetano) {
-      //   await page.deleteCookie(cookieBe);
-      // }
-      //
-      // // Verificar que os cookies foram limpos
-      // const cookiesAfterBetano = await page.cookies();
-      // console.log('Cookies after deletion:', cookiesAfterBetano);
+      await new Promise(resolve => setTimeout(resolve, 18000));
       await browser.close()
     }
-
-
-    async function buttonNext(page) {
-      await page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const button = buttons.find(btn => {
-          const span = btn.querySelector('span');
-          // @ts-ignore
-          return span && span.textContent.trim() === 'Avançar';
-        });
-        if (button) {
-
-          button.click();
-        }
-      });
-    }
-
 
   }
 

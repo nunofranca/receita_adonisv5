@@ -1,16 +1,21 @@
 import axios from "axios";
 import ButtonNextBetano from "./ButtonNextBetano";
 import RandomClick from "../../../RandonClick";
+import { Page, Browser } from "puppeteer";
 
 
-const BasicData = async (page, data, url, browser) => {
+const BasicData = async (page: Page, data: {
+  dateBirth: string | number | Date;
+  cpf: any;
+  id: any;
+}, url: any, browser: Browser) => {
   await new Promise(resolve => setTimeout(resolve, 30000));
 
   for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
     const x = await  RandomClick(0, 1280); // Coordenada X aleatória dentro do viewport
     const y =await  RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x, await y);
-    await page.mouse.click(await x,await y);
+
    // Espera aleatória entre 500ms e 2500ms
   }
   console.log('Etrou no BasicData')
@@ -23,7 +28,7 @@ const BasicData = async (page, data, url, browser) => {
     const x = await  RandomClick(0, 987); // Coordenada X aleatória dentro do viewport
     const y =await  RandomClick(0, 1254);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
      // Espera aleatória entre 500ms e 2500ms
   }
 
@@ -73,7 +78,7 @@ const BasicData = async (page, data, url, browser) => {
     const x = await  RandomClick(0, 800); // Coordenada X aleatória dentro do viewport
     const y = await RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
 
   }
   await page.select('select[name="Day"]', day);
@@ -107,7 +112,7 @@ const BasicData = async (page, data, url, browser) => {
     const x = await  RandomClick(0, 1895); // Coordenada X aleatória dentro do viewport
     const y =  await RandomClick(0, 1458);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
 
   }
   await page.waitForSelector('#tax-number', {timeout:  await RandomClick(300, 1352)});
@@ -115,7 +120,7 @@ const BasicData = async (page, data, url, browser) => {
     const x = await  RandomClick(0, 700); // Coordenada X aleatória dentro do viewport
     const y =  await RandomClick(0, 878);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
 
   }
   await page.type('#tax-number', data.cpf);
@@ -127,7 +132,7 @@ const BasicData = async (page, data, url, browser) => {
     const x = await  RandomClick(0, 880); // Coordenada X aleatória dentro do viewport
     const y =  await RandomClick(0, 2541);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
   }
   await new Promise(resolve => setTimeout(resolve, 1000));
   if (cpfExist2) {

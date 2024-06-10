@@ -4,8 +4,8 @@ const Login = async (page, browser) => {
   console.log('Entrou no componente que loga a betano');
 
   try {
-    await page.waitForSelector('span', {timeout: 30000});
 
+    await new Promise(resolve => setTimeout(resolve, 10000));
     const spans = await page.$$('span');
 
     for (let span of spans) {
