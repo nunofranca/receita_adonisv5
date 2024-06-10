@@ -106,6 +106,7 @@ export default class TestPixSimple extends BaseCommand {
       slowMo: 10,
       defaultViewport: null,
       headless: false,
+     
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
 
