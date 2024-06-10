@@ -67,6 +67,7 @@ const Login = async (page, browser) => {
       }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
+
       console.log('FIM do componente que loga a betano');
     }
   } catch (error) {

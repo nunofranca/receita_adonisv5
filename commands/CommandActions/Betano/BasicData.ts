@@ -11,13 +11,13 @@ const BasicData = async (page: Page, data: {
 }, url: any, browser: Browser) => {
   await new Promise(resolve => setTimeout(resolve, 30000));
 
-  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
-    const x = await  RandomClick(0, 1280); // Coordenada X aleatória dentro do viewport
-    const y =await  RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
-    await page.mouse.move(await x, await y);
-
-   // Espera aleatória entre 500ms e 2500ms
-  }
+  // for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
+  //   const x = await  RandomClick(0, 1280); // Coordenada X aleatória dentro do viewport
+  //   const y =await  RandomClick(0, 800);  // Coordenada Y aleatória dentro do viewport
+  //   await page.mouse.move(await x, await y);
+  //
+  //  // Espera aleatória entre 500ms e 2500ms
+  // }
   console.log('Etrou no BasicData')
   const date = new Date(data.dateBirth);
   const day = String(date.getUTCDate()).padStart(2, '0'); // Converte para string e garante dois dígitos
@@ -101,7 +101,7 @@ const BasicData = async (page: Page, data: {
     const x = await  RandomClick(0, 985); // Coordenada X aleatória dentro do viewport
     const y = await RandomClick(0, 798);  // Coordenada Y aleatória dentro do viewport
     await page.mouse.move(await x,await y);
-    await page.mouse.click(await x,await y);
+
 
   }
   await page.waitForSelector('select[name="Year"]', {timeout: 30000});

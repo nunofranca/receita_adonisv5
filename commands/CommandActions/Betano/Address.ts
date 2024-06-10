@@ -43,6 +43,7 @@ const Address = async (page, cep, address) =>{
     await page.type("#mobilePhone", address.phone)
 
     console.log('Adicionou o Telefone: ' + address.phone)
+    await new Promise(resolve => setTimeout(resolve, 4000));
   } catch (error) {
     console.log(error)
   }

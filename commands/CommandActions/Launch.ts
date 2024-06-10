@@ -6,16 +6,16 @@ const Launch = async () => {
 
     return await puppeteer.launch({
         env: {
-          DISPLAY: "10.0"
+          DISPLAY: ":0"
         },
         ignoreHTTPSErrors: true,
         //userDataDir: profileDir,
         executablePath: '/usr/bin/microsoft-edge',
         //executablePath: '/usr/bin/chrome-browser',
-        //executablePath: '/usr/bin/chromium-browser',
+       // executablePath: '/usr/bin/chromium-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: true,
+        headless: false,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 

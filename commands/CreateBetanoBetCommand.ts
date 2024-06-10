@@ -1,5 +1,6 @@
 import {BaseCommand} from '@adonisjs/core/build/standalone';
 import puppeteer from 'puppeteer-extra';
+import {KnownDevices} from 'puppeteer';
 import StealthPlugin from "puppeteer-extra-plugin-stealth"
 
 import axios from 'axios';
@@ -16,16 +17,12 @@ import Xvfb from 'xvfb';
 import VerifyCpfAndEmailInBetano from "./CommandActions/VerifyCpfAndEmailInBetano";
 import LoginGoogle from "./CommandActions/LoginGoogle";
 import Launch from "./CommandActions/Launch";
-import AuthProxy from "./CommandActions/Betano/AuthProxy";
-import ConfigPage from "./CommandActions/Betano/ConfigPage";
+
 import Login from "./CommandActions/Betano/Login";
 import BasicData from "./CommandActions/Betano/BasicData";
 import Address from "./CommandActions/Betano/Address";
 import ButtonNextBetano from "./CommandActions/Betano/ButtonNextBetano";
-import {da} from "@faker-js/faker";
-import {HttpsProxyAgent} from "https-proxy-agent";
-import NotBot from "./CommandActions/NotBot";
-import {add} from "slashes";
+
 
 const xvfb = new Xvfb({
   displayNum: 99, // número da tela
@@ -116,10 +113,6 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
-
-    //
-
-
     if (Object.keys(proxy.user.datas).length === 0) {
 
       console.log('Sem registro para verirficar')
@@ -146,15 +139,6 @@ export default class TestPixSimple extends BaseCommand {
     const addressReq = await axios.get(url + '/api/address');
     const address = addressReq.data;
 
-    // const addressReqVia = await axios.get('https://viacep.com.br/ws/'+address.postCode+'/json/');
-    //
-    // const addressApiVia = addressReqVia.data
-    // if (addressApiVia.erro) {
-    //     console.log(address.postCode)
-    //     console.log(addressApiVia)
-    //     return
-    // }
-
     if (proxy.slug === 'undefined') {
       return
     }
@@ -173,74 +157,21 @@ export default class TestPixSimple extends BaseCommand {
     }
 
     const browser = await Launch()
-    if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-      await browser.close()
-      return;
-    }
+
 
     try {
-
-      const page = await browser.newPage();
-      await page.goto('http://192.168.0.1/')
-
-      await page.locator('#userName').wait()
-      await page.locator('#userName').fill('nuno')
-      await page.locator('#pcPassword').fill('Nuno1201#')
-      await page.locator('#loginBtn').click()
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      const frames = page.frames();
-      const bottomLeftFrame = frames.find(frame => frame.name() === 'bottomLeftFrame');
-
-      if (bottomLeftFrame) {
-        console.log('Frame `bottomLeftFrame` encontrado!');
-
-        const elementoHandle = await bottomLeftFrame.$('#menu_network'); // Substitua `seletorDoElemento` pelo seletor real
-
-        if (elementoHandle) {
-          // Clica no elemento
-          await elementoHandle.click();
-          console.log('Clique realizado no elemento dentro do frame `bottomLeftFrame`.');
-        } else {
-          console.log('Elemento não encontrado no frame `bottomLeftFrame`.');
-        }
-      } else {
-        console.log('Frame `bottomLeftFrame` não encontrado.');
+      let myIpResponse = await axios.get('https://api.ipify.org?format=json');
+      let myIp = myIpResponse.data.ip;
+      console.log('IP atual:', myIp);
+      let accountResponse = await axios.get(url + '/api/account/' + myIp);
+      if (accountResponse.data) {
+        await this.resetConnection(browser)
+        return
       }
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
-      const bottomMainFrame = frames.find(frame => frame.name() === 'mainFrame');
-
-      if (bottomMainFrame) {
-        const elementReset = await bottomMainFrame.$('#disConn'); // Substitua `seletorDoElemento` pelo seletor real
-        if (elementReset) {
-          try {
-            // Obter o IP público
-            let myIpResponse = await axios.get('https://api.ipify.org?format=json');
-            let myIp = myIpResponse.data.ip;
-            console.log('IP atual:', myIp);
-
-            // Consultar a conta usando o IP
-            let accountResponse = await axios.get(url + '/api/account/' + myIp);
-            let account = accountResponse.data;
-
-            // Continuar tentando desconectar enquanto a conta existir
-            while (account) {
-              await new Promise(resolve => setTimeout(resolve, 3000)); // Aguardar 3 segundos
-              await elementReset.click();
-              console.log('Clicado para desconectar.');
-
-              // Re-verificar a conta após tentar desconectar
-              accountResponse = await axios.get(url + '/api/account/' + myIp);
-              if (account) break
-
-            }
-
-          } catch (error) {
-            console.error('Erro durante a execução:', error);
-          }
-        } else {
-          console.error('Elemento não encontrado.');
+      if (data.betano === null) {
+        if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+          await browser.close()
+          return;
         }
       }
 
@@ -255,59 +186,82 @@ export default class TestPixSimple extends BaseCommand {
       console.log('recuperacao ' + email.emailRecovery)
       console.log('************************************')
       console.log('')
-
+      const page = await browser.newPage();
 
       await page.goto('https://gmail.com')
+
+
+      setInterval(async () => {
+
+        await this.checkForCaptcha(page, browser);
+      }, 60000); // 60000 ms = 1 minuto
       await LoginGoogle(email, page, browser)
 
       await new Promise(resolve => setTimeout(resolve, 10000));
-      await page.goto('https://br.betano.com/myaccount/register')
-
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
-      //await  NotBot(pageBetano)
+
       await page.setUserAgent(randomUserAgentBetano);
 
 
-
-      await Login(page, browser)
       await new Promise(resolve => setTimeout(resolve, 10000));
 
+      const devices = [
+        'iPhone X',
+        'iPhone 11 Pro',
+        'iPhone 12 Pro',
+        'Pixel 2',
+        'Pixel 5',
+        'Galaxy S9',
+        'iPad Pro'
+      ];
+      const device = devices[Math.floor(Math.random() * devices.length)];
+      const pageBetano = await browser.newPage();
+      // @ts-ignore
+      await pageBetano.emulate(KnownDevices[device])
+      await pageBetano.goto('https://br.betano.com/myaccount/register')
+      console.log('Emulando o: ' + device)
+
+
+      setInterval(async () => {
+        await this.checkForCaptcha(pageBetano, browser);
+      }, 60000);
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      await Login(pageBetano, browser)
 
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-      console.log('Carregando a página...')
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      console.log('Página carregadada')
 
-      await BasicData(page, data, url, browser)
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      await ButtonNextBetano(page)
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      await Address(page, cep, address)
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      await ButtonNextBetano(page)
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      await page.focus('#username');
-      await page.keyboard.down('Control');
-      await page.keyboard.press('A');
-      await page.keyboard.up('Control');
-      await page.keyboard.press('Backspace');
+      await BasicData(pageBetano, data, url, browser)
+
+      await ButtonNextBetano(pageBetano)
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      await Address(pageBetano, cep, address)
+      await ButtonNextBetano(pageBetano)
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      await pageBetano.focus('#username');
+      await pageBetano.keyboard.down('Control');
+      await pageBetano.keyboard.press('A');
+      await pageBetano.keyboard.up('Control');
+      await pageBetano.keyboard.press('Backspace');
 
       await new Promise(resolve => setTimeout(resolve, 2000))
-      await page.type('#username', username)
+      await pageBetano.type('#username', username)
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await page.waitForSelector('input[type="password"]', {visible: true});
-      await page.type('input[type="password"]', 'Money4Life#')
+      await pageBetano.waitForSelector('input[type="password"]', {visible: true});
+      await pageBetano.type('input[type="password"]', 'Money4Life#')
       await new Promise(resolve => setTimeout(resolve, 5000));
-      await ButtonNextBetano(page)
+      await ButtonNextBetano(pageBetano)
       await new Promise(resolve => setTimeout(resolve, 5000));
-      const checkbox = await page.$('span.checkbox-check.tw-rounded-xs');
+      const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
       if (!checkbox) return
       await checkbox.click();
       console.log('Clicou no checkbox');
       await new Promise(resolve => setTimeout(resolve, 3000));
-
-      await page.evaluate(() => {
+      let accountResponseConfirmation = await axios.get(url + '/api/account/' + myIp);
+      if (accountResponseConfirmation.data) {
+        return
+      }
+      await pageBetano.evaluate(() => {
         console.log('Entrou no componente que aperta o botão de próximo');
         const buttons = Array.from(document.querySelectorAll('button'));
         const registerButton = buttons.find(button => button.textContent.trim() === 'REGISTRAR');
@@ -344,12 +298,82 @@ export default class TestPixSimple extends BaseCommand {
       });
     } catch (error) {
       console.log('Ultimo catch:' + error)
+      await this.resetConnection(browser)
 
     } finally {
+
+
       await new Promise(resolve => setTimeout(resolve, 18000));
       await browser.close()
     }
 
+  }
+
+  async resetConnection(browser) {
+    try {
+      const pageRoteador = await browser.newPage();
+      await pageRoteador.goto('http://192.168.0.1/')
+
+
+      await pageRoteador.locator('#userName').wait()
+      await pageRoteador.locator('#userName').fill('nuno')
+      await pageRoteador.locator('#pcPassword').fill('Nuno1201#')
+      await pageRoteador.locator('#loginBtn').click()
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      const frames = pageRoteador.frames();
+      const bottomLeftFrame = frames.find(frame => frame.name() === 'bottomLeftFrame');
+
+      if (bottomLeftFrame) {
+        const elementoHandle = await bottomLeftFrame.$('#menu_network'); // Substitua `seletorDoElemento` pelo seletor real
+        if (elementoHandle) {
+          await elementoHandle.click();
+
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Aguardar 3 segundos
+      }
+      const bottomMainFrame = frames.find(frame => frame.name() === 'mainFrame');
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      if (bottomMainFrame) {
+        const elementReset = await bottomMainFrame.$('#disConn'); // Substitua `seletorDoElemento` pelo seletor real
+        if (elementReset) {
+          try {
+
+            await elementReset.click();
+            console.log('Clicado para desconectar.');
+            await new Promise(resolve => setTimeout(resolve, 3000)); // Aguardar 3 segundos
+
+            return
+          } catch (error) {
+            console.error('Erro durante a execução:', error);
+          }
+        } else {
+          console.error('Elemento não encontrado.');
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async checkForCaptcha(page, browser) {
+    const captchaSelectors = [
+      'iframe[src*="recaptcha"]',
+      'iframe[src*="hcaptcha"]',
+      'div[id*="recaptcha"]',
+      'div[class*="hcaptcha"]',
+      'img[src*="captcha"]',
+    ];
+
+    for (const selector of captchaSelectors) {
+      try {
+        await page.waitForSelector(selector, {timeout: 5000});
+        await this.resetConnection(browser)
+      } catch (e) {
+        // Element not found within the timeout
+      }
+    }
+
+    return false;
   }
 
 

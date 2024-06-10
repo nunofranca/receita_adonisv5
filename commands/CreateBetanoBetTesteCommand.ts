@@ -87,14 +87,41 @@ export default class TestPixSimple extends BaseCommand {
 
 
     const proxy = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/proxy')
-    console.log(proxy.data)
+    console.log(proxy.data.proxy)
     const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data/betano/' + proxy.data.user_id)
     if (Object.keys(response.data).length < 3) {
       console.log('Sem dados');
       return
     }
 
-    const browser = await Launch(proxy.data)
+   const browser = await puppeteer.launch({
+      env: {
+        DISPLAY: ":0"
+      },
+      ignoreHTTPSErrors: true,
+      //userDataDir: profileDir,
+      executablePath: '/usr/bin/microsoft-edge',
+      //executablePath: '/usr/bin/chrome-browser',
+      // executablePath: '/usr/bin/chromium-browser',
+      slowMo: 10,
+      defaultViewport: null,
+      headless: false,
+      ignoreDefaultArgs: ["--disable-extensions"],
+      args: [
+
+        '--proxy-server=http://'+proxy.data.proxy,
+        // '--start-maximized',
+        '--start-minimized',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--window-size=1920x1080',
+        '--disable-features=IsolateOrigins,site-per-process',
+        // '--user-data-dir=../profiles/dateBirth'
+      ],
+    });
 
 
     // @ts-ignore
