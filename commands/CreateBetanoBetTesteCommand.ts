@@ -94,7 +94,7 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
-   const browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
       // env: {
       //   DISPLAY: ":0"
       // },
@@ -103,9 +103,10 @@ export default class TestPixSimple extends BaseCommand {
       executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chrome-browser',
       // executablePath: '/usr/bin/chromium-browser',
+      headless: false,
 
       args: [
-        '--proxy-server=http://'+proxy.data.proxy,
+        '--proxy-server=http://' + proxy.data.proxy,
         // '--start-maximized',
         '--start-minimized',
         '--no-sandbox'
