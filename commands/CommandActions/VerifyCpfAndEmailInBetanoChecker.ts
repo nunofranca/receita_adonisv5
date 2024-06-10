@@ -31,7 +31,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   if (!found) {
     console.error('Botão "Registrar com email" não encontrado.');
   }
-  await page.waitForSelector('#tax-number', {timeout: 60000}).delay(200);
+  await page.waitForSelector('#tax-number', {timeout: 60000});
 
   for (const [index, data] of Object.entries(response.data)) {
     await page.focus('#tax-number');
@@ -39,7 +39,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    await page.type('#tax-number', await formatCPF(data.cpf));
+    await page.type('#tax-number', await formatCPF(data.cpf)).delay(200);
     console.log('Digitou o CPF');
     await new Promise(resolve => setTimeout(resolve, 3000));
     const cpfExist = await page.evaluate(() => {
