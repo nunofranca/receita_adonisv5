@@ -96,7 +96,7 @@ export default class TestPixSimple extends BaseCommand {
 
    const browser = await puppeteer.launch({
       env: {
-        DISPLAY: ":0"
+        DISPLAY: "10.0"
       },
       ignoreHTTPSErrors: true,
       //userDataDir: profileDir,
@@ -106,7 +106,7 @@ export default class TestPixSimple extends BaseCommand {
       slowMo: 10,
       defaultViewport: null,
       headless: false,
-     
+
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
 
