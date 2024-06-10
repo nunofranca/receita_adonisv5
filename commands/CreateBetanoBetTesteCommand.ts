@@ -114,7 +114,6 @@ export default class TestPixSimple extends BaseCommand {
         // '--start-maximized',
         '--start-minimized',
         '--no-sandbox',
-        '
 
       ],
     });
