@@ -4,11 +4,6 @@ import path from 'path'
 
 const Launch = async () => {
 
-    const profileDir = path.resolve(__dirname, `../profiles/${Math.floor(10000000 + Math.random() * 90000000).toString()}`)
-
-    if (!fs.existsSync(profileDir)) {
-        fs.mkdirSync(profileDir, {recursive: true})
-    }
     return await puppeteer.launch({
         env: {
           DISPLAY: "10.0"
