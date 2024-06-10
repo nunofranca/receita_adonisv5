@@ -36,7 +36,7 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   for (const [index, data] of Object.entries(response.data)) {
     await page.focus('#tax-number');
 
-    
+
     await new Promise(resolve => setTimeout(resolve, 500));
 
     await page.type('#tax-number', await formatCPF(data.cpf));

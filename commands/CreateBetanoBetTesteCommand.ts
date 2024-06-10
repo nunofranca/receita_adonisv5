@@ -100,7 +100,7 @@ export default class TestPixSimple extends BaseCommand {
       // },
       ignoreHTTPSErrors: true,
       //userDataDir: profileDir,
-      executablePath: '/usr/bin/microsoft-edge',
+      //executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chrome-browser',
       // executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
