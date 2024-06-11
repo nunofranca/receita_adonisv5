@@ -6,7 +6,7 @@ const Launch = async () => {
 
     return await puppeteer.launch({
         env: {
-          DISPLAY: ":0"
+          DISPLAY: "10.0"
         },
         ignoreHTTPSErrors: true,
         //userDataDir: profileDir,
@@ -19,7 +19,7 @@ const Launch = async () => {
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
-            // '--proxy-server=http://ipv6-ww.lightningproxies.net:10000',
+            '--proxy-server=http://geo.iproyal.com:12321',
             // '--start-maximized',
             '--start-minimized',
             '--no-sandbox',

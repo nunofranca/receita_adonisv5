@@ -22,6 +22,8 @@ import Login from "./CommandActions/Betano/Login";
 import BasicData from "./CommandActions/Betano/BasicData";
 import Address from "./CommandActions/Betano/Address";
 import ButtonNextBetano from "./CommandActions/Betano/ButtonNextBetano";
+import AuthProxy from "./CommandActions/Betano/AuthProxy";
+import Geolocalization from "../Geolocalization";
 
 
 const xvfb = new Xvfb({
@@ -89,6 +91,7 @@ export default class TestPixSimple extends BaseCommand {
   };
 
   public async run() {
+
     console.log('Entrou no metodo RUN')
 
 
@@ -108,17 +111,14 @@ export default class TestPixSimple extends BaseCommand {
 
     const proxy = proxyReq.data;
 
-    if (Object.keys(proxy).length == 0) {
-      console.log('Sem proxy');
-      return
-    }
 
-    if (Object.keys(proxy.user.datas).length === 0) {
+    const getCityKey = (city) => {
+      const cities = Geolocalization();
+      return cities.find(c => c.name === city);
+    };
+    const geo = getCityKey(proxy.city)
+    console.log(geo.longitude, geo.latitude)
 
-      console.log('Sem registro para verirficar')
-      return
-
-    }
     const data = proxy.user.datas[0];
 
 
@@ -144,7 +144,7 @@ export default class TestPixSimple extends BaseCommand {
     }
     console.log(proxy.slug)
 
-    const cepReq = await axios.get(url + '/api/cep/' + proxy.slug);
+    const cepReq = await axios.get(url + '/api/cep/salvador');
     const cep = cepReq.data
 
     const email = proxy.user.emails[0];
@@ -160,20 +160,20 @@ export default class TestPixSimple extends BaseCommand {
 
 
     try {
-      let myIpResponse = await axios.get('https://api.ipify.org?format=json');
-      let myIp = myIpResponse.data.ip;
-      console.log('IP atual:', myIp);
-      let accountResponse = await axios.get(url + '/api/account/' + myIp);
-      if (accountResponse.data) {
-        await this.resetConnection(browser)
-        return
-      }
-      if (data.betano === null) {
-        if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-          await browser.close()
-          return;
-        }
-      }
+      // let myIpResponse = await axios.get('https://api.ipify.org?format=json');
+      // let myIp = myIpResponse.data.ip;
+      // console.log('IP atual:', myIp);
+      // let accountResponse = await axios.get(url + '/api/account/' + myIp);
+      // if (accountResponse.data) {
+      //   await this.resetConnection(browser)
+      //   return
+      // }
+      // if (data.betano === null) {
+      //   if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+      //     await browser.close()
+      //     return;
+      //   }
+      // }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
@@ -187,16 +187,22 @@ export default class TestPixSimple extends BaseCommand {
       console.log('************************************')
       console.log('')
       const page = await browser.newPage();
+      console.log(proxy)
+      await AuthProxy(proxy, page)
 
       await page.goto('https://gmail.com')
+      // await page.goto('https://meuip.com')
 
-
-      setInterval(async () => {
-
-        await this.checkForCaptcha(page, browser);
-      }, 60000); // 60000 ms = 1 minuto
       await LoginGoogle(email, page, browser)
-
+      // const deleteFiles = await this.prompt.toggle(
+      //   'Want to delete all files?',
+      //   ['Y', 'N']
+      // )
+      //
+      // if (!deleteFiles) {
+      //   console.log('nao')
+      //   return
+      // }
       await new Promise(resolve => setTimeout(resolve, 10000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
 
@@ -206,25 +212,27 @@ export default class TestPixSimple extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 10000));
 
       const devices = [
-        'iPhone X',
         'iPhone 11 Pro',
         'iPhone 12 Pro',
-        'Pixel 2',
-        'Pixel 5',
         'Galaxy S9',
         'iPad Pro'
       ];
       const device = devices[Math.floor(Math.random() * devices.length)];
       const pageBetano = await browser.newPage();
+
+      await AuthProxy(proxy, pageBetano)
+      // @ts-ignore
+
+      const context = browser.defaultBrowserContext();
+      await context.overridePermissions('https://br.betano.com/myaccount/register', ['geolocation']);
+      await context.overridePermissions('https://accounts.google.com', ['geolocation']);
+      // @ts-ignore
+      await pageBetano.setGeolocation({latitude: geo.latitude, longitude: geo.longitude});
       // @ts-ignore
       await pageBetano.emulate(KnownDevices[device])
       await pageBetano.goto('https://br.betano.com/myaccount/register')
       console.log('Emulando o: ' + device)
 
-
-      setInterval(async () => {
-        await this.checkForCaptcha(pageBetano, browser);
-      }, 60000);
       await new Promise(resolve => setTimeout(resolve, 10000));
       await Login(pageBetano, browser)
 
@@ -301,9 +309,7 @@ export default class TestPixSimple extends BaseCommand {
       await this.resetConnection(browser)
 
     } finally {
-
-
-      await new Promise(resolve => setTimeout(resolve, 18000));
+      await this.resetConnection(browser)
       await browser.close()
     }
 
@@ -354,6 +360,19 @@ export default class TestPixSimple extends BaseCommand {
       console.log(error)
     }
   }
+
+
+  // Função para verificar se o texto está presente
+  async checkTextPresence(page, browser) {
+    const textPresent = await page.evaluate((text) => {
+      return document.body.innerText.includes(text);
+    }, 'We want to make sure it is actually you we are dealing with and not a robot.');
+
+    if (textPresent) {
+      await this.resetConnection(browser)
+    }
+  }
+
 
   async checkForCaptcha(page, browser) {
     const captchaSelectors = [

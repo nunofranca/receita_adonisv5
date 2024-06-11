@@ -31,18 +31,19 @@ const LoginGoogle = async (email, page, browser) => {
     await randomMouseMovePopup();
     await page.focus('#identifierId');
     await new Promise(resolve => setTimeout(resolve, 700));
-    await page.type('#identifierId', email.email, {delay: 300});
+    await page.type('#identifierId', email.email, {delay: 150});
     await randomMouseMovePopup();
     await new Promise(resolve => setTimeout(resolve, 3000));
     await ButtonNext(page);
     await randomMouseMovePopup();
     await NoteLogin(page, browser);
 
+
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     await page.focus('#password');
     await new Promise(resolve => setTimeout(resolve, 800));
-    await page.type('#password', email.password, {delay: 400});
+    await page.type('#password', email.password, {delay: 150});
 
     await ButtonNext(page);
     await new Promise(resolve => setTimeout(resolve, 10000));
@@ -83,7 +84,7 @@ const LoginGoogle = async (email, page, browser) => {
       await new Promise(resolve => setTimeout(resolve, 5000));
       await page.focus('input[type="email"]');
       await new Promise(resolve => setTimeout(resolve, 800));
-      await page.type('input[type="email"]', email.emailRecovery, {delay: 250});
+      await page.type('input[type="email"]', email.emailRecovery, {delay: 150});
       console.log('Adicionou o email de recuperacação ' + email.emailRecovery)
       await new Promise(resolve => setTimeout(resolve, 5000));
       await ButtonNext(page)
