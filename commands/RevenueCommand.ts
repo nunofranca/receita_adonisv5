@@ -50,8 +50,9 @@ export default class RevenueCommand extends BaseCommand {
       await this.countdown(10);
 
     }
-    console.log(this.check.data)
+
     for (const [index, check] of Object.entries(this.check.data)) {
+      console.log(check)
 
 
       let browser;
