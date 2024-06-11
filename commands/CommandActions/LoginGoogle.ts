@@ -39,7 +39,7 @@ const LoginGoogle = async (email, page, browser) => {
     await NoteLogin(page, browser);
 
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 15000));
 
     await page.focus('#password');
     await new Promise(resolve => setTimeout(resolve, 800));

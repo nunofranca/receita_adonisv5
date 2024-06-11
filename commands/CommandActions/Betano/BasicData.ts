@@ -33,39 +33,6 @@ const BasicData = async (page: Page, data: {
   }
 
 
-  for (let i = 0; i < 5; i++) {
-    try {
-      console.log('Tentativa ' + (i + 1) + ' de achar o select Day');
-
-      // Tentar encontrar o primeiro seletor
-      try {
-        await page.waitForSelector('select[name="Day"]', {timeout: 30000});
-      } catch (e1) {
-        console.log('select[name="Day"] não encontrado.');
-      }
-
-      // Tentar encontrar o segundo seletor
-      try {
-        await page.waitForSelector('#day', {timeout: 30000});
-      } catch (e2) {
-        console.log('#day não encontrado.');
-      }
-
-      // Se pelo menos um dos seletores foi encontrado, sair do loop
-      if (await page.$('select[name="Day"]') || await page.$('#day')) {
-        break;
-      }
-
-    } catch (e) {
-      console.log(`Tentativa ${i + 1} falhou. Tentando novamente...`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      if (i == 4) {
-        await browser.close();
-        return;
-      }
-    }
-  }
 
 // Verificar novamente fora do loop se pelo menos um dos seletores foi encontrado
   if (!await page.$('select[name="Day"]') && !await page.$('#day')) {
@@ -81,49 +48,37 @@ const BasicData = async (page: Page, data: {
 
 
   }
-  await page.select('select[name="Day"]', day);
-  console.log('Adicionou o dia de nascimento ' + day)
-  for (let i = 0; i < 5; i++) {
-    try {
-      console.log('Tentativa ' + i + 1 + ' de acha o select Month')
+  async function humanSelect(page, selector, value) {
+    const element = await page.$(selector);
+    if (element) {
+      // Simular movimento do mouse até o elemento
+      const boundingBox = await element.boundingBox();
+      await page.mouse.move(
+        boundingBox.x + boundingBox.width / 2,
+        boundingBox.y + boundingBox.height / 2
+      );
 
-      await page.waitForSelector('select[name="Month"]', {timeout: 30000});
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 1000) + 500)); // Atraso aleatório entre 500ms e 1500ms
 
-    } catch (e) {
-      console.log(`Tentativa ${i + 1} falhou. Tentando novamente...`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      page.focus(selector)
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 700) + 100)); // Atraso aleatório entre 500ms e 1500ms
+
+      await page.select(selector, value);
     }
   }
+  await  humanSelect(page, 'select[name="Day"]', day)
+  await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 1000) + 500)); // Atraso aleatório entre 500ms e 1500ms
   await page.select('select[name="Month"]', month);
-  console.log('passou do select do month')
-  console.log('Adicionou o mês de nascimento ' + month)
-  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
-    const x = await  RandomClick(0, 985); // Coordenada X aleatória dentro do viewport
-    const y = await RandomClick(0, 798);  // Coordenada Y aleatória dentro do viewport
-    await page.mouse.move(await x,await y);
+  await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 1000) + 500)); // Atraso aleatório entre 500ms e 1500ms
+  await  humanSelect(page, 'select[name="Year"]', year)
 
-
+  async function humanCpf(page, selector, text) {
+    for (let i = 0; i < text.length; i++) {
+      await page.type(selector, text[i]);
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 200) + 50))
+    }
   }
-  await page.waitForSelector('select[name="Year"]', {timeout: 30000});
-  await page.select('select[name="Year"]', year);
-  console.log('passou do select do year')
-  console.log('Adicionou o ano de nascimento ' + year)
-  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
-    const x = await  RandomClick(0, 1895); // Coordenada X aleatória dentro do viewport
-    const y =  await RandomClick(0, 1458);  // Coordenada Y aleatória dentro do viewport
-    await page.mouse.move(await x,await y);
-
-
-  }
-  await page.waitForSelector('#tax-number', {timeout:  await RandomClick(300, 1352)});
-  for (let i = 0; i < 5; i++) { // Realiza 5 movimentos e cliques aleatórios
-    const x = await  RandomClick(0, 700); // Coordenada X aleatória dentro do viewport
-    const y =  await RandomClick(0, 878);  // Coordenada Y aleatória dentro do viewport
-    await page.mouse.move(await x,await y);
-
-
-  }
-  await page.type('#tax-number', data.cpf);
+  await humanCpf(page, '#tax-number', data.cpf)
   await new Promise(resolve => setTimeout(resolve, 2000));
   const cpfExist2 = await page.evaluate(() => {
     return document.body.innerText.includes('Este CPF já existe');

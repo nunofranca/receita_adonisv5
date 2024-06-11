@@ -6,7 +6,7 @@ const Launch = async () => {
 
     return await puppeteer.launch({
         env: {
-          DISPLAY: "10.0"
+          DISPLAY: ":0"
         },
         ignoreHTTPSErrors: true,
         //userDataDir: profileDir,
@@ -15,11 +15,11 @@ const Launch = async () => {
        // executablePath: '/usr/bin/chromium-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: true,
+        headless: false,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
-            '--proxy-server=http://geo.iproyal.com:12321',
+           '--proxy-server=http://geo.iproyal.com:12321',
             // '--start-maximized',
             '--start-minimized',
             '--no-sandbox',

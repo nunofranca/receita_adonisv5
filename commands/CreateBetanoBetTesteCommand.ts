@@ -95,9 +95,9 @@ export default class TestPixSimple extends BaseCommand {
     }
 
    const browser = await puppeteer.launch({
-      // env: {
-      //   DISPLAY: ":0"
-      // },
+      env: {
+        DISPLAY: ":0"
+      },
       // ignoreHTTPSErrors: true,
       //userDataDir: profileDir,
       //executablePath: '/usr/bin/microsoft-edge',
@@ -105,7 +105,7 @@ export default class TestPixSimple extends BaseCommand {
       // executablePath: '/usr/bin/chromium-browser',
      slowMo: 10,
      defaultViewport: null,
-     headless: false,
+     headless: true,
      ignoreDefaultArgs: ["--disable-extensions"],
       args: [
 

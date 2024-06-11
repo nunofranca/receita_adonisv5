@@ -35,13 +35,14 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
 
   for (const [index, data] of Object.entries(response.data)) {
     await page.focus('#tax-number');
+    await deleteField(page, '#tax-number')
 
 
-    await new Promise(resolve => setTimeout(resolve, 8000));
 
-    await page.type('#tax-number', '11637563779', {delay: 200});
+
+    await page.type('#tax-number', data.cpf, {delay: 50});
     console.log('Digitou o CPF');
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     const cpfExist = await page.evaluate(() => {
       return document.body.innerText.includes('Este CPF já existe') || document.body.innerText.includes('Este CPF não é válido');
     });
@@ -65,6 +66,24 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
   }
   await browser.close();
   return;
+}
+
+async function deleteField(page, selector) {
+  // Focar no campo
+
+  await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 200) + 100)); // Atraso aleatório entre 100ms e 300ms
+
+  // // Selecionar todo o texto no campo
+  await page.click(selector, { clickCount: 3 });
+  //
+  // // Obter o valor atual do campo
+  // const text = await page.$eval(selector, el => el.value);
+
+  // Segurar a tecla Backspace para deletar o texto
+  for (let i = 0; i < 10; i++) {
+    await page.keyboard.press('Backspace');
+    await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 100) + 50)); // Atraso aleatório entre 50ms e 150ms
+  }
 }
 
 async function formatCPF(cpfString) {

@@ -24,6 +24,7 @@ import Address from "./CommandActions/Betano/Address";
 import ButtonNextBetano from "./CommandActions/Betano/ButtonNextBetano";
 import AuthProxy from "./CommandActions/Betano/AuthProxy";
 import Geolocalization from "../Geolocalization";
+import DataAccount from "./CommandActions/Betano/DataAccount";
 
 
 const xvfb = new Xvfb({
@@ -92,6 +93,8 @@ export default class TestPixSimple extends BaseCommand {
 
   public async run() {
 
+
+
     console.log('Entrou no metodo RUN')
 
 
@@ -114,10 +117,15 @@ export default class TestPixSimple extends BaseCommand {
 
     const getCityKey = (city) => {
       const cities = Geolocalization();
-      return cities.find(c => c.name === city);
+      const randomCity =  cities.filter(c => c.name === city)
+
+      const randomIndex = Math.floor(Math.random() * randomCity.length);
+      return cities[randomIndex];
     };
     const geo = getCityKey(proxy.city)
+
     console.log(geo.longitude, geo.latitude)
+
 
     const data = proxy.user.datas[0];
 
@@ -160,20 +168,20 @@ export default class TestPixSimple extends BaseCommand {
 
 
     try {
-      // let myIpResponse = await axios.get('https://api.ipify.org?format=json');
-      // let myIp = myIpResponse.data.ip;
-      // console.log('IP atual:', myIp);
-      // let accountResponse = await axios.get(url + '/api/account/' + myIp);
-      // if (accountResponse.data) {
-      //   await this.resetConnection(browser)
-      //   return
-      // }
-      // if (data.betano === null) {
-      //   if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-      //     await browser.close()
-      //     return;
-      //   }
-      // }
+      let myIpResponse = await axios.get('https://api.ipify.org?format=json');
+      let myIp = myIpResponse.data.ip;
+      console.log('IP atual:', myIp);
+      let accountResponse = await axios.get(url + '/api/account/' + myIp);
+      if (accountResponse.data) {
+        await this.resetConnection(browser)
+        return
+      }
+      if (data.betano === null) {
+        if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+          await browser.close()
+          return;
+        }
+      }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
@@ -188,25 +196,16 @@ export default class TestPixSimple extends BaseCommand {
       console.log('')
       const page = await browser.newPage();
       console.log(proxy)
-      await AuthProxy(proxy, page)
+      // await AuthProxy(proxy, page)
 
-      await page.goto('https://gmail.com')
+      await page.goto('https://gmail.com', {timeout: 180000})
       // await page.goto('https://meuip.com')
 
       await LoginGoogle(email, page, browser)
-      // const deleteFiles = await this.prompt.toggle(
-      //   'Want to delete all files?',
-      //   ['Y', 'N']
-      // )
-      //
-      // if (!deleteFiles) {
-      //   console.log('nao')
-      //   return
-      // }
+
       await new Promise(resolve => setTimeout(resolve, 10000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
 
-      await page.setUserAgent(randomUserAgentBetano);
 
 
       await new Promise(resolve => setTimeout(resolve, 10000));
@@ -215,12 +214,12 @@ export default class TestPixSimple extends BaseCommand {
         'iPhone 11 Pro',
         'iPhone 12 Pro',
         'Galaxy S9',
-        'iPad Pro'
       ];
       const device = devices[Math.floor(Math.random() * devices.length)];
       const pageBetano = await browser.newPage();
 
-      await AuthProxy(proxy, pageBetano)
+      // await AuthProxy(proxy, pageBetano)
+      await pageBetano.setUserAgent(randomUserAgentBetano);
       // @ts-ignore
 
       const context = browser.defaultBrowserContext();
@@ -229,8 +228,8 @@ export default class TestPixSimple extends BaseCommand {
       // @ts-ignore
       await pageBetano.setGeolocation({latitude: geo.latitude, longitude: geo.longitude});
       // @ts-ignore
-      await pageBetano.emulate(KnownDevices[device])
-      await pageBetano.goto('https://br.betano.com/myaccount/register')
+      // await pageBetano.emulate(KnownDevices[device])
+      await pageBetano.goto('https://br.betano.com/myaccount/register',{timeout: 180000})
       console.log('Emulando o: ' + device)
 
       await new Promise(resolve => setTimeout(resolve, 10000));
@@ -242,33 +241,24 @@ export default class TestPixSimple extends BaseCommand {
       await BasicData(pageBetano, data, url, browser)
 
       await ButtonNextBetano(pageBetano)
-      await new Promise(resolve => setTimeout(resolve, 8000));
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 1000) + 500)); // Atraso aleatório entre 500ms e 1500ms
+
+
       await Address(pageBetano, cep, address)
       await ButtonNextBetano(pageBetano)
-      await new Promise(resolve => setTimeout(resolve, 8000));
-      await pageBetano.focus('#username');
-      await pageBetano.keyboard.down('Control');
-      await pageBetano.keyboard.press('A');
-      await pageBetano.keyboard.up('Control');
-      await pageBetano.keyboard.press('Backspace');
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 8000) + 500)); // Atraso aleatório entre 500ms e 1500ms
 
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      await pageBetano.type('#username', username)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await pageBetano.waitForSelector('input[type="password"]', {visible: true});
-      await pageBetano.type('input[type="password"]', 'Money4Life#')
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await DataAccount(pageBetano, username)
       await ButtonNextBetano(pageBetano)
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * 10000) + 500)); // Atraso aleatório entre 500ms e 1500ms
+
+
       const checkbox = await pageBetano.$('span.checkbox-check.tw-rounded-xs');
       if (!checkbox) return
       await checkbox.click();
       console.log('Clicou no checkbox');
       await new Promise(resolve => setTimeout(resolve, 3000));
-      let accountResponseConfirmation = await axios.get(url + '/api/account/' + myIp);
-      if (accountResponseConfirmation.data) {
-        return
-      }
+
       await pageBetano.evaluate(() => {
         console.log('Entrou no componente que aperta o botão de próximo');
         const buttons = Array.from(document.querySelectorAll('button'));
@@ -306,10 +296,10 @@ export default class TestPixSimple extends BaseCommand {
       });
     } catch (error) {
       console.log('Ultimo catch:' + error)
-      await this.resetConnection(browser)
+      // await this.resetConnection(browser)
 
     } finally {
-      await this.resetConnection(browser)
+      // await this.resetConnection(browser)
       await browser.close()
     }
 
