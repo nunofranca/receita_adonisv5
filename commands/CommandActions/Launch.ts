@@ -19,7 +19,7 @@ const Launch = async () => {
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
-           '--proxy-server=http://geo.iproyal.com:12321',
+           '--proxy-server=http://0bec7eb1a8bcde76.zqz.na.pyproxy.io:16666',
             // '--start-maximized',
             '--start-minimized',
             '--no-sandbox',

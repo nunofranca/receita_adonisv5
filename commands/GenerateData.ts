@@ -32,11 +32,13 @@ export default class GenerateData extends BaseCommand {
 
   public async run() {
 
+
+
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({
-      env: {
-        display : "10.0"
-      },
+      // env: {
+      //   display : "10.0"
+      // },
 
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
@@ -44,11 +46,11 @@ export default class GenerateData extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
-        //'--proxy-server=http://geo.iproyal.com:12321',
+        '--proxy-server=http://185.72.241.142:7434',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -62,21 +64,20 @@ export default class GenerateData extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
-    // await page.authenticate({
-    //   username: 'PSqAoBQrU9fCnfiX',
-    //   password: 'Nuno1201_country-br',
-    // })
+    await page.authenticate({
+      username: 'pbwqkqyc',
+      password: 'vmjm4enywubs',
+    })
+
 
     // Navigate the page to a URL
-    await page.goto('https://estrelabet.com/register', {
-      waitUntil: 'networkidle0'
-    });
+    await page.goto('https://estrelabet.com/register', {timeout: 60000});
 
     await page.screenshot()
 
     let total = 0
 
-    for (let i = 0; i < 20000; i++) {
+    for (let i = 0; i < 100; i++) {
       if (i === 19999){
         console.log('Ultimo loop')
       }
@@ -98,17 +99,19 @@ export default class GenerateData extends BaseCommand {
         return element ? element.innerText : null;
       });
       if (text) {
+        console.log(cpf + ' não exite')
         continue;
       }
 
       const response = await axios.get('https://api.netrin.com.br/v1/consulta-composta?token=60b26d39-b51b-4fd4-8019-87e73aad6b37&s=receita-federal-cpf-data-nascimento&cpf=' + cpf)
       console.log(response.status)
-      if (response.data.CpfBirthdate.idade > 54 || response.data.CpfBirthdate.idade < 35) {
+      if (response.data.CpfBirthdate.idade > 75 || response.data.CpfBirthdate.idade < 18) {
+        console.log(cpf + ' fora da idade')
         continue
       }
       total++
       console.log('Total aproveitado: ' + total)
-
+      console.log(cpf + ' exite e ta no range')
      axios.post('https://app-54786.dc-sp-1.absamcloud.com/api/data', {
         cpf: cpf,
         name: response.data.CpfBirthdate.nome,

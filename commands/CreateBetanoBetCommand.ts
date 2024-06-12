@@ -171,17 +171,17 @@ export default class TestPixSimple extends BaseCommand {
       let myIpResponse = await axios.get('https://api.ipify.org?format=json');
       let myIp = myIpResponse.data.ip;
       console.log('IP atual:', myIp);
-      let accountResponse = await axios.get(url + '/api/account/' + myIp);
-      if (accountResponse.data) {
-        await this.resetConnection(browser)
-        return
-      }
-      if (data.betano === null) {
-        if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-          await browser.close()
-          return;
-        }
-      }
+      // let accountResponse = await axios.get(url + '/api/account/' + myIp);
+      // if (accountResponse.data) {
+      //   await this.resetConnection(browser)
+      //   return
+      // }
+      // if (data.betano === null) {
+      //   if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+      //     await browser.close()
+      //     return;
+      //   }
+      // }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
@@ -196,14 +196,15 @@ export default class TestPixSimple extends BaseCommand {
       console.log('')
       const page = await browser.newPage();
       console.log(proxy)
-      // await AuthProxy(proxy, page)
+
+      await AuthProxy(proxy, page)
 
       await page.goto('https://gmail.com', {timeout: 180000})
       // await page.goto('https://meuip.com')
 
       await LoginGoogle(email, page, browser)
-
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await page.goto('https://www.youtube.com/watch?v=g56D6ywsd5s', {timeout: 180000})
+      await new Promise(resolve => setTimeout(resolve, 1000000000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
 
 
