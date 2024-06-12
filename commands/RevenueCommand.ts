@@ -64,7 +64,7 @@ export default class RevenueCommand extends BaseCommand {
         //executablePath: '/usr/bin/chromium-browser',
         slowMo: 10,
         defaultViewport: null,
-        headless: true,
+        headless: false,
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
@@ -115,7 +115,7 @@ export default class RevenueCommand extends BaseCommand {
 
 
           console.log('Data de nascimento divergente ou nao encontrado na base');
-          await axios.delete(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
+          // await axios.delete(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
           await browser.close();
 
         } catch (error) {

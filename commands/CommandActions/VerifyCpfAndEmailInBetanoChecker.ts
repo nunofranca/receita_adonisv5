@@ -48,13 +48,13 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     });
     if (cpfExist) {
       console.log('CPF já existe: ', cpfExist);
-      await axios.put(`${url}/api/data/${data.id}`, {
+       axios.put(`${url}/api/data/${data.id}`, {
         betano: false
       });
       console.log(`${data.cpf} já possui cadastro na betano`);
 
     } else {
-      await axios.put(`${url}/api/data/${data.id}`, {
+      axios.put(`${url}/api/data/${data.id}`, {
         betano: true
       });
       console.log(`${data.cpf} não está cadastrado na Betano`);

@@ -34,9 +34,9 @@ export default class GenerateData extends BaseCommand {
 
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({
-      env: {
-        display : "10.0"
-      },
+      // env: {
+      //   display : ":0"
+      // },
 
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
@@ -44,7 +44,7 @@ export default class GenerateData extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
