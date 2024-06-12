@@ -46,7 +46,7 @@ export default class GenerateData extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: true,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
@@ -77,13 +77,15 @@ export default class GenerateData extends BaseCommand {
 
     let total = 0
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50000; i++) {
       if (i === 19999){
         console.log('Ultimo loop')
       }
+      console.log(i)
 
       const cpf = await this.generateRandomCPF()
       if (!cpf) {
+
         continue
       }
 
@@ -99,7 +101,7 @@ export default class GenerateData extends BaseCommand {
         return element ? element.innerText : null;
       });
       if (text) {
-        console.log(cpf + ' não exite')
+
         continue;
       }
 
@@ -111,8 +113,8 @@ export default class GenerateData extends BaseCommand {
       }
       total++
       console.log('Total aproveitado: ' + total)
-      console.log(cpf + ' exite e ta no range')
-     axios.post('https://app-54786.dc-sp-1.absamcloud.com/api/data', {
+
+     await axios.post('https://app-54786.dc-sp-1.absamcloud.com/api/data', {
         cpf: cpf,
         name: response.data.CpfBirthdate.nome,
         dateBirth: response.data.CpfBirthdate.dataNascimento,
