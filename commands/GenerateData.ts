@@ -50,7 +50,7 @@ export default class GenerateData extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
-        '--proxy-server=http://185.72.241.142:7434',
+        '--proxy-server=http://geo.iproyal.com:12321',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -65,8 +65,8 @@ export default class GenerateData extends BaseCommand {
     });
     const page = await browser.newPage();
     await page.authenticate({
-      username: 'pbwqkqyc',
-      password: 'vmjm4enywubs',
+      username: 'PSqAoBQrU9fCnfiX',
+      password: 'Nuno1201_country-br_city-salvador',
     })
 
 
