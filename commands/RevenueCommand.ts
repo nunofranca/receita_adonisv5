@@ -65,6 +65,7 @@ export default class RevenueCommand extends BaseCommand {
         slowMo: 10,
         defaultViewport: null,
         headless: true,
+
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
