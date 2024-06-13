@@ -164,24 +164,24 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
-    const browser = await Launch()
+    const browser = await Launch(proxy)
 
 
     try {
       let myIpResponse = await axios.get('https://api.ipify.org?format=json');
       let myIp = myIpResponse.data.ip;
       console.log('IP atual:', myIp);
-      // let accountResponse = await axios.get(url + '/api/account/' + myIp);
-      // if (accountResponse.data) {
-      //   await this.resetConnection(browser)
-      //   return
-      // }
-      // if (data.betano === null) {
-      //   if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
-      //     await browser.close()
-      //     return;
-      //   }
-      // }
+      let accountResponse = await axios.get(url + '/api/account/' + myIp);
+      if (accountResponse.data) {
+        await this.resetConnection(browser)
+        return
+      }
+      if (data.betano === null) {
+        if (await VerifyCpfAndEmailInBetano(data, email, browser, proxy, url)) {
+          await browser.close()
+          return;
+        }
+      }
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
@@ -197,30 +197,40 @@ export default class TestPixSimple extends BaseCommand {
       const page = await browser.newPage();
       console.log(proxy)
 
-      await AuthProxy(proxy, page)
+      // await AuthProxy(proxy, page)
 
       await page.goto('https://gmail.com', {timeout: 180000})
+      // const deleteFiles = await this.prompt.toggle(
+      //   'Posso continuar??',
+      //   ['Y', 'N']
+      // )
+      //
+      // if (!deleteFiles) {
+      //   console.log('escolheu nao')
+      //   return
+      // }
       // await page.goto('https://meuip.com')
 
       await LoginGoogle(email, page, browser)
-      await page.goto('https://www.youtube.com/watch?v=g56D6ywsd5s', {timeout: 180000})
-      await new Promise(resolve => setTimeout(resolve, 1000000000));
+      // await page.goto('https://www.youtube.com/watch?v=g56D6ywsd5s', {timeout: 180000})
+      // await new Promise(resolve => setTimeout(resolve, 1000000000));
       const randomUserAgentBetano = userAgentBetano[Math.floor(Math.random() * userAgentBetano.length)];
 
-
+      console.log(randomUserAgentBetano);
+      console.log(randomUserAgentBetano['userAgent']);
+      console.log(randomUserAgentBetano['name']);
 
       await new Promise(resolve => setTimeout(resolve, 10000));
 
-      const devices = [
-        'iPhone 11 Pro',
-        'iPhone 12 Pro',
-        'Galaxy S9',
-      ];
-      const device = devices[Math.floor(Math.random() * devices.length)];
       const pageBetano = await browser.newPage();
+      page.on('request', (request) => {
+        const headers = request.headers();
+        headers['Referer'] = 'https://google.com'; // Define o site de origem desejado
+        request.continue({ headers });
+      });
 
-      // await AuthProxy(proxy, pageBetano)
-      await pageBetano.setUserAgent(randomUserAgentBetano);
+      await AuthProxy(proxy, pageBetano)
+
       // @ts-ignore
 
       const context = browser.defaultBrowserContext();
@@ -229,9 +239,13 @@ export default class TestPixSimple extends BaseCommand {
       // @ts-ignore
       await pageBetano.setGeolocation({latitude: geo.latitude, longitude: geo.longitude});
       // @ts-ignore
-      // await pageBetano.emulate(KnownDevices[device])
+      await pageBetano.emulate({
+        userAgent: randomUserAgentBetano.userAgent,
+        viewport: randomUserAgentBetano.viewport
+      });
+      await pageBetano.setViewport(randomUserAgentBetano['viewport'])
       await pageBetano.goto('https://br.betano.com/myaccount/register',{timeout: 180000})
-      console.log('Emulando o: ' + device)
+      console.log('Emulando o: ' + randomUserAgentBetano['name'])
 
       await new Promise(resolve => setTimeout(resolve, 10000));
       await Login(pageBetano, browser)
@@ -272,12 +286,12 @@ export default class TestPixSimple extends BaseCommand {
       });
       await new Promise(resolve => setTimeout(resolve, 10000));
       const ip = await axios.get('https://api.ipify.org?format=json')
-      axios.post(
+      await axios.post(
         url + '/api/account',
         {
           ip: ip.data.ip,
           password: 'Money4Life#',
-          useragent: randomUserAgentBetano ?? 'Sem informação',
+          useragent: randomUserAgentBetano['userAgent'] ?? 'Sem informação',
           user_id: data.user_id,
           username: username,
           data: data,

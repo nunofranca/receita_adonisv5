@@ -2,8 +2,8 @@ import puppeteer from "puppeteer-extra";
 import fs from 'fs'
 import path from 'path'
 
-const Launch = async () => {
-
+const Launch = async (proxy) => {
+    const proxyData = 'http://'+proxy.proxy
     return await puppeteer.launch({
         env: {
           DISPLAY: ":0"
@@ -19,7 +19,7 @@ const Launch = async () => {
         ignoreDefaultArgs: ["--disable-extensions"],
         args: [
 
-           '--proxy-server=http://0bec7eb1a8bcde76.zqz.na.pyproxy.io:16666',
+           //'--proxy-server=' +proxyData ?? '',
             // '--start-maximized',
             '--start-minimized',
             '--no-sandbox',
@@ -27,6 +27,7 @@ const Launch = async () => {
             '--disable-dev-shm-usage',
             '--disable-accelerated-2d-canvas',
             '--disable-gpu',
+
             '--window-size=1920x1080',
             '--disable-features=IsolateOrigins,site-per-process',
             // '--user-data-dir=../profiles/dateBirth'

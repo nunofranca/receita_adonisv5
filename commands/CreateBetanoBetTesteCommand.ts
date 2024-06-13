@@ -108,7 +108,6 @@ export default class TestPixSimple extends BaseCommand {
      headless: true,
      ignoreDefaultArgs: ["--disable-extensions"],
       args: [
-
         '--proxy-server=http://'+proxy.data.proxy,
         // '--start-maximized',
         '--start-minimized',
@@ -119,7 +118,6 @@ export default class TestPixSimple extends BaseCommand {
         '--disable-gpu',
         '--window-size=1920x1080',
         '--disable-features=IsolateOrigins,site-per-process',
-
       ],
     });
 

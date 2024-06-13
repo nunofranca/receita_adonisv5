@@ -46,7 +46,7 @@ export default class GenerateData extends BaseCommand {
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
@@ -81,7 +81,9 @@ export default class GenerateData extends BaseCommand {
       if (i === 19999){
         console.log('Ultimo loop')
       }
-      console.log(i)
+
+
+
 
       const cpf = await this.generateRandomCPF()
       if (!cpf) {

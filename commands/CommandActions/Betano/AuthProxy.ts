@@ -1,8 +1,8 @@
 const AuthProxy =async (proxy, page) =>{
 
   await page.authenticate({
-    username: 'hee54548-zone-resi',
-    password: 'gftr5154rt',
+    username: proxy.username,
+    password: proxy.password,
   });
   // await page.authenticate({
   //   username: proxy.username,
