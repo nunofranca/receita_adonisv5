@@ -32,25 +32,25 @@ export default class GenerateData extends BaseCommand {
 
   public async run() {
 
-
+    console.log('entrou no run')
 
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({
       // env: {
-      //   display : "10.0"
+      //   display : ":0"
       // },
 
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
-      //executablePath: '/usr/bin/microsoft-edge',
-      executablePath: '/usr/bin/chromium-browser',
+      executablePath: '/usr/bin/microsoft-edge',
+      //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
-      headless: false,
+      headless: true,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
-        '--proxy-server=http://geo.iproyal.com:12321',
+        '--proxy-server=http://geo.iproyal.com:11201',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -66,12 +66,12 @@ export default class GenerateData extends BaseCommand {
     const page = await browser.newPage();
     await page.authenticate({
       username: 'PSqAoBQrU9fCnfiX',
-      password: 'Nuno1201_country-br_city-salvador',
+      password: 'Nuno1201_country-br',
     })
 
 
     // Navigate the page to a URL
-    await page.goto('https://estrelabet.com/register', {timeout: 60000});
+    await page.goto('https://estrelabet.com/register', {timeout: 180000});
 
     await page.screenshot()
 
