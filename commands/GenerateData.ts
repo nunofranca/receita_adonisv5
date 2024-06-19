@@ -42,7 +42,7 @@ export default class GenerateData extends BaseCommand {
 
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
-      executablePath: '/usr/bin/microsoft-edge',
+      //executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chromium-browser',
       slowMo: 10,
       defaultViewport: null,
