@@ -50,7 +50,7 @@ export default class GenerateData extends BaseCommand {
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
-        '--proxy-server=http://geo.iproyal.com:11201',
+       // '--proxy-server=http://geo.iproyal.com:11201',
         '--lang=pt-BR', //
         '--start-minimized',
         '--no-sandbox',
@@ -64,10 +64,10 @@ export default class GenerateData extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
-    await page.authenticate({
-      username: 'PSqAoBQrU9fCnfiX',
-      password: 'Nuno1201_country-br',
-    })
+    // await page.authenticate({
+    //   username: 'PSqAoBQrU9fCnfiX',
+    //   password: 'Nuno1201_country-br',
+    // })
 
 
     // Navigate the page to a URL
