@@ -36,14 +36,14 @@ export default class GenerateData extends BaseCommand {
 
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch({
-      env: {
-        display : ":0"
-      },
+      // env: {
+      //   display : ":0"
+      // },
 
       ignoreHTTPSErrors: true,
       // userDataDir: '../profiles/dateBirth',
       //executablePath: '/usr/bin/microsoft-edge',
-      executablePath: '/usr/bin/chrome-browser',
+     // executablePath: '/usr/bin/chrome-browser',
       slowMo: 10,
       defaultViewport: null,
       headless: false,
