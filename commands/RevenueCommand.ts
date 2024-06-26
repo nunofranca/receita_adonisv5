@@ -36,7 +36,7 @@ export default class RevenueCommand extends BaseCommand {
 
     try {
 
-      const url = 'https://app-54786.dc-sp-1.absamcloud.com/api/data/revenue';
+      const url = 'https://checkbetano.com.br/api/data/revenue';
       console.log(url)
 
       this.check = await axios.get(url)
@@ -117,7 +117,7 @@ export default class RevenueCommand extends BaseCommand {
 
           console.log('Data de nascimento divergente ou nao encontrado na base');
           // await axios.delete(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
-          await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+          await axios.put(`https://checkbetano.com.br/api/data/${check.id}`, {
             'dateBirth': null,
             'name': null,
 
@@ -157,7 +157,7 @@ export default class RevenueCommand extends BaseCommand {
 
         try {
           // @ts-ignore
-          const response = await axios.put(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`, {
+          const response = await axios.put(`https://checkbetano.com.br/api/data/${check.id}`, {
             'revenue': valores[3] == 'REGULAR',
             'cpf': await this.formatCPF(check.cpf),
             'dateBirth': await this.formatDate(check.dateBirth),

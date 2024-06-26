@@ -86,9 +86,9 @@ export default class TestPixSimple extends BaseCommand {
   public async run() {
 
 
-    const proxy = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/proxy')
+    const proxy = await axios.get('https://checkbetano.com.br/api/proxy')
     console.log(proxy.data.proxy)
-    const response = await axios.get('https://app-54786.dc-sp-1.absamcloud.com/api/data/betano/' + proxy.data.user_id)
+    const response = await axios.get('https://checkbetano.com.br/api/data/betano/' + proxy.data.user_id)
     if (Object.keys(response.data).length < 3) {
       console.log('Sem dados');
       return
@@ -123,7 +123,7 @@ export default class TestPixSimple extends BaseCommand {
 
 
     // @ts-ignore
-    if (await VerifyCpfAndEmailInBetanoChecker(response, 'nunotestestte@gmail.com', browser, proxy.data, 'https://app-54786.dc-sp-1.absamcloud.com')) {
+    if (await VerifyCpfAndEmailInBetanoChecker(response, 'nunotestestte@gmail.com', browser, proxy.data, 'https://checkbetano.com.br')) {
       await browser.close()
       return;
     }
