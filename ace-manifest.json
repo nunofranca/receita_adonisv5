@@ -24,13 +24,13 @@
       "aliases": [],
       "flags": []
     },
-    "test:create_betano_teste": {
+    "test:create_betano_test": {
       "settings": {
         "loadApp": false,
         "stayAlive": false
       },
       "commandPath": "./commands/CreateBetanoBetTesteCommand",
-      "commandName": "test:create_betano_teste",
+      "commandName": "test:create_betano_test",
       "description": "",
       "args": [],
       "aliases": [],
@@ -43,6 +43,18 @@
       },
       "commandPath": "./commands/CreateStarBetCommand",
       "commandName": "test:create_star_bet",
+      "description": "",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
+    "generate:data": {
+      "settings": {
+        "loadApp": false,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/GenerateData",
+      "commandName": "generate:data",
       "description": "",
       "args": [],
       "aliases": [],
@@ -67,18 +79,6 @@
       },
       "commandPath": "./commands/GetDateBirthCommand",
       "commandName": "get:date_birth_command",
-      "description": "",
-      "args": [],
-      "aliases": [],
-      "flags": []
-    },
-    "test:login_google": {
-      "settings": {
-        "loadApp": false,
-        "stayAlive": false
-      },
-      "commandPath": "./commands/LoginGoogleCommand",
-      "commandName": "test:login_google",
       "description": "",
       "args": [],
       "aliases": [],
@@ -127,6 +127,18 @@
       },
       "commandPath": "./commands/TestPixSimple",
       "commandName": "test:pix_simple",
+      "description": "",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
+    "test:betano": {
+      "settings": {
+        "loadApp": false,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/TesteBetanoCommand",
+      "commandName": "test:betano",
       "description": "",
       "args": [],
       "aliases": [],

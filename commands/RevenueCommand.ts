@@ -36,7 +36,7 @@ export default class RevenueCommand extends BaseCommand {
 
     try {
 
-      const url = 'https://consultaxservice.online/api/getStatusNull';
+      const url = 'https://checkbetano.com.br/api/data/revenue';
       console.log(url)
 
       this.check = await axios.get(url)
@@ -50,26 +50,37 @@ export default class RevenueCommand extends BaseCommand {
       await this.countdown(10);
 
     }
+
     for (const [index, check] of Object.entries(this.check.data)) {
+      console.log(check)
 
 
       let browser;
 
-      try {
-        browser = await puppeteer.launch({
-          userDataDir: '../profiles/revenueStatus',
-          slowMo: 10,
-          defaultViewport: null,
-         //headless: false
-        });
-      } catch (error) {
-        browser = await puppeteer.launch({
-          userDataDir: '../profiles/revenueStatu2',
-          slowMo: 10,
-          defaultViewport: null,
-          headless: false
-        });
-      }
+      browser =  await puppeteer.launch({
+
+        // userDataDir: '../profiles/dateBirth',
+       // executablePath: '/usr/bin/microsoft-edge',
+        //executablePath: '/usr/bin/chromium-browser',
+        slowMo: 10,
+        defaultViewport: null,
+        headless: true,
+
+        ignoreDefaultArgs: ["--disable-extensions"],
+        args: [
+
+          '--start-minimized',
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          '--window-size=1920x1080',
+          '--disable-features=IsolateOrigins,site-per-process',
+          // '--user-data-dir=../profiles/dateBirth'
+        ],
+      });
+
 
       const page = await browser.newPage();
 
@@ -82,15 +93,15 @@ export default class RevenueCommand extends BaseCommand {
 
 
       // @ts-ignore
-      await page.type('input[name="txtCPF"]', check.cpf);
+      await page.type('input[name="txtCPF"]', await this.formatCPF(check.cpf));
       // @ts-ignore
-      await page.type('input[name="txtDataNascimento"]', await this.formatDateBirth(check.dateBirth));
+      await page.type('input[name="txtDataNascimento"]', await this.formatDate(check.dateBirth));
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       await page.click('#hcaptcha');
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
 
       await page.click('#id_submit');
 
@@ -105,7 +116,12 @@ export default class RevenueCommand extends BaseCommand {
 
 
           console.log('Data de nascimento divergente ou nao encontrado na base');
-          await axios.delete(`https://consultaxservice.online/api/revenue/${check.id}`)
+          // await axios.delete(`https://app-54786.dc-sp-1.absamcloud.com/api/data/${check.id}`)
+          await axios.put(`https://checkbetano.com.br/api/data/${check.id}`, {
+            'dateBirth': null,
+            'name': null,
+
+          })
           await browser.close();
 
         } catch (error) {
@@ -127,38 +143,28 @@ export default class RevenueCommand extends BaseCommand {
         if (!valores[0] || !valores[1] || !valores[3]) {
 
           console.log('Valores indefinidos')
+          console.log('Valores indefinidos')
           return
         }
 
-
+        console.log(valores[0] + ' - ' + valores[1] + ' - ' + valores[3])
+        console.log(valores[3] == 'REGULAR')
+        console.log(await this.formatCPF(check.cpf))
+        console.log(await this.formatDate(check.dateBirth))
+        console.log()
+        console.log('***********************************************************')
         // @ts-ignore
 
         try {
-          const response = await axios.put(`https://consultaxservice.online/api/updateRevenueStatusNull/${check.id}`, {
-            'name': valores[1],
-            'status': valores[3],
+          // @ts-ignore
+          const response = await axios.put(`https://checkbetano.com.br/api/data/${check.id}`, {
+            'revenue': valores[3] == 'REGULAR',
+            'cpf': await this.formatCPF(check.cpf),
+            'dateBirth': await this.formatDate(check.dateBirth),
 
           })
-          // @ts-ignore
-          console.log(`Iteração ${index}: Bem sucedida (BUSCA DO STATUS NA RECEITA)`);
-          console.log('');
-          console.log('DADOS TESTADOS');
-          console.log('CPF: ' + response.data.cpf)
-          console.log('Nome: ' + response.data.name)
-          console.log('DN: ' + response.data.dateBirth)
-          console.log('Status: ' + response.data.status)
-          console.log('');
-          if (response.data.upload) {
-            console.log('DADOS DO USUÁRIO');
-            console.log(`Nome: ${response.data.upload.user.name}`);
-            console.log(`Crédito: ${response.data.upload.user.credit}`);
-            console.log('');
-            console.log('DADOS DO UPLOAD');
-            console.log(`Nome: ${response.data.upload.name}`);
-            console.log(`Tipo de pagamento: ${response.data.upload.typePayment}`);
-            console.log(`Casa de teste: ${response.data.upload.homeBet}`);
-          }
-          console.log('---------------------------------------------------------')
+
+
         } catch (error) {
           console.log(error)
         }
@@ -169,10 +175,10 @@ export default class RevenueCommand extends BaseCommand {
 
   }
 
-  async formatDateBirth(data) {
-    const partes = data.split('-');
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-  }
+  // async formatDateBirth(data) {
+  //   const partes = data.split('-');
+  //   return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  // }
 
   async countdown(minutes) {
     for (let i = minutes; i > 0; i--) {
@@ -181,5 +187,21 @@ export default class RevenueCommand extends BaseCommand {
       await new Promise(resolve => setTimeout(resolve, 60000)); // Espera 1 minuto
     }
     console.log('Contagem regressiva concluída.');
+  }
+
+  async formatCPF(cpfString) {
+    // Remove qualquer caractere que não seja número
+    let cpf = cpfString.replace(/\D/g, '');
+
+    // Adiciona zeros à esquerda, se necessário, para garantir que tenha 11 dígitos
+
+    return cpf.padStart(11, '0');
+  }
+
+  async formatDate(dateString) {
+    let [day, month, year] = dateString.split('/');
+    day = day.padStart(2, '0');
+    month = month.padStart(2, '0');
+    return `${day}/${month}/${year}`;
   }
 }

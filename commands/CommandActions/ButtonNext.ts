@@ -9,7 +9,7 @@ const ButtonNext = async (page) => {
     const span = await button.$('span');
     if (span) {
       const textContent = await page.evaluate(el => el.textContent.trim(), span);
-      if (textContent === 'Avançar') {
+      if (textContent === 'Next') {
         await button.click();
         console.log('Clicou no botão "Avançar"');
         found = true;
