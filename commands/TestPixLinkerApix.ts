@@ -32,15 +32,11 @@ export default class TestPixLinker extends BaseCommand {
   protected check;
 
   public async run() {
-
-
     const browser = await puppeteer.launch({
-      userDataDir: '../profiles/pixLinker',
       handleSIGINT: false,
       slowMo: 10,
       defaultViewport: null,
       headless: false,
-
       args: [
         '--enable-automation',
         // '--start-maximized',
@@ -48,36 +44,49 @@ export default class TestPixLinker extends BaseCommand {
       ],
     });
     const page = await browser.newPage();
-
     await browser.waitForTarget(() => true);
 
-
     try {
-      await page.goto('https://ib.linker.com.br/login',);
-    } catch (error) {
-      console.error('Erro ao carregar a página de login:', error);
-    }
+      await page.goto('https://ib.contasimples.com/login');
+      await page.type('#email', 'alberttojrfsa@gmail.com');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await page.type('#password', '120112');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const buttonsNext = await page.$$('button');
+      for (const next of buttonsNext) {
+        const buttonText = await next.evaluate(node => node.textContent.trim());
+        if (buttonText === 'Entrar') {
+          await next.click();
+          break;
+        }
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 40000));
+
+      await page.click('[href="/cliente/pix"]');
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      await page.click('[href="/cliente/pix/transferencia-pix"]');
+      await new Promise(resolve => setTimeout(resolve, 10000));
+      const spans = await page.$$('span');
+      for (const span of spans) {
+        try {
+          const buttonText = await span.evaluate(node => node.textContent.trim());
+          if (buttonText === 'Novo Contato') {
+            await span.click();
+            break;
+          }
+        } catch (error) {
+          console.error('Erro ao avaliar ou clicar no elemento:', error);
+        }
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 10000));
 
 
-    await new Promise(resolve => setTimeout(resolve, 30000));
 
-    try {
-      await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-    } catch (error) {
-      console.error('Erro ao carregar a página de dashboard já logado:', error);
-    }
+      let yes = 0;
+      let no = 0
 
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
-
-    let comPix = 0;
-    let semPix = 0
-    let stop = 0
-    let listNotPix = [];
-
-
-    for (let consults = 0; consults <= 2000; consults++) {
 
 
 
@@ -87,192 +96,67 @@ export default class TestPixLinker extends BaseCommand {
       console.log()
       console.log('_________________________________________')
 
-       const url = 'https://apix.tec.br/api/data';
+      const url = 'https://www.checkbetano.com.br/api/data/pix';
 
 
       this.check = await axios.get(url);
-
-
-
-      if (Object.keys(this.check.data).length === 0) {
-        console.log('Não há CPF para consulta');
-
-        continue
-      }
+      let comPix = 0;
+      let semPix = 0
 
       for (const [index, check] of Object.entries(this.check.data)) {
+        let cpf = check.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 
-        async function clickBanner()
-        {
-          const buttonsNext = await page.$$('button');
-          for (const next of buttonsNext) {
-
-            const buttonText = await next.evaluate(node => node.textContent.trim());
-            if (buttonText === 'Continuar') {
-
-              await next.click();
-              break;
-            }
-          }
-
-          }
-
-        if(stop  == 5 ){
-          check.cpf = '11637563779'
-        }
-        if (stop == 100) {
-          listNotPix = [];
-          let time = 0
-
-          console.log('')
-          console.log('PAUSADO POR FALHA NA COMUNICAÇÃO DO LINKER')
-          console.log('Total de CPFs na lista: ' + listNotPix.length)
-          while (time <= 10) {
-            try {
-              await page.goto('https://ib.linker.com.br');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-              await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-            } catch (error) {
-              await page.goto('https://ib.linker.com.br/pix',);
-              await new Promise(resolve => setTimeout(resolve, 5000));
-              await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-
-            }
-
-            time += 1
-            await new Promise(resolve => setTimeout(resolve, 50000));
-            console.log('Tempo restante para voltar: ' + Math.ceil(10 - time) + ' minutos');
-            console.log('_________________________________________')
-
-          }
-          time = 0
-          stop = 0
-        }
-
-
-        let input = true;
-        while (input) {
-          try {
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            // Clica no botão com o texto "Chave CPF"
-            const buttons = await page.$$('button');
-            for (const button of buttons) {
-
-              const buttonText = await button.evaluate(node => node.textContent.trim());
-              if (buttonText === 'Chave CPF') {
-                await button.click();
-                break;
-              }
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await page.waitForSelector('input', {timeout: 3000}); // Espera até que um elemento de entrada seja encontrado na página dentro de 5 segundos
-            await page.type('input', check.cpf); // Digita o valor do CPF no elemento de entrada
-            input = false
-
-          } catch (error) {
-            console.log('INTERAÇÃO: ' + index)
-            console.log('STATUS: INPUT NÃO ENCONTRADO')
-            console.log('CPF: ' + check.cpf)
-            console.log('___________________________________________________')
-            await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-
-          }
-        }
-
-
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        const buttonsNext = await page.$$('button');
-        for (const next of buttonsNext) {
-
-          const buttonText = await next.evaluate(node => node.textContent.trim());
-          if (buttonText === 'Continuar') {
-
-            await next.click();
-            break;
-          }
-        }
-
+        await page.type('[placeholder="Digite a chave que você deseja cadastrar"]', cpf);
         await new Promise(resolve => setTimeout(resolve, 7000));
-
-
-        const temTextoDadosContato = await page.evaluate(() => {
-
-          try {
-            return document.body.textContent.includes('Dados do contato');
-          }catch (error){
-            return
-          }
-
+        const semPix = await page.evaluate(() => {
+          return document.body.textContent.includes('Chave não encontrada');
+        });
+        const comPix = await page.evaluate(() => {
+          return document.body.textContent.includes('Chave encontrada');
         });
 
-
-        if (temTextoDadosContato) {
-          try {
-
-            await this.updateCheck(check.id, 1)
-          }catch (error){
-            console.log(error)
-            await this.updateCheck(check.id, 1)
-          }
-
-          while (listNotPix.length > 0) {
-            const id = listNotPix.shift();
-            await this.updateCheck(id, 0)
-            semPix += 1;
-          }
-          comPix += 1;
-          stop = 0
-          await new Promise(resolve => setTimeout(resolve, 2000))
-
-
-        } else {
-
-
-          console.log('INTERAÇÃO: ' + index)
-          console.log('CPF: ' + check.cpf + ' adicionado a lista de possíveis pix')
-          console.log('___________________________________________________')
-          listNotPix.push(check.id)
-
-          stop += 1
-          await new Promise(resolve => setTimeout(resolve, 10000))
-
+        if (comPix) {
+          console.log('___________________________________________________________');
+          console.log('Com PIX.');
+          console.log(cpf)
+          await this.updateCheck(check.id, 0)
+          yes +=1
+          console.log('COM PIX ' + yes)
+          console.log('___________________________________________________________');
 
         }
-
-        let reload = true
-        while (reload) {
-          try {
-            console.log('')
-            console.log('RESUMO DE CONSULTAS')
-            console.log('COM PIX: ' + comPix)
-            console.log('SEM PIX: ' + semPix)
-            console.log('___________________________________________________')
-            console.log('')
-            await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-            reload = false
-
-          } catch (error) {
-            console.log('Erro ao atualizar ')
-          }
+        if (semPix) {
+          console.log('___________________________________________________________');
+          console.log('Sem PIX.');
+          console.log(cpf)
+          no +=1
+          console.log('SEM PIX ' + no)
+          console.log('___________________________________________________________');
+          //await this.updateCheck(check.id, 1)
         }
+        await page.$eval('[placeholder="Digite a chave que você deseja cadastrar"]', input => {
+          input.value = '';
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 45000));
       }
+
+    } catch (error) {
+      console.error('Erro ao executar o script:', error);
+    } finally {
+      await browser.close();
     }
-
-
-    await new Promise(resolve => setTimeout(resolve, 200000000000));
   }
+
 
   async updateCheck(id, pix){
     try {
-      await fetch('https://apix.tec.br/api/data/' + id, {
+      await fetch('https://www.checkbetano.com.br/api/data/' + id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({status: pix})
+        body: JSON.stringify({pix: pix})
       });
     }catch (error){
       console.log('ERRO AO FAZER UPDATE DO CHECK' + error)

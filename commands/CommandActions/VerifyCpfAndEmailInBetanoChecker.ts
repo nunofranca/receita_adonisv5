@@ -6,13 +6,13 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
 
 
   const page = await browser.newPage()
-  await AuthProxy(proxy, page)
+ await AuthProxy(proxy, page)
   await page.goto('https://brbetano.com/register', {timeout: 180000});
   console.log('Abriu a página da betano pra verificar se email o CPF já estão cadastrados')
 
 
   await page.waitForSelector('span', {timeout: 30000});
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 10000));
 
   // Encontrar todos os elementos <span> e procurar pelo texto desejado
   const spans = await page.$$('span');
@@ -46,6 +46,8 @@ const VerifyCpfAndEmailInBetano = async (response, email, browser, proxy, url) =
     const cpfExist = await page.evaluate(() => {
       return document.body.innerText.includes('Este CPF já existe') || document.body.innerText.includes('Este CPF não é válido');
     });
+    console.log(cpfExist)
+    new Promise(resolve => setTimeout(resolve, 3000000));
     if (cpfExist) {
       console.log('CPF já existe: ', cpfExist);
        axios.put(`${url}/api/data/${data.id}`, {

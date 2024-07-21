@@ -49,33 +49,17 @@ export default class TestPixLinker extends BaseCommand {
     });
     const page = await browser.newPage();
 
-
     await browser.waitForTarget(() => true);
 
 
     try {
-      await page.goto('https://ib.linker.com.br/login',);
+      await page.goto('https://www.gerarpix.com.br/',);
     } catch (error) {
       console.error('Erro ao carregar a página de login:', error);
     }
 
 
-    await new Promise(resolve => setTimeout(resolve, 30000));
-
-    try {
-      await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-    } catch (error) {
-      console.error('Erro ao carregar a página de dashboard já logado:', error);
-    }
-
-
-    await new Promise(resolve => setTimeout(resolve, 5000));
-
-
-    let comPix = 0;
-    let semPix = 0
-    let stop = 0
-    let listNotPix = [];
+     await new Promise(resolve => setTimeout(resolve, 5000));
 
 
     for (let consults = 0; consults <= 2000; consults++) {
@@ -88,27 +72,10 @@ export default class TestPixLinker extends BaseCommand {
       console.log()
       console.log('_________________________________________')
 
-
-      let randomNumber = Math.random() * 100; // Multiplica por 100 para gerar um número entre 0 e 100
-    console.log(randomNumber)
-      let url;
-
-      // if (randomNumber < 50) {
-      //   console.log('CONSULTAR DADOS COM UPLOAD')
-      //   url = 'https://consultaxservice.online/api/check/getByPixNullWithUpload';
-      // }
-
-      if (randomNumber >0) {
-        console.log('CONSULTAR DADOS SEM UPLOAD')
-        url = 'https://consultaxservice.online/api/check/getByPixNullNotUpload';
-      }
+      const url = 'https://www.checkbetano.com.br/api/data/pix';
 
 
       this.check = await axios.get(url);
-
-      // if(randomNumber >= 80){
-      //   console.log('TOTAL PARA RETESTE ' + this.check)
-      // }
 
 
 
@@ -120,145 +87,8 @@ export default class TestPixLinker extends BaseCommand {
 
       for (const [index, check] of Object.entries(this.check.data)) {
 
-        if (stop == 10) {
-          listNotPix = [];
-          let time = 0
-
-          console.log('')
-          console.log('PAUSADO POR FALHA NA COMUNICAÇÃO DO LINKER')
-          console.log('Total de CPFs na lista: ' + listNotPix.length)
-          while (time <= 10) {
-            try {
-              await page.goto('https://ib.linker.com.br');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-              await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-            } catch (error) {
-              await page.goto('https://ib.linker.com.br/pix',);
-              await new Promise(resolve => setTimeout(resolve, 5000));
-              await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-              await new Promise(resolve => setTimeout(resolve, 5000));
-
-            }
-
-            time += 1
-            await new Promise(resolve => setTimeout(resolve, 50000));
-            console.log('Tempo restante para voltar: ' + Math.ceil(10 - time) + ' minutos');
-            console.log('_________________________________________')
-
-          }
-          time = 0
-          stop = 0
-        }
-
-
-        let input = true;
-        while (input) {
-          try {
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            // Clica no botão com o texto "Chave CPF"
-            const buttons = await page.$$('button');
-            for (const button of buttons) {
-
-              const buttonText = await button.evaluate(node => node.textContent.trim());
-              if (buttonText === 'Chave CPF') {
-                await button.click();
-                break;
-              }
-            }
-            await new Promise(resolve => setTimeout(resolve, 6000));
-            await page.waitForSelector('input', {timeout: 3000}); // Espera até que um elemento de entrada seja encontrado na página dentro de 5 segundos
-            await page.type('input', check.cpf); // Digita o valor do CPF no elemento de entrada
-            input = false
-
-          } catch (error) {
-            console.log('INTERAÇÃO: ' + index)
-            console.log('STATUS: INPUT NÃO ENCONTRADO')
-            console.log('CPF: ' + check.cpf)
-            console.log('___________________________________________________')
-            await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-
-          }
-        }
-
-
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        const buttonsNext = await page.$$('button');
-        for (const next of buttonsNext) {
-
-          const buttonText = await next.evaluate(node => node.textContent.trim());
-          if (buttonText === 'Continuar') {
-
-            await next.click();
-            break;
-          }
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 7000));
-
-
-        const temTextoDadosContato = await page.evaluate(() => {
-
-          try {
-            return document.body.textContent.includes('Dados do contato');
-          }catch (error){
-            return
-          }
-
-        });
-
-
-        if (temTextoDadosContato) {
-          try {
-
-            await this.updateCheck(check.id, 1)
-          }catch (error){
-            console.log(error)
-            await this.updateCheck(check.id, 1)
-          }
-
-          while (listNotPix.length > 0) {
-            const id = listNotPix.shift();
-            await this.updateCheck(id, 0)
-            semPix += 1;
-          }
-          comPix += 1;
-          stop = 0
-          await new Promise(resolve => setTimeout(resolve, 2000))
-
-
-        } else {
-
-
-          console.log('INTERAÇÃO: ' + index)
-          console.log('CPF: ' + check.cpf + ' adicionado a lista de possíveis pix')
-          console.log('___________________________________________________')
-          listNotPix.push(check.id)
-
-          stop += 1
-          await new Promise(resolve => setTimeout(resolve, 10000))
-
-
-        }
-
-        let reload = true
-        while (reload) {
-          try {
-            console.log('')
-            console.log('RESUMO DE CONSULTAS')
-            console.log('COM PIX: ' + comPix)
-            console.log('SEM PIX: ' + semPix)
-            console.log('___________________________________________________')
-            console.log('')
-            await page.goto('https://ib.linker.com.br/pix/transfer/new/with-key');
-            reload = false
-
-          } catch (error) {
-            console.log('Erro ao atualizar ')
-          }
-        }
-      }
+        page.select('#key_type', 'cpf')
+    
     }
 
 
@@ -267,7 +97,7 @@ export default class TestPixLinker extends BaseCommand {
 
   async updateCheck(id, pix){
     try {
-      await fetch('https://consultaxservice.online/api/check/' + id, {
+      await fetch('https://www.checkbetano.com.br/api/data/' + id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

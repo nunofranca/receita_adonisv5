@@ -60,7 +60,7 @@ export default class TestPixSimple extends BaseCommand {
   /**
    * Command name is used to run the command
    */
-  public static commandName = 'test:create_betano_teste';
+  public static commandName = 'test:create_betano_test';
 
   /**
    * Command description is displayed in the "help" output
@@ -94,21 +94,23 @@ export default class TestPixSimple extends BaseCommand {
       return
     }
 
-   const browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
       env: {
         DISPLAY: ":0"
       },
       // ignoreHTTPSErrors: true,
       //userDataDir: profileDir,
-      //executablePath: '/usr/bin/microsoft-edge',
+     // executablePath: '/usr/bin/microsoft-edge',
       //executablePath: '/usr/bin/chrome-browser',
       // executablePath: '/usr/bin/chromium-browser',
-     slowMo: 10,
-     defaultViewport: null,
-     headless: true,
-     ignoreDefaultArgs: ["--disable-extensions"],
+      slowMo: 10,
+      defaultViewport: null,
+      headless: false,
+      ignoreDefaultArgs: ["--disable-extensions"],
       args: [
-        '--proxy-server=http://'+proxy.data.proxy,
+        // '--proxy-server=http://'+proxy.data.proxy,
+
+        '--proxy-server=http://' + proxy.data.proxy,
         // '--start-maximized',
         '--start-minimized',
         '--no-sandbox',

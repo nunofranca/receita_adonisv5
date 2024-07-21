@@ -46,7 +46,7 @@ export default class GenerateData extends BaseCommand {
      //executablePath: '/usr/bin/chrome-browser',
       slowMo: 10,
       defaultViewport: null,
-      // headless: false,
+      headless: false,
       ignoreDefaultArgs: ["--disable-extensions"],
       args: [
         // '--proxy-server=http://geo.iproyal.com:12321',
@@ -67,7 +67,7 @@ export default class GenerateData extends BaseCommand {
     //   password: 'Nuno1201_country-br',
     // })
 
-    await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G965F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Mobile Safari/537.36');
+    // await page.setUserAgent('Mozilla/5.0 (Linux; Android 8.0.0; SM-G965F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Mobile Safari/537.36');
 
     // Navigate the page to a URL
     await page.goto('https://estrelabet.com/pb/register', {timeout: 180000});
